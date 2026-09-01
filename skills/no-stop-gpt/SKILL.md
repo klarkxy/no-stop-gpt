@@ -12,7 +12,8 @@ description: >-
   ownerless abstractions — prove first, then delete). Use when writing or
   editing code; reviewing a diff or PR for over-design or over-defense;
   auditing one defensive mechanism; or simplifying a codebase — including
-  反过度设计, 过度防御, 防御性代码审计, 代码简化, 熵回收, anti-overengineering.
+  反过度设计, 过度防御, 防御性代码审计, 代码简化, 熵回收, anti-overengineering,
+  let it crash, 任其崩溃.
   Do not use for general style review, performance tuning, or requested
   security, auth, crypto, migration, or verification work.
 license: SATA 2.1
@@ -20,7 +21,7 @@ license: SATA 2.1
 
 # Anti-Overengineering
 
-Spend the complexity budget on the requested work. Fail early and visibly.
+Spend the complexity budget on the requested work. Fail early and visibly, at the unit that owns the work.
 
 Models optimize for looking complete and not exploding: tests stay green, nobody gets blamed. RL punishes crashes, trust boundaries stay invisible, and agent-authored scaffolding gets treated as proof a capability is required. Invert that. Complexity must stay proportional to the request and the real trust boundary.
 
@@ -51,7 +52,7 @@ Run all five before adding or keeping a mechanism:
 
 1. **Trust boundary.** Did this data just cross a user, network, disk, or third-party boundary? Yes → validate. No → trust the caller.
 2. **Reachability.** Can this project's supported use actually produce this case? Reachable is enough; constructible in principle is not.
-3. **Failure semantics.** Can the caller distinguish this failure from real success? If not, throw — never return a same-shaped default (`0`, `""`, `'free'`, empty list, `MAX_VALUE`).
+3. **Failure semantics.** Can the caller distinguish this failure from real success? If not, throw out of the unit that owns the work — never return a same-shaped default (`0`, `""`, `'free'`, empty list, `MAX_VALUE`).
 4. **Named consumer.** Whose live decision changes based on this hash, flag, gate, or ledger? No named consumer → do not build it.
 5. **"What would I do differently if this check fired?"** No answer → do not run the check.
 
@@ -70,9 +71,10 @@ Prevent-mode rails. Every changed line traces to the request.
 - Do not abstract single-use code. Inline first; abstract at 3+ real call sites. When a real second implementation or failure window exists, build the harder design — dodging requested work is not simplicity.
 - Where judgement is needed, judge. Do not replace it with a scoring table, a checklist, or a re-verification loop over something already settled.
 - Do not handle impossible errors. Do not wrap code that cannot throw.
+- Expected errors belong at the owned boundary (bad input, declined payment, missing file when absence is legal). Unexpected errors — broken invariants, type lies, "this cannot happen" — leave the unit that owns the work uncaught. Do not invent an out-of-spec recovery the contract never named.
 - Do not add backwards-compatibility shims, feature flags, config knobs, caching, or migration machinery unless explicitly requested.
 - Future extensibility is a future decision.
-- Suppressing the error is not fixing the error. Fail early and visibly. Propagate errors up; do not log-and-continue.
+- Suppressing the error is not fixing the error. Fail early and visibly. Fail the unit that owns the work: a request fails the request, a job fails the job, a process-level invariant fails the process. Do not catch-and-continue inside the unit whose state is already dirty, and do not abort a whole service for a single request. Recovery belongs to an outer owner that still has a known-good state. Use the isolation the platform already provides; do not scaffold a supervisor, error bus, or retry actor to make throwing safe.
 - When a shared helper grows parameters and conditionals so callers run different subsets of it, the abstraction is wrong — inline it back into the callers and re-extract only what remains. Duplication is far cheaper than the wrong abstraction.
 - Do not hide a root cause with a retry, a longer timeout, a weaker assertion, a broader mock, or a parallel execution path.
 - A fallback needs a shipped contract, a named failure mode, and a removal plan — otherwise do not add it. No dual-write, no "if the primary fails, use the sidecar" branch.
@@ -108,7 +110,7 @@ Do not remove or skip:
 
 Requested security, migration, or verification work **is** the work, not scope creep.
 
-Aggressive minimalism must never remove boundary validation. "Write the fewest lines" is not a license to delete user-input checks.
+Aggressive minimalism must never remove boundary validation. "Write the fewest lines" is not a license to delete user-input checks. "Let it crash" is not a license to skip owned-boundary I/O handling, or to abort a process for a request-scoped error.
 
 A Hard exception in the requested work is in-scope work. Implement it. Do not "simplify" it away to look lean, and do not hide it behind extra wrappers, flags, or fallbacks.
 
@@ -116,7 +118,7 @@ A Hard exception in the requested work is in-scope work. Implement it. Do not "s
 
 Stop when one of these is true:
 
-- Prevent: the change solves the request, and one final sweep of your own diff finds no placeholder-on-failure, trusted-path guard, or speculative machinery left from this change. Models rarely write cleanly on the first pass but recognize violations on a re-read.
+- Prevent: the change solves the request, and one final sweep of your own diff finds no placeholder-on-failure, trusted-path guard, request-scoped process abort, or speculative machinery left from this change. Models rarely write cleanly on the first pass but recognize violations on a re-read.
 - Audit: every named mechanism has a verdict, including keeps, each with a check that would expose a wrong removal.
 - The user set an explicit budget (files, lines, scope) and the honest solution does not fit — stop before editing and report the blocker with the smallest viable alternative.
 - A Hard exception is the mechanism under discussion and no separate deletion authorization exists — keep it.
@@ -144,6 +146,7 @@ Read the one reference the need calls for. Do not load them all by default.
 ```text
 Mechanism:
 Trust boundary it sits on:
+Unit that should fail:
 Named consumer:
 Verdict: keep | remove | downgrade
 Evidence:

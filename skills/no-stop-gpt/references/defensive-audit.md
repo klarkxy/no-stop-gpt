@@ -49,6 +49,7 @@ For every candidate, trace:
 - consumer
 - failure model
 - trust boundary
+- the unit that should fail (request, job, worker, process)
 - the live decision the mechanism changes
 
 Never flag `hash`, `fallback`, `gate`, `retry`, `lock`, or `checksum` by themselves. No named consumer → the mechanism is a candidate for removal. A named consumer whose live decision changes → keep or downgrade, with evidence.
@@ -62,15 +63,16 @@ One row per mechanism:
 ```text
 Mechanism: <symbol or site>
 Trust boundary it sits on: <owned boundary | borrowed handoff | none>
+Unit that should fail: <request | job | worker | process>
 Named consumer: <who, what decision> | none
 Verdict: keep | remove | downgrade
 Evidence: <producer, consumer, failure model, live decision — or which Core test failed>
 Check that would expose a wrong removal: <smallest test, probe, or trace>
 ```
 
-- **keep** — owned boundary, or a borrowed-handoff check that still changes a live decision in a reachable failure.
-- **remove** — no named consumer, unreachable case, or theater on a borrowed handoff.
-- **downgrade** — keep the owned-boundary check; delete inner copies, same-level re-validation, or same-shaped defaults.
+- **keep** — owned boundary, or a borrowed-handoff check that still changes a live decision in a reachable failure. A catch at the request or job boundary that becomes a typed error the caller or operator sees (4xx, job failure, dead-letter) is keep.
+- **remove** — no named consumer, unreachable case, or theater on a borrowed handoff. A catch, retry, or fallback inside the unit that just failed, inventing a patched value so execution can continue, is remove.
+- **downgrade** — keep the owned-boundary check; delete inner copies, same-level re-validation, or same-shaped defaults. A process abort on a request- or job-scoped error downgrades to failing that request or job; keep process abort only when the process itself is untrustworthy (see Domain portrait).
 
 The "wrong removal" check must be able to fail if the verdict is wrong. "Looks unused" is not a check. It must also fail a happy-path-correct, adversarial-unsafe stand-in — the lean version that breaks on the trust-boundary case. A check that only exercises the happy path cannot expose a wrong removal.
 
@@ -85,7 +87,7 @@ The portrait, in full or mostly:
 - the failure model includes bit flips, disk corruption, replica divergence, or hardware drift — not merely a teammate's bad call
 - assertions are load-bearing in the verification strategy (simulation, fuzzing, production crash-on-violation)
 
-In those domains a production assertion that crashes on a violated invariant is a Hard exception: it downgrades a correctness disaster into a liveness failure. This portrait does not license assertion theater on a CRUD trusted path — apply it only when the process is the source of truth and the failure model includes corruption.
+In those domains a production assertion that crashes on a violated invariant is a Hard exception: it downgrades a correctness disaster into a liveness failure. This portrait does not license assertion theater on a CRUD trusted path — apply it only when the process is the source of truth and the failure model includes corruption. A request-scoped or job-scoped error is not this portrait; do not cite it to justify aborting the process in a request handler.
 
 An error defined out of existence at design time (the API contract makes the edge a legal success) is not a swallowed failure; audit the contract, not the missing throw.
 

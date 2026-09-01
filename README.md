@@ -13,7 +13,7 @@
 
 Coding agents love doing more than you asked. A one-line change grows a factory. A call that can't fail gets three layers of try-catch and a fallback. Scaffolding the agent wrote last turn becomes "proof" the capability is required. They're not broken — they're trained to look complete and never crash. Your codebase pays for it.
 
-This skill is the hand in the picture. It keeps complexity proportional to the request and the real trust boundary, and when something goes wrong it fails early and loudly. It's not a license to slack off: requested hard work is the work, and heavy assertions in a ledger kernel are the optimum. The goal is the design a senior engineer would defend — not the smallest diff.
+This skill is the hand in the picture. It keeps complexity proportional to the request and the real trust boundary, and when something goes wrong it fails early and loudly, at the unit that owns the work. It's not a license to slack off: requested hard work is the work, and heavy assertions in a ledger kernel are the optimum. The goal is the design a senior engineer would defend — not the smallest diff.
 
 ## Three modes
 
@@ -31,7 +31,7 @@ Before any mechanism gets added — or kept:
 
 1. **Trust boundary** — did this data just cross a user / network / disk / third-party boundary? Validate if it did; trust the caller if it didn't.
 2. **Reachability** — can this project's real usage actually produce this case? "Constructible in principle" doesn't count.
-3. **Failure semantics** — can the caller tell failure from success? If not, throw; a same-shaped default (`0`, `""`, `'free'`) is a lie.
+3. **Failure semantics** — can the caller tell failure from success? If not, throw out of the unit that owns the work; a same-shaped default (`0`, `""`, `'free'`) is a lie.
 4. **Named consumer** — name someone whose live decision changes because of this hash / flag / gate. Can't? Don't build it.
 5. **"What would I do differently if this fired?"** — no answer, no check.
 
@@ -75,6 +75,7 @@ The rules are adapted from 2025–2026 community practice and classic texts. Tha
 
 - Andrej Karpathy — Simplicity First / Surgical Changes
 - [HERO-Anti-OverDefense](https://github.com/wanshuiyin/HERO-Anti-OverDefense) — reachable vs constructible
+- Joe Armstrong / Erlang — Let it crash (fail the isolated unit; recover outside it)
 - LessWrong, pathological guardrailing — fail early and visibly
 - [ponytail](https://github.com/DietrichGebert/ponytail) — reuse ladder, ceiling comment, runnable check (this skill rejects its "laziness" philosophy)
 - Sandi Metz — The Wrong Abstraction

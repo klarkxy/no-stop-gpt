@@ -1,4 +1,4 @@
 interface:
   display_name: "No, Stop! GPT!"
   short_description: "Cut over-designed and over-defensive code"
-  default_prompt: "Use $no-stop-gpt to keep this change proportional: spend complexity only on the requested work and fail early."
+  default_prompt: "Use $no-stop-gpt to keep this change proportional: spend complexity only on the requested work and fail early, at the unit that owns the work."

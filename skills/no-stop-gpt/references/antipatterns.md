@@ -5,6 +5,7 @@ Use while reviewing a diff or cleaning AI slop. Match the concrete form; do not 
 ## Contents
 
 - Swallowed failures
+- Wrong failure radius
 - Defensive bloat on trusted paths
 - Premature abstraction
 - Unrequested machinery
@@ -30,6 +31,17 @@ The caller cannot tell failure from success. Core test: Failure semantics.
 - Test that locks in the buggy fallback (`assertEqual(0.0)` when DB is down; `toBe("")` on parse error) → assert the throw or error type. Tests that bless a default freeze the lie.
 
 Grep: `except Exception.*(?:pass|return (?:0|None|\[\]|""|''))`; `catch\s*\([^)]*\)\s*\{\s*\}`; `,\s*_\s*:?= `; `_\s*,\s*err\s*:?= `; `return (?:0\.0|0|None|\[\]|""|''|'free'|MAX_VALUE)` inside `except`/`catch`; health handlers returning a literal `"ok"`/`true`.
+
+## Wrong failure radius
+
+The failure stopped in the wrong unit. Core tests: Failure semantics, Trust boundary.
+
+- `try` / `catch` in the helper that just hit a broken invariant, then return a patched value → throw out of the helper. The dirty unit does not recover itself.
+- `process.exit` / `os._exit` / `Environment.FailFast` / `abort()` on a request- or job-scoped error → fail that request or job; keep the process. Process abort is for "this process's state is no longer trustworthy."
+- Inner retry loop around the same function after it mutated local state → retry from the outer owner (queue nack, worker runtime, caller) against a clean start.
+- Mapping unexpected exceptions to HTTP 200 + `{ ok: false }` / a success-shaped DTO → fail the request with a real error status. A 200 that carries a failure is a swallowed failure with the wrong radius.
+
+Grep: `process\.exit` / `os\._exit` / `Environment\.FailFast` / `std::abort` / `runtime\.Goexit` in request or job handlers; `catch` that returns a constructed default after mutation; `retry` wrapping a function that mutates locals; `200` with `ok:\s*false`.
 
 ## Defensive bloat on trusted paths
 

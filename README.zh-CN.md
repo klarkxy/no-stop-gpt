@@ -15,7 +15,7 @@
 
 也不是它坏——模型的训练目标就是“看起来完整、千万别炸”。测试是绿的，就没人挨骂，代价是你的代码越来越肿。
 
-这个 skill 就是图里那只手。它让复杂度始终配得上需求和真实的信任边界，出了问题就早点炸、大声炸。但它不是教 AI 偷懒：该干的硬活一件不能少，账本内核里的重断言就是最优解。目标永远是“资深工程师愿意辩护的设计”，而不是“最短的 diff”。
+这个 skill 就是图里那只手。它让复杂度始终配得上需求和真实的信任边界，出了问题就早点炸、大声炸，炸在拥有这项工作的那一层。但它不是教 AI 偷懒：该干的硬活一件不能少，账本内核里的重断言就是最优解。目标永远是“资深工程师愿意辩护的设计”，而不是“最短的 diff”。
 
 ## 三个模式
 
@@ -33,7 +33,7 @@ Sweep 途中遇到单个机制拿不准，会就地调一次 Audit。
 
 1. **信任边界** — 数据刚跨过用户 / 网络 / 磁盘 / 第三方边界？跨了就校验，没跨就信任调用方。
 2. **可达性** — 这个项目真实的使用方式，能产生这种情况吗？“理论上构造得出来”不算数。
-3. **失败语义** — 调用方分得清失败和成功吗？分不清就抛错——`0`、`""`、`'free'` 这种同型默认值是撒谎。
+3. **失败语义** — 调用方分得清失败和成功吗？分不清就往外抛，让拥有这项工作的单元失败——`0`、`""`、`'free'` 这种同型默认值是撒谎。
 4. **具名消费者** — 说出一个会因为这个 hash / flag / gate 改变决策的人。说不出，就别建。
 5. **“它真触发了，我会做什么不一样的事？”** — 答不上来，这个检查就别跑。
 
@@ -77,6 +77,7 @@ Sweep 的行为验证记录在 [docs/sweep-validation.zh-CN.md](./docs/sweep-val
 
 - Andrej Karpathy — Simplicity First / Surgical Changes
 - [HERO-Anti-OverDefense](https://github.com/wanshuiyin/HERO-Anti-OverDefense) — reachable vs constructible
+- Joe Armstrong / Erlang — Let it crash（隔离单元内该崩就崩，恢复放在外面）
 - LessWrong pathological guardrailing — fail early and visibly
 - [ponytail](https://github.com/DietrichGebert/ponytail) — reuse ladder、ceiling comment、runnable check（本套件反其“懒惰”哲学而行）
 - Sandi Metz — The Wrong Abstraction

@@ -35,6 +35,14 @@ Recovery is backward: inline the helper into every caller, delete the parts each
 
 When an edge case is a normal completion of the stated goal (deleting a file that is already gone; clamping an out-of-range substring), define it as success in the API instead of inventing an exception surface. This is a contract change made at design time — not a swallowed failure. Real failures still throw, and the caller must never mistake failure for success (Core test 3).
 
+Expected domain failures (malformed input, declined payment, a missing resource when absence is a legal outcome) are handled at the owned boundary as typed errors or 4xx. They are not crashes.
+
+Unexpected failures (broken invariant, type lie, "this cannot happen") leave the unit that owns the work uncaught. The unit that just violated its contract is the worst place to recover — its state is already suspect. Recovery belongs to an outer owner that still has known-good state: fail the request, nack the job, restart the worker, or crash the process if the process itself is no longer trustworthy.
+
+Isolation is the precondition. Use the unit the platform already provides (HTTP request, queue job, test, process). Do not scaffold a supervisor tree, error bus, or retry actor to make throwing safe. Without isolation, catching everything is the wrong fix — fail visibly at the current boundary rather than inventing a new runtime.
+
+Do not write ad-hoc recovery the spec never named. `if null: return 0` is a new behavior, not error handling.
+
 ## Economics of speculation
 
 A presumptive feature pays four costs even when the guess is right: build (labor for unused work), delay (the requested work ships later), carry (every later change pays the extra complexity), and repair (the guess ages before the real need arrives). Name which cost you are accepting before keeping speculative machinery. This is evidence language for Audit verdicts, not a license to drop a requested contract.
