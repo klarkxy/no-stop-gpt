@@ -1,11 +1,8 @@
----
-name: simplify-codebase
-description: Broad simplification audit or authorized implementation whose objective is to remove accidental complexity. Use for evidence-backed deletion or consolidation of dead code, duplicate state, redundant APIs or layers, ownerless abstractions, obsolete compatibility or design records, and accepted over-engineering cuts in any language; also use for 代码简化 or 熵回收. Do not use merely to decide whether one specific defensive guard, test, retry, fallback, or compatibility mechanism is still necessary; run the no-stop-gpt skill's focused defensive audit first. Do not use for general code review, onboarding, style-only refactoring, or performance tuning.
----
+# Sweep: repository-scale simplification
 
-# Simplify Codebase
+Read when the request is repo-scale simplification: 代码简化, 熵回收, dead code, duplicate state, redundant layers, ownerless abstractions. Reduce the number of concepts and obligations a codebase must keep coherent. Line-count reduction is supporting evidence, not the objective. A successful run may conclude that the inspected surface is already justified.
 
-Reduce the number of concepts and obligations a codebase must keep coherent. Line-count reduction is supporting evidence, not the objective. A successful run may conclude that the inspected surface is already justified.
+When a single defensive guard, test, retry, fallback, or compatibility mechanism needs its own keep/remove verdict during a sweep, run the focused defensive audit ([defensive-audit.md](defensive-audit.md)) for that mechanism, then continue the sweep.
 
 ## Select mode and scope
 
@@ -34,9 +31,9 @@ The contract map is complete when all in-scope entrypoints and authority boundar
 
 ## Cover the relevant surface
 
-For every Broad engagement, and for Focused work involving dynamic architecture or dependency substitution, read [investigation.md](references/investigation.md). Build a coverage map before ranking findings; the first plausible deletion must not end the survey.
+For every Broad engagement, and for Focused work involving dynamic architecture or dependency substitution, read [investigation.md](investigation.md). Build a coverage map before ranking findings; the first plausible deletion must not end the survey.
 
-For concurrency, cancellation, readiness, cleanup, defensive copies, validation, authorization, security isolation, accessibility, data-loss prevention, or cross-process data, also read [boundaries-and-lifecycle.md](references/boundaries-and-lifecycle.md).
+For concurrency, cancellation, readiness, cleanup, defensive copies, validation, authorization, security isolation, accessibility, data-loss prevention, or cross-process data, also read [boundaries-and-lifecycle.md](boundaries-and-lifecycle.md).
 
 Use repository-native search, compiler and linter output, dependency metadata, and history as discovery instruments. Treat their findings as leads until runtime consumers and contracts have been examined.
 
@@ -68,14 +65,14 @@ Candidate proof is complete when every qualifying lead is classified as ranked, 
 
 In Survey mode, stop after reporting the ranked evidence. Include important rejected candidates when the rejection teaches something or identifies a concrete missing fact.
 
-In Change mode, read [execution-and-recovery.md](references/execution-and-recovery.md) and select the strongest authorized cut. One ownership boundary is the default batch size, not a run limit: for an explicitly requested set of cuts, finish and validate each boundary before starting the next.
+In Change mode, read [execution-and-recovery.md](execution-and-recovery.md) and select the strongest authorized cut. One ownership boundary is the default batch size, not a run limit: for an explicitly requested set of cuts, finish and validate each boundary before starting the next.
 
-If the user requests a simplification proposal, local cleanup annotation, or design-record consolidation, or if a selected change invalidates an ADR, RFC, design note, or architectural inventory, read [decision-records.md](references/decision-records.md). Do not turn an ordinary code audit into a repository-wide documentation purge.
+If the user requests a simplification proposal, local cleanup annotation, or design-record consolidation, or if a selected change invalidates an ADR, RFC, design note, or architectural inventory, read [decision-records.md](decision-records.md). Do not turn an ordinary code audit into a repository-wide documentation purge.
 
-If the user asks to combine findings from another branch, pull request, task, or agent run, read [integrating-findings.md](references/integrating-findings.md). Preserve evidence, not finding counts.
+If the user asks to combine findings from another branch, pull request, task, or agent run, read [integrating-findings.md](integrating-findings.md). Preserve evidence, not finding counts.
 
 ## Deliver the result
 
 For a survey, report coverage, ranked proof records, rejected or unresolved high-value leads, and the next fact needed for each uncertainty.
 
-For a change, complete the validation and operation receipt defined in [execution-and-recovery.md](references/execution-and-recovery.md). Report each validation layer separately; a narrow green check does not establish broader runtime, deployment, or user acceptance.
+For a change, complete the validation and operation receipt defined in [execution-and-recovery.md](execution-and-recovery.md). Report each validation layer separately; a narrow green check does not establish broader runtime, deployment, or user acceptance.

@@ -1,19 +1,20 @@
 ---
 name: no-stop-gpt
 description: >-
-  Prevents and audits over-engineering and over-defensive design so complexity
-  stays proportional to the request and the real trust boundary; failures stay
-  early and visible. Targets the optimal proportional solution, not lazy
-  minimalism. Owns the focused case — decide whether one specific defensive
-  guard, test, retry, fallback, or compatibility mechanism is still necessary
-  (focused defensive audit) — plus in-change prevention. Use when writing or
+  Prevents and audits over-engineering and over-defensive design, and runs
+  evidence-backed repository simplification, so complexity stays proportional
+  to the request and the real trust boundary; failures stay early and visible.
+  Targets the optimal proportional solution, not lazy minimalism. Three modes:
+  Prevent (in-change discipline while writing code), Audit (decide whether one
+  specific defensive guard, test, retry, fallback, or compatibility mechanism
+  is still necessary — focused defensive audit, read-only), and Sweep
+  (repo-scale removal of dead code, duplicate state, redundant layers, and
+  ownerless abstractions — prove first, then delete). Use when writing or
   editing code; reviewing a diff or PR for over-design or over-defense;
-  auditing one defensive mechanism; receiving a single-mechanism handoff from
-  a broader simplification skill; or when the user says 反过度设计, 过度防御,
-  防御性代码审计, or anti-overengineering. Do not use for repository-wide dead-code, duplicate-state, or
-  ownerless-abstraction sweeps (that is a repo-simplification skill's job); general style review;
-  performance tuning; or requested security, auth, crypto, migration, or
-  verification work.
+  auditing one defensive mechanism; or simplifying a codebase — including
+  反过度设计, 过度防御, 防御性代码审计, 代码简化, 熵回收, anti-overengineering.
+  Do not use for general style review, performance tuning, or requested
+  security, auth, crypto, migration, or verification work.
 ---
 
 # Anti-Overengineering
@@ -29,18 +30,19 @@ The target is the optimal solution to the stated problem — the design a senior
 Pick one mode before touching code:
 
 - **Prevent** (default while writing or changing code): apply Change discipline and the Core decision tests. Do not introduce over-design.
-- **Audit** (named diff, PR, or mechanism; or a single-mechanism handoff from a broader simplification skill): emit keep / remove / downgrade plus evidence for each suspect mechanism. Stay read-only unless the user explicitly authorizes edits.
+- **Audit** (named diff, PR, or mechanism; or a single-mechanism question inside a Sweep): emit keep / remove / downgrade plus evidence for each suspect mechanism. Stay read-only unless the user explicitly authorizes edits.
+- **Sweep** (repo-scale simplification): read [sweep.md](references/sweep.md) and follow it end to end — Survey is read-only ranked evidence, Change requires explicit authorization and validates every cut.
 
 Map the request to a mode, then stop expanding:
 
 - "add / fix / implement X" → Prevent
 - "is this guard, test, retry, fallback, or shim still needed?" → Audit
 - "review this diff or PR for over-engineering" → Audit first; edit only after explicit authorization
-- "cut the over-engineering" on a diff or subsystem with no prior verdicts → Audit first; apply cuts only after the verdicts are accepted, and hand a large accepted batch to a dedicated repo-simplification skill when one is available
-- "simplify the repo" / 熵回收 / 代码简化 → out of scope: hand it to a repo-simplification skill if one is available; otherwise say so — do not quietly expand into a sweep
+- "cut the over-engineering" on a diff or subsystem with no prior verdicts → Audit first; apply cuts only after the verdicts are accepted; escalate a large accepted batch to Sweep
+- "simplify the repo" / 熵回收 / 代码简化 / dead-code or duplicate-state cleanup → Sweep
 - vague product scope ("what should this feature even include?") → product scope is not code scope; settle the requirement first, then apply Prevent to the implementation
 
-If Audit finds many unrelated cuts, report them and hand the sweep over. Do not quietly expand into a repo-wide delete.
+If Audit finds many unrelated cuts, report them and escalate to Sweep with the user's direction. Do not quietly expand a single-mechanism audit into a repo-wide delete.
 
 ## Core decision tests
 
@@ -128,10 +130,13 @@ Read the one reference the need calls for. Do not load them all by default.
 - Classifying and fixing antipatterns (reviewing a diff, cleaning AI slop): read [antipatterns.md](references/antipatterns.md).
 - Deciding whether one defensive mechanism stays (focused defensive audit): read [defensive-audit.md](references/defensive-audit.md).
 - Choosing a design shape in Prevent (abstract or not, module boundaries, new dependency, error contract): read [design-heuristics.md](references/design-heuristics.md).
+- Running a Sweep: read [sweep.md](references/sweep.md); it names its own deeper references (investigation, boundaries-and-lifecycle, execution-and-recovery, decision-records, integrating-findings) per phase.
 
 ## Deliverables
 
 **Prevent:** no extra artifact. The diff is the deliverable. Mention leftover unrelated dead code in the reply; do not delete it.
+
+**Sweep:** the survey report or change receipt defined in [sweep.md](references/sweep.md).
 
 **Audit:** one verdict row per mechanism.
 

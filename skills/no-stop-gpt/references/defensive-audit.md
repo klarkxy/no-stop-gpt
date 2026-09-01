@@ -95,4 +95,4 @@ An error defined out of existence at design time (the API contract makes the edg
 - Deletion requires an explicit user authorization for that mechanism (or an explicit "apply these verdicts" instruction).
 - Deleting a Hard exception (authz, trust-boundary validation, security isolation, crypto, data-loss prevention, stored-format compatibility, accessibility essentials, external I/O failure handling, startup config validation, quiescence-establishing cleanup) is always its own explicitly authorized objective. An audit of "is this retry needed?" is not authorization to strip authz.
 - Quiescence cleanup is never theater: a dispose/shutdown path that guarantees no owned timer, listener, worker, or pending task can still publish or mutate after the terminal boundary protects a real failure window, even though it sits inside one process.
-- If the authorized removal is one mechanism among many accidental-complexity cuts, finish this verdict and hand the rest to a broader simplification pass.
+- If the authorized removal is one mechanism among many accidental-complexity cuts, finish this verdict and escalate the rest to Sweep mode ([sweep.md](sweep.md)).
