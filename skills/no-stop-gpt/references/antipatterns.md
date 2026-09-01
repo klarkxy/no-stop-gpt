@@ -19,7 +19,7 @@ Use while reviewing a diff or cleaning AI slop. Match the concrete form; do not 
 
 ## Swallowed failures
 
-The caller cannot tell failure from success. The Core test is Failure semantics.
+The caller cannot tell failure from success. Core test: Failure semantics.
 
 - Bare `except:` / `except Exception:` / empty `catch` that returns a default → let it throw, or translate to a typed error the caller must handle.
 - `except …: return 0` / `return None` / `return []` / `return ""` → throw. A same-shaped default is a lie.
@@ -29,11 +29,11 @@ The caller cannot tell failure from success. The Core test is Failure semantics.
 - Go `v, _ :=` / `_, err :=` / `defer x.Close()` ignoring `error` → assign and handle `err`. Dropped `error` is a swallowed failure.
 - Test that locks in the buggy fallback (`assertEqual(0.0)` when DB is down; `toBe("")` on parse error) → assert the throw or error type. Tests that bless a default freeze the lie.
 
-Grep: `except Exception.*(?:pass|return (?:0|None|\[\]|""|''))` ; `catch\s*\([^)]*\)\s*\{\s*\}` ; `,\s*_\s*:?= ` ; `_\s*,\s*err\s*:?= ` ; `return (?:0\.0|0|None|\[\]|""|''|'free'|MAX_VALUE)` inside `except`/`catch`; health handlers returning a literal `"ok"`/`true`.
+Grep: `except Exception.*(?:pass|return (?:0|None|\[\]|""|''))`; `catch\s*\([^)]*\)\s*\{\s*\}`; `,\s*_\s*:?= `; `_\s*,\s*err\s*:?= `; `return (?:0\.0|0|None|\[\]|""|''|'free'|MAX_VALUE)` inside `except`/`catch`; health handlers returning a literal `"ok"`/`true`.
 
 ## Defensive bloat on trusted paths
 
-The value never crossed a trust boundary. The Core test is Trust boundary.
+The value never crossed a trust boundary. Core test: Trust boundary.
 
 - Null / undefined check on a value the type system or constructor already guarantees → delete the check; fix the type if it is lying.
 - `try` / `catch` around a pure function that cannot throw → delete the wrapper.
@@ -42,11 +42,11 @@ The value never crossed a trust boundary. The Core test is Trust boundary.
 - Re-validating the same input at the same trust level (controller then service then repo, same schema) → keep the first owned-boundary check; delete the copies (downgrade, not strip-the-boundary).
 - Optimistic fallback on trusted data (`inventory → MAX_VALUE`, `plan → 'free'`, missing price → `0`) → throw. Invented abundance or a free plan is a silent billing / safety bug.
 
-Grep: `if .+ is (?:None|null|undefined)` on typed non-optional params; `try\s*\{[^}]+\}` wrapping arithmetic / pure maps; `hasattr\(` / `getattr\([^,]+,\s*['\"][^'\"]+['\"],` ; `or MAX_VALUE` / `or 'free'` / `?? 0` after an internal lookup.
+Grep: `if .+ is (?:None|null|undefined)` on typed non-optional params; `try\s*\{[^}]+\}` wrapping arithmetic / pure maps; `hasattr\(` / `getattr\([^,]+,\s*['\"][^'\"]+['\"],`; `or MAX_VALUE` / `or 'free'` / `?? 0` after an internal lookup.
 
 ## Premature abstraction
 
-One implementation, one call site, or no second consumer yet. The Core tests are Named consumer and Reachability.
+One implementation, one call site, or no second consumer yet. Core tests: Named consumer, Reachability.
 
 - Interface / factory / strategy for a single implementation → call the concrete type. Add the interface when a second implementation exists.
 - Repository for one entity with one query → put the query next to the caller or the store helper. A Repository is not a compliment.
@@ -61,7 +61,7 @@ Grep: `interface I[A-Z]` with one implementer; `class \w+Factory` / `class \w+St
 
 ## Unrequested machinery
 
-Nobody asked, and no named consumer will turn it. The Core test is Named consumer.
+Nobody asked, and no named consumer will turn it. Core test: Named consumer.
 
 - Backward-compat shim for one remaining caller → update the caller. A shim is for a shipped external contract, not your last internal call site.
 - Feature flags / config knobs no one will turn (`RETRY_COUNT`, `ENABLE_NEW_PARSER`, `USE_V2`) → delete the flag; keep one path. A flag needs an owner who will flip it in production.
@@ -70,19 +70,19 @@ Nobody asked, and no named consumer will turn it. The Core test is Named consume
 - Treating unshipped local migrations as immutable history → squash or delete them. History starts at the first migration that reached a shared database.
 - Promoting ordinary logging to "evidence" / "provenance" / "forensics" → keep a log line if an operator reads it; do not add a store, hash chain, or schema for it.
 
-Grep: `ENABLE_` / `FEATURE_` / `RETRY_COUNT` / `USE_V2` ; `sha256` / `checksum` / `hmac` / `ledger` / `audit_log` with no verifier; `setInterval` / `cron` / `reconciliation` next to a feature with no production reader; migration files that never left the working tree.
+Grep: `ENABLE_` / `FEATURE_` / `RETRY_COUNT` / `USE_V2`; `sha256` / `checksum` / `hmac` / `ledger` / `audit_log` with no verifier; `setInterval` / `cron` / `reconciliation` next to a feature with no production reader; migration files that never left the working tree.
 
 ## Noise
 
 Adds tokens, not decisions. Delete on sight in a diff you own.
 
-- Comments that narrate the next line (`// increment counter`, `# return result`) → delete. Keep comments that state a non-obvious invariant or a hazard. Also keep ceiling comments naming a deliberate corner and its upgrade trigger (`# ceiling: ...`), and the one runnable check on new non-trivial logic — neither is noise.
+- Comments that narrate the next line (`// increment counter`, `# return result`) → delete. Keep comments that state a non-obvious invariant or a hazard, ceiling comments that name a deliberate corner and its upgrade trigger (`# ceiling: ...`), and the one runnable check on new non-trivial logic — these are not noise.
 - Docstrings that repeat the signature (`getUser(id): Gets the user by id`) → delete or replace with the contract the types do not say.
 - `getAllUsersFromDatabase` / `fetchUserDataFromApiAndMapToDto` → `getUsers` / `fetchUser`. Name the result, not the pipeline.
 - Leftover `console.log` / `print(` / `dbg!` / `fmt.Println` from debugging → delete.
 - Conversational comments (`// let's handle the edge case here`, `// TODO: maybe later we could`) → delete or turn into a real tracked task with an owner.
 
-Grep: `// (get|set|return|increment|loop|check)` ; `console\.log` / `print\(` / `dbg!` ; functions matching `getAll.*From` / `fetch.*And.*` ; `TODO: maybe` / `let's `.
+Grep: `// (get|set|return|increment|loop|check)`; `console\.log` / `print\(` / `dbg!`; functions matching `getAll.*From` / `fetch.*And.*`; `TODO: maybe` / `let's `.
 
 ## Test bloat
 

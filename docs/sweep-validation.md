@@ -1,10 +1,10 @@
-# Validation / 验证记录
+# Validation
 
-本文档记录 `simplify-codebase` 在首次开源前完成的行为验证。它不是永久质量声明；仓库和 Agent 运行时变化后，应重新验证相关结论。
+[中文](./sweep-validation.zh-CN.md)
 
-This document records the behavioral validation completed before the initial open-source release. It is not a permanent quality claim; relevant results should be rechecked as repositories and Agent runtimes evolve.
+This document records the behavioral validation completed before the initial open-source release (the Sweep scenarios were exercised under the former `simplify-codebase` skill, now merged into `no-stop-gpt` as Sweep mode). It is not a permanent quality claim; relevant results should be rechecked as repositories and agent runtimes evolve.
 
-## Scenarios / 场景
+## Scenarios
 
 ### Change
 
@@ -30,7 +30,7 @@ This document records the behavioral validation completed before the initial ope
 - Expected behavior: prove the cut below file granularity.
 - Result: the focused audit found 14 candidate-exclusive CSS classes, identified removable members inside mixed selectors, retained the shared stylesheet and surviving component, and found two stale documentation references.
 
-## Mechanical checks / 机械检查
+## Mechanical checks
 
 - Skill structure and frontmatter validation;
 - YAML metadata validation;
@@ -39,9 +39,9 @@ This document records the behavioral validation completed before the initial ope
 - upstream-name and attribution scan;
 - clean-worktree checks for read-only scenarios.
 
-## Known limits / 已知边界
+## Known limits
 
-- These tests establish behavior for the exercised scenarios, not every language, build system, or Agent runtime.
+- These tests establish behavior for the exercised scenarios, not every language, build system, or agent runtime.
 - Dynamic consumers outside the inspected repository can remain unknowable without external evidence.
 - Deployment, production health, and end-user acceptance remain separate gates from repository tests.
 - A user must still authorize product or compatibility changes.

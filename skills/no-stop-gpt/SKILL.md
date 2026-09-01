@@ -15,6 +15,7 @@ description: >-
   反过度设计, 过度防御, 防御性代码审计, 代码简化, 熵回收, anti-overengineering.
   Do not use for general style review, performance tuning, or requested
   security, auth, crypto, migration, or verification work.
+license: SATA 2.1
 ---
 
 # Anti-Overengineering
@@ -42,7 +43,7 @@ Map the request to a mode, then stop expanding:
 - "simplify the repo" / 熵回收 / 代码简化 / dead-code or duplicate-state cleanup → Sweep
 - vague product scope ("what should this feature even include?") → product scope is not code scope; settle the requirement first, then apply Prevent to the implementation
 
-If Audit finds many unrelated cuts, report them and escalate to Sweep with the user's direction. Do not quietly expand a single-mechanism audit into a repo-wide delete.
+If Audit finds many unrelated cuts, report them and let the user decide whether to escalate to Sweep. Do not quietly expand a single-mechanism audit into a repo-wide delete.
 
 ## Core decision tests
 
@@ -115,7 +116,7 @@ A Hard exception in the requested work is in-scope work. Implement it. Do not "s
 
 Stop when one of these is true:
 
-- Prevent: the change solves the request, and one final sweep of your own diff finds no placeholder-on-failure, trusted-path guard, or speculative machinery left from this change. Models rarely write clean on the first pass but recognize violations on a re-read.
+- Prevent: the change solves the request, and one final sweep of your own diff finds no placeholder-on-failure, trusted-path guard, or speculative machinery left from this change. Models rarely write cleanly on the first pass but recognize violations on a re-read.
 - Audit: every named mechanism has a verdict, including keeps, each with a check that would expose a wrong removal.
 - The user set an explicit budget (files, lines, scope) and the honest solution does not fit — stop before editing and report the blocker with the smallest viable alternative.
 - A Hard exception is the mechanism under discussion and no separate deletion authorization exists — keep it.

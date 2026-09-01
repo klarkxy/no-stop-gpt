@@ -1,84 +1,94 @@
 <div align="center">
 
-# No. Stop. GPT.
-
-**反过度设计、反过度防御、全库熵回收的 Agent Skill — 最优化，而非最小化。**
-
-*Anti-over-engineering & anti-over-defensive skills for coding agents — optimize, don't minimize.*
+# No, Stop! GPT!
 
 [![Agent Skill](https://img.shields.io/badge/Agent-Skill-22c55e?style=flat-square)](./skills/no-stop-gpt/SKILL.md)
 [![License: SATA 2.1](https://img.shields.io/badge/License-SATA%202.1-0f172a?style=flat-square)](./LICENSE.txt)
 
+[简体中文](./README.zh-CN.md)
+
+<img src="./assets/mascot.png" alt="No, Stop! GPT! mascot — GPT-chan caught mid-over-engineering" width="240">
+
 </div>
 
-编码模型被训练成优化"看起来完整且不炸"：测试保持绿色、没人被责怪。于是它们吞异常、给不可能失败的调用加 fallback、为单一实现建 factory、保留没人要求的兼容层，并把自己上一轮生成的脚手架当成"现在必须保留"的证据。
+Coding agents love doing more than you asked. A one-line change grows a factory. A call that can't fail gets three layers of try-catch and a fallback. Scaffolding the agent wrote last turn becomes "proof" the capability is required. They're not broken — they're trained to look complete and never crash. Your codebase pays for it.
 
-这个 skill 让 agent 把复杂度预算花在被要求的事情上：**复杂度与需求和真实信任边界成比例，失败要早且可见。** 它不是"能少写就少写"的懒惰规则——被要求的硬活就是工作本身，账本内核里的重断言就是最优解。目标永远是资深工程师愿意辩护的设计，而不是最短的 diff。
+This skill is the hand in the picture. It keeps complexity proportional to the request and the real trust boundary, and when something goes wrong it fails early and loudly. It's not a license to slack off: requested hard work is the work, and heavy assertions in a ledger kernel are the optimum. The goal is the design a senior engineer would defend — not the smallest diff.
 
-## 三个模式
+## Three modes
 
-| 模式 | 职责 | 授权 |
+| Mode | What it does | Permissions |
 |---|---|---|
-| **Prevent** | 写码时的默认护栏：变更纪律 + 五问决策测试，不引入过度设计 | 默认生效 |
-| **Audit** | 裁决单个防御机制（guard/retry/fallback/兼容层）的去留，输出 keep/remove/downgrade 判定表 | 只读；删除需显式授权 |
-| **Sweep** | 存量代码库的证据式简化与熵回收：死代码、重复状态、冗余层、无主抽象——先证明，再删除 | Survey 只读勘察 / Change 授权删改 |
+| **Prevent** | Default rails while writing code: change discipline + five decision tests, so over-design never lands | Always on |
+| **Audit** | Judges one defensive mechanism (guard / retry / fallback / shim): keep / remove / downgrade, with evidence | Read-only; deleting needs your go-ahead |
+| **Sweep** | Repo-wide entropy cleanup: dead code, duplicate state, redundant layers, ownerless abstractions — prove first, then delete | Survey (read-only) / Change (authorized) |
 
-三者成闭环：Prevent 管住新增代码，Audit 裁决存量机制，Sweep 做全库清理；Sweep 中遇到单个防御机制的存废问题会内部调用 Audit 的 focused defensive audit。
+When a Sweep hits a single mechanism it's unsure about, it runs a focused Audit on the spot.
 
-### no-stop-gpt 的核心：五问决策测试
+### The five decision tests
 
-1. **信任边界** — 数据刚跨过用户/网络/磁盘/第三方边界？是 → 校验；否 → 信任调用方。
-2. **可达性** — 本项目支持的用法真能产生这个情况？可达才算数，"原则上可构造"不算。
-3. **失败语义** — 调用方能区分失败与成功？不能 → 抛错，禁止同型默认值（`0`、`""`、`'free'`）。
-4. **具名消费者** — 这个 hash/flag/gate 改变谁的实时决策？没有 → 不建。
-5. **"这个检查触发了我会做什么不同的事？"** — 答不上来 → 不要跑这个检查。
+Before any mechanism gets added — or kept:
 
-外加硬例外清单（边界校验、authn/authz、数据防丢失、正确性关键系统的生产断言等永不裁剪）与领域画像（账本/存储内核/航天控制里重防御才是最优）。
+1. **Trust boundary** — did this data just cross a user / network / disk / third-party boundary? Validate if it did; trust the caller if it didn't.
+2. **Reachability** — can this project's real usage actually produce this case? "Constructible in principle" doesn't count.
+3. **Failure semantics** — can the caller tell failure from success? If not, throw; a same-shaped default (`0`, `""`, `'free'`) is a lie.
+4. **Named consumer** — name someone whose live decision changes because of this hash / flag / gate. Can't? Don't build it.
+5. **"What would I do differently if this fired?"** — no answer, no check.
 
-## 安装
+Hard exceptions — boundary validation, authn/authz, data-loss prevention, … — are never on the table. Full ruleset: [SKILL.md](./skills/no-stop-gpt/SKILL.md).
 
-把 `skills/` 下需要的 skill 目录复制到你的 agent skill 目录：
+## Install
+
+With the open [skills CLI](https://github.com/vercel-labs/skills):
+
+```bash
+npx skills add klarkxy/no-stop-gpt
+```
+
+Or copy `skills/no-stop-gpt/` into your agent's skills directory:
 
 ```powershell
 # OpenAI Codex
 Copy-Item -Recurse skills/no-stop-gpt ~/.codex/skills/
 # Claude Code
 Copy-Item -Recurse skills/no-stop-gpt ~/.claude/skills/
-# Cursor（个人级）
+# Cursor (user level)
 Copy-Item -Recurse skills/no-stop-gpt ~/.cursor/skills/
-# 通用（多 agent 共享，Codex/Cursor 均可读取）
+# Shared (Codex / Cursor / Kimi Code CLI all read this)
 Copy-Item -Recurse skills/no-stop-gpt ~/.agents/skills/
 ```
 
-项目级安装则复制到仓库的 `.cursor/skills/`、`.claude/skills/` 等目录。
+For a project-level install, drop it in the repo's `.cursor/skills/`, `.claude/skills/`, or `.agents/skills/`.
 
-## 使用
+## Usage
 
-- 写码时自动生效（Prevent 模式），或显式唤起：说 `no-stop-gpt`、`anti-overengineering`、`反过度设计`、`过度防御`。
-- 审查 diff：*"用 no-stop-gpt 审查这个 PR 的过度设计"* → 输出每个机制的 keep/remove/downgrade 判定表（只读）。
-- 裁决单个机制：*"这个 retry 还需要吗？"* → focused defensive audit。
-- 全库清理：说 `简化代码库`、`熵回收` → Sweep 模式（先只读勘察出带证据的候选清单，授权后才删）。
+- It's already active while you code (Prevent). Or call it by name: `no-stop-gpt`, `anti-overengineering`, `反过度设计`.
+- Hand it a diff or PR → a keep / remove / downgrade verdict per mechanism. Read-only; it won't touch anything.
+- Ask *"is this retry still necessary?"* → a focused defensive audit.
+- Say *"simplify the codebase"* → Sweep: a read-only survey with ranked evidence first, deletion only after you authorize it.
 
-## 思想来源
+Sweep's behavioral validation: [docs/sweep-validation.md](./docs/sweep-validation.md).
 
-条款综合改写自 2025–2026 社区实践与经典文献，致谢（按出现顺序不分先后）：
+## Credits
 
-Andrej Karpathy（Simplicity First / Surgical Changes）· [HERO-Anti-OverDefense](https://github.com/wanshuiyin/HERO-Anti-OverDefense)（reachable vs constructible）· LessWrong pathological guardrailing（fail early and visibly）· [ponytail](https://github.com/DietrichGebert/ponytail)（reuse ladder、ceiling comment、runnable check——但本套件反其"懒惰"哲学而行）· Sandi Metz（The Wrong Abstraction）· John Ousterhout（A Philosophy of Software Design）· Rob Pike（Go proverbs）· Martin Fowler（YAGNI 四成本）· Rich Hickey（Simple Made Easy）· Casey Muratori（semantic compression）· Carson Gross（Locality of Behaviour）· [grug](https://grugbrain.dev/)（cut-points）· TigerBeetle TIGER_STYLE 与 NASA Power of 10（重防御的领域边界）· Mitchell Hashimoto（rules as failure log）· OpenClaw AGENTS.md（fallback 是产品决策）。
+The rules are adapted from 2025–2026 community practice and classic texts. Thanks, in no particular order:
 
----
-
-## English
-
-Coding models are trained to optimize for *looking complete without exploding*: tests stay green, nobody gets blamed. So they swallow exceptions, add fallbacks to calls that cannot fail, build factories for single implementations, keep compatibility layers nobody asked for, and treat their own earlier scaffolding as proof a capability is required.
-
-This skill makes the agent spend its complexity budget on the requested work: **complexity proportional to the request and the real trust boundary; failures early and visible.** It is explicitly *not* a "write less code" laziness ruleset — requested hard work is the work, and heavy assertions in a ledger kernel are the optimum. The target is always the design a senior engineer would defend, never the smallest diff.
-
-Three modes: **Prevent** — in-change discipline while writing code, built on five decision tests (trust boundary, reachability, failure semantics, named consumer, "what would I do differently?"), hard exceptions that are never traded away, and a domain portrait for systems where heavy defense *is* the optimum. **Audit** — a focused defensive audit that emits keep / remove / downgrade verdicts for individual guards, retries, fallbacks, and shims (read-only). **Sweep** — evidence-backed simplification of existing codebases: dead code, duplicate state, redundant layers, ownerless abstractions; Survey (read-only) and Change (authorized) sub-modes, prove first, then delete.
-
-**Install:** copy `skills/no-stop-gpt/` into `~/.codex/skills/`, `~/.claude/skills/`, `~/.cursor/skills/`, or the shared `~/.agents/skills/`.
-
-**Trigger:** applies automatically while coding, or say `no-stop-gpt` / `anti-overengineering`; say "simplify the codebase" for the repo-wide Sweep.
+- Andrej Karpathy — Simplicity First / Surgical Changes
+- [HERO-Anti-OverDefense](https://github.com/wanshuiyin/HERO-Anti-OverDefense) — reachable vs constructible
+- LessWrong, pathological guardrailing — fail early and visibly
+- [ponytail](https://github.com/DietrichGebert/ponytail) — reuse ladder, ceiling comment, runnable check (this skill rejects its "laziness" philosophy)
+- Sandi Metz — The Wrong Abstraction
+- John Ousterhout — A Philosophy of Software Design
+- Rob Pike — Go proverbs
+- Martin Fowler — YAGNI's four costs
+- Rich Hickey — Simple Made Easy
+- Casey Muratori — semantic compression
+- Carson Gross — Locality of Behaviour
+- [grug](https://grugbrain.dev/) — cut-points
+- TigerBeetle TIGER_STYLE & NASA's Power of 10 — where heavy defense is the optimum
+- Mitchell Hashimoto — rules as failure log
+- OpenClaw AGENTS.md — a fallback is a product decision
 
 ## License
 
-[SATA 2.1](./LICENSE.txt)（[license source](https://github.com/klarkxy/sata-license)）— The Star And Thank Author License, v2.1: use freely (MIT terms). Starring and thanking are an invitation, not a condition — you may, and arguably you should, but the license holds either way. 用得开心的话，最好点个 star、谢谢作者；可以点，应该点，但不强制，不点也照样授权。
+[SATA 2.1](./LICENSE.txt) ([source](https://github.com/klarkxy/sata-license)) — The Star And Thank Author License, v2.1: use it freely (MIT terms). Starring and thanking are an invitation, not a condition — you may, arguably you should, but the license holds either way.

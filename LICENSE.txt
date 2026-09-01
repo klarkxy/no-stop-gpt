@@ -1,7 +1,7 @@
             The Star And Thank Author License (SATA)
                   Version 2.1, September 2026
 
-Copyright © 2026 艾薇娜 (https://github.com/klarkxy)
+Copyright © 2026 klarkxy 
 
 Project Url: https://github.com/klarkxy/no-stop-gpt
 

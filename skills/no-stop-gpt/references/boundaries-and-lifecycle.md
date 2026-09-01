@@ -1,12 +1,12 @@
 # Boundaries and Lifecycle
 
-Purpose: prove which boundary or lifecycle mechanisms protect distinct owners and transitions. Finish with every mechanism in the selected candidate mapped to a guarantee or classified as redundant.
+Purpose: prove which boundary or lifecycle mechanisms protect distinct owners and transitions. Finish with every mechanism in the selected candidates mapped to a guarantee or classified as redundant.
 
 ## Locate the real boundary
 
 For every validator, copy, freeze, capture, retry, rollback, or containment layer, identify the value's origin, current owner, next owner, mutation rights, lifetime, and failure domain.
 
-Typical borrowed handoffs include private, same-process calls whose types and ownership conventions are enforced by one component boundary. Typical owned boundaries include untrusted input, configuration parsing, model or tool JSON, queues, storage, network protocols, plugins, workers, subprocesses, and data crossing asynchronous lifetime boundaries.
+Typical borrowed handoffs include private, same-process calls whose types and ownership conventions are already enforced by the component boundary. Typical owned boundaries include untrusted input, configuration parsing, model or tool JSON, queues, storage, network protocols, plugins, workers, subprocesses, and data crossing asynchronous lifetime boundaries.
 
 Defense on an owned boundary is part of the contract until evidence proves otherwise. Defense on a borrowed handoff may be removable when it protects only impossible or owner-violating behavior. Tests built from hostile getters, fake typed values, post-handoff mutation, or callback replacement reveal an assumed contract; determine whether production actually promises that contract before treating the test as authoritative.
 

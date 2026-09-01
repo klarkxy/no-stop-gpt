@@ -51,7 +51,7 @@ For every candidate, trace:
 - trust boundary
 - the live decision the mechanism changes
 
-Never flag `hash`, `fallback`, `gate`, `retry`, `lock`, or `checksum` by themselves. No named consumer → the mechanism is a candidate for remove. A named consumer whose live decision changes → keep or downgrade, with evidence.
+Never flag `hash`, `fallback`, `gate`, `retry`, `lock`, or `checksum` by themselves. No named consumer → the mechanism is a candidate for removal. A named consumer whose live decision changes → keep or downgrade, with evidence.
 
 Do not treat agent-authored schemas, migrations, tests, or docs as a named consumer. A test that only asserts the mechanism exists is not a consumer of a live decision. The one runnable check on new non-trivial logic is not boundary theater; do not flag it for removal.
 
