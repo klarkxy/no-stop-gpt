@@ -1,0 +1,159 @@
+# Antipattern catalog
+
+Use while reviewing a diff or cleaning AI slop. Match the concrete form; do not flag a keyword alone. Each item: bad → good, or a one-line verdict.
+
+## Contents
+
+- Swallowed failures
+- Defensive bloat on trusted paths
+- Premature abstraction
+- Unrequested machinery
+- Noise
+- Test bloat
+- Dependency bloat
+- Premature performance
+- API and data-model overdesign
+- Concurrency and async drama
+- Infrastructure
+- Observability theater
+
+## Swallowed failures
+
+The caller cannot tell failure from success. The Core test is Failure semantics.
+
+- Bare `except:` / `except Exception:` / empty `catch` that returns a default → let it throw, or translate to a typed error the caller must handle.
+- `except …: return 0` / `return None` / `return []` / `return ""` → throw. A same-shaped default is a lie.
+- Batch job that `log`s and continues, dropping the record → fail the item visibly (dead-letter, counted error, or abort). Silent skip is data loss.
+- Health check that always returns healthy / `200` / `ok` → return the real probe result; an always-green check has no named consumer.
+- Retry loop that invents a terminal state (`"pending"`, `"ok"`, last good value) when retries are exhausted → exhaust, then throw. `"pending"` is not a result.
+- Go `v, _ :=` / `_, err :=` / `defer x.Close()` ignoring `error` → assign and handle `err`. Dropped `error` is a swallowed failure.
+- Test that locks in the buggy fallback (`assertEqual(0.0)` when DB is down; `toBe("")` on parse error) → assert the throw or error type. Tests that bless a default freeze the lie.
+
+Grep: `except Exception.*(?:pass|return (?:0|None|\[\]|""|''))` ; `catch\s*\([^)]*\)\s*\{\s*\}` ; `,\s*_\s*:?= ` ; `_\s*,\s*err\s*:?= ` ; `return (?:0\.0|0|None|\[\]|""|''|'free'|MAX_VALUE)` inside `except`/`catch`; health handlers returning a literal `"ok"`/`true`.
+
+## Defensive bloat on trusted paths
+
+The value never crossed a trust boundary. The Core test is Trust boundary.
+
+- Null / undefined check on a value the type system or constructor already guarantees → delete the check; fix the type if it is lying.
+- `try` / `catch` around a pure function that cannot throw → delete the wrapper.
+- Validating internal function parameters after the owned boundary already validated them → validate at the system boundary only; trust the caller inside.
+- `hasattr` / `getattr(..., default)` for attributes that always exist on the type → use the attribute. Optional access implies an optional contract you do not have.
+- Re-validating the same input at the same trust level (controller then service then repo, same schema) → keep the first owned-boundary check; delete the copies (downgrade, not strip-the-boundary).
+- Optimistic fallback on trusted data (`inventory → MAX_VALUE`, `plan → 'free'`, missing price → `0`) → throw. Invented abundance or a free plan is a silent billing / safety bug.
+
+Grep: `if .+ is (?:None|null|undefined)` on typed non-optional params; `try\s*\{[^}]+\}` wrapping arithmetic / pure maps; `hasattr\(` / `getattr\([^,]+,\s*['\"][^'\"]+['\"],` ; `or MAX_VALUE` / `or 'free'` / `?? 0` after an internal lookup.
+
+## Premature abstraction
+
+One implementation, one call site, or no second consumer yet. The Core tests are Named consumer and Reachability.
+
+- Interface / factory / strategy for a single implementation → call the concrete type. Add the interface when a second implementation exists.
+- Repository for one entity with one query → put the query next to the caller or the store helper. A Repository is not a compliment.
+- Event bus with one publisher and one subscriber → direct call. A bus needs a second independently deployed consumer.
+- Builder for three fields → a constructor or a literal. Builders start at many fields or many optional stages that callers actually use.
+- `Result<T, E>` / `Either` wrappers where the language already throws and callers do not match both sides → throw. A Result type needs named branch handling.
+- Single-method class whose name is a verb (`UserFetcher.fetch`) → a function.
+- Call chain `A → B → C → D` where B/C only forward arguments → collapse to the function that does the work.
+- Barrel re-exports (`index.ts` that only re-exports one module) → import the file. Barrels start when they hide a stable public surface.
+
+Grep: `interface I[A-Z]` with one implementer; `class \w+Factory` / `class \w+Strategy` / `class \w+Builder`; `class \w+Repository`; `Result<` / `Either<`; `export \* from` / `export \{[^}]+\} from` in a one-line barrel.
+
+## Unrequested machinery
+
+Nobody asked, and no named consumer will turn it. The Core test is Named consumer.
+
+- Backward-compat shim for one remaining caller → update the caller. A shim is for a shipped external contract, not your last internal call site.
+- Feature flags / config knobs no one will turn (`RETRY_COUNT`, `ENABLE_NEW_PARSER`, `USE_V2`) → delete the flag; keep one path. A flag needs an owner who will flip it in production.
+- Hashes / checksums / signatures / ledgers / locks with no named consumer → do not build them. A digest that nothing verifies is theater.
+- Schedulers / reconciliation loops / retention jobs for a dormant or unshipped feature → do not schedule work that has no live reader.
+- Treating unshipped local migrations as immutable history → squash or delete them. History starts at the first migration that reached a shared database.
+- Promoting ordinary logging to "evidence" / "provenance" / "forensics" → keep a log line if an operator reads it; do not add a store, hash chain, or schema for it.
+
+Grep: `ENABLE_` / `FEATURE_` / `RETRY_COUNT` / `USE_V2` ; `sha256` / `checksum` / `hmac` / `ledger` / `audit_log` with no verifier; `setInterval` / `cron` / `reconciliation` next to a feature with no production reader; migration files that never left the working tree.
+
+## Noise
+
+Adds tokens, not decisions. Delete on sight in a diff you own.
+
+- Comments that narrate the next line (`// increment counter`, `# return result`) → delete. Keep comments that state a non-obvious invariant or a hazard. Also keep ceiling comments naming a deliberate corner and its upgrade trigger (`# ceiling: ...`), and the one runnable check on new non-trivial logic — neither is noise.
+- Docstrings that repeat the signature (`getUser(id): Gets the user by id`) → delete or replace with the contract the types do not say.
+- `getAllUsersFromDatabase` / `fetchUserDataFromApiAndMapToDto` → `getUsers` / `fetchUser`. Name the result, not the pipeline.
+- Leftover `console.log` / `print(` / `dbg!` / `fmt.Println` from debugging → delete.
+- Conversational comments (`// let's handle the edge case here`, `// TODO: maybe later we could`) → delete or turn into a real tracked task with an owner.
+
+Grep: `// (get|set|return|increment|loop|check)` ; `console\.log` / `print\(` / `dbg!` ; functions matching `getAll.*From` / `fetch.*And.*` ; `TODO: maybe` / `let's `.
+
+## Test bloat
+
+The consumer of a test is an observable behavior, not a coverage gauge. Core tests: Named consumer, Reachability.
+
+- Mocking every neighbor and asserting `repo.find` was called with the right args → test public behavior or one tier of real integration; mock only I/O. A test that breaks on refactor without a contract change tests the implementation.
+- Tests on pure getters/setters/DTOs to feed a coverage number → do not test accessors with no branches; exclude DTO packages from the gate. Coverage is a lead, not an acceptance criterion.
+- `assertEqual(0)` on a catch branch, or reflection into private methods, to reach 100% → assert the throw or delete the private test.
+- One test class mirroring every helper of the implementation, all red on any refactor → organize suites by behavior and scenario, not by file structure.
+
+Grep: `toHaveBeenCalled` / `verify\(` with no assertion on a business value; `test.*get[A-Z]` on branchless classes; coverage gates pinned at `100`; `getDeclaredMethod`.
+
+## Dependency bloat
+
+Core test: Named consumer. A new dependency must bring a real contract, not a sliver.
+
+- Installing a package for `leftPad` / `isBlank` / `chunk` → inline the dozen lines you can own. New micro-deps are not reuse.
+- Empty adapter around a just-added library (`class RedisAdapter { get(k) { return this.client.get(k) } }`) with one backend → use the library directly; wrap only for a second implementation or to contain leaking upstream types.
+
+Grep: `left-pad` / `is-odd` / single-function packages in the manifest; `class \w+(Adapter|Wrapper)` whose methods are one-line delegations.
+
+## Premature performance
+
+Core test: Named consumer — who measured this? Machinery without a measurement is speculation.
+
+- `@lru_cache` / `useMemo` / hand-rolled memo maps with no profile → measure first; add on the proven hot path with a stated invalidation rule.
+- Pool sizes and buffer constants tuned upward "to be safe" with no queue-depth data → size from the resource's real capacity; leave a ceiling comment when you guess.
+- Micro-optimization that costs readability on an unmeasured path (object pools, hand-rolled SIMD, custom binary protocols) → keep the clear implementation until a number says otherwise.
+
+Grep: `lru_cache` / `useMemo` / `memoize` with no nearby benchmark or ceiling comment; `maximumPoolSize` / `max_connections` large constants without justification; comments saying "faster" with no number.
+
+## API and data-model overdesign
+
+Core tests: Named consumer, Reachability. Version, paginate, and generalize for consumers that exist.
+
+- GraphQL + DataLoader + query-complexity budgets for one internal frontend → one REST/RPC endpoint; upgrade when a second client or real over-fetch appears.
+- gRPC + protobuf + codegen between two same-language services in one repo → a function call or JSON over HTTP.
+- `/v1` `/v2` on an API that never shipped externally → change the callers; versioning is for shipped external contracts.
+- Cursor pagination, `hasNext`, page counts on tables with dozens of rows → return the list.
+- EAV tables (`entity_id, attr, value`) for "migration-free flexibility" → real columns, or one JSONB column with an actual query need.
+- `deleted_at` / soft-delete on every table by default → hard delete; soft-delete only where the business restores, with a real purge path.
+- Sharding, per-tenant databases, or UUID PKs "for future scale" on one underloaded database → `bigint` identity and indexes until a capacity number exists.
+
+Grep: `type Query` / `DataLoader` in internal/admin services; `proto/` with 2-3 rpcs and no second-language client; `'/api/v2'` with no external v1 consumer; `attr_key` / `eav_`; `deleted_at` on log/session/cache tables; `shard_id` in a project with no scale numbers.
+
+## Concurrency and async drama
+
+Core tests: Reachability, "what would I do differently if this fired?" Prove the interleaving before guarding it.
+
+- Locks around code with no shared mutable state, or on an already-serialized path → delete; name the interleaving first.
+- Hand-rolled double-checked locking for a lazy singleton → the language's once-initialization (static holder, `sync.Once`, module level).
+- `sleep(500)` / `await delay(1000)` as synchronization → wait on the real signal: a condition, an event, or a bounded retry of the actual check.
+- Defensive timeouts and unbounded retries on local, in-process calls → let it throw; retries belong to idempotent external I/O, with a budget and jitter.
+
+Grep: `Lock(` around functions with no shared state; `if.*null.*synchronized` double-check; `sleep(` / `setTimeout` as sync in business logic; `retry` / `backoff` wrapping pure functions or in-memory calls.
+
+## Infrastructure
+
+Core test: Named consumer — the org size, traffic, and on-call rotation that would consume this.
+
+- Kubernetes, Helm, and a microservice split for a single-operator project → one process or Compose on one box; k8s is for real multi-node scheduling with someone to run it.
+- dev/staging/qa/preprod config matrices in a repo with no promotion pipeline → local plus production; add an environment when a real promotion process exists.
+
+Grep: `kind: Deployment` in repos with no production traffic; five-plus "microservices" by one author in one compose file; `.env.staging` / `.env.qa` with no CI promotion.
+
+## Observability theater
+
+Core test: Named consumer — who reads this, and what decision changes?
+
+- Entry/exit logging on every function, `logger.debug` on every branch → structured events at boundaries (request id, outcome, error); delete narration.
+- Metrics and dashboards with no alert, no SLO, and no reader → do not build them; instrument the golden signals someone is on call for.
+- `log.error` on expected misses or success paths → the level must match failure semantics; error-level entries must be actionable.
+
+Grep: `Entering` / `Leaving` / `got here`; paired first/last-line logs; `metrics.increment` with no corresponding alert rule; `log.error` in success paths.
