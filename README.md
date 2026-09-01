@@ -82,4 +82,4 @@ This suite makes the agent spend its complexity budget on the requested work: **
 
 ## License
 
-[SATA 2.1](./LICENSE.txt) — The Star And Thank Author License, v2.1: use freely (MIT terms). Starring and thanking are an invitation, not a condition — you may, and arguably you should, but the license holds either way. 用得开心的话，最好点个 star、谢谢作者；可以点，应该点，但不强制，不点也照样授权。
+[SATA 2.1](./LICENSE.txt)（[license source](https://github.com/klarkxy/sata-license)）— The Star And Thank Author License, v2.1: use freely (MIT terms). Starring and thanking are an invitation, not a condition — you may, and arguably you should, but the license holds either way. 用得开心的话，最好点个 star、谢谢作者；可以点，应该点，但不强制，不点也照样授权。
