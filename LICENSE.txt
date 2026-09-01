@@ -1,5 +1,5 @@
             The Star And Thank Author License (SATA)
-                    Version 2.0, April 2021
+            Version 2.0 (Relaxed Variant), September 2026
 
 Copyright © 2026 艾薇娜 (https://github.com/klarkxy)
 
@@ -15,8 +15,10 @@ furnished to do so, subject to the following conditions:
 The above copyright notice and this permission notice shall be included in
 all copies or substantial portions of the Software.
 
-And wait, the most important, you should star/+1/like the project(s) in project url
-section above first, and then thank the author(s) in Copyright section.
+And wait, one more thing — an invitation, not a condition: it would be best if
+you star/+1/like the project(s) in the project url section above, and thank the
+author(s) in the Copyright section. You may, and arguably you should — but the
+permissions above hold either way, star or no star.
 
 Here are some suggested ways:
 

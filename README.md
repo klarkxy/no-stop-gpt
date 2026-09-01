@@ -82,4 +82,4 @@ This suite makes the agent spend its complexity budget on the requested work: **
 
 ## License
 
-[SATA 2.0](./LICENSE.txt) — The Star And Thank Author License: use freely (MIT terms), but first **star this repo, then thank the author**. 用得开心的话，点个 star，然后谢谢作者。
+[SATA 2.0 (Relaxed Variant)](./LICENSE.txt) — The Star And Thank Author License: use freely (MIT terms). Starring and thanking are an invitation, not a condition — you may, and arguably you should, but the license holds either way. 用得开心的话，最好点个 star、谢谢作者；可以点，应该点，但不强制，不点也照样授权。
