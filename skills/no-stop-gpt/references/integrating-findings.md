@@ -1,4 +1,4 @@
-# Integrating Findings
+# Integrating findings
 
 Purpose: map every imported finding to retained, consolidated, rejected, superseded, or unresolved against the destination's current contracts.
 

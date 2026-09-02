@@ -86,7 +86,7 @@ Check that would expose a wrong removal: <smallest test, probe, or trace>
 - **remove** — no named consumer, unreachable case, or theater on a borrowed handoff. A catch, retry, or fallback inside the unit that just failed, inventing a patched value so execution can continue, is remove.
 - **downgrade** — keep the owned-boundary check; delete inner copies, same-level re-validation, or same-shaped defaults. A process abort on a request- or job-scoped error downgrades to failing that request or job; keep process abort only when the process itself is untrustworthy (see Domain portrait).
 
-The "wrong removal" check must be able to fail if the verdict is wrong. "Looks unused" is not a check. It must also fail a happy-path-correct, adversarial-unsafe stand-in — the lean version that breaks on the trust-boundary case. A check that only exercises the happy path cannot expose a wrong removal.
+The "wrong removal" check must be able to fail if the verdict is wrong. "Looks unused" is not a check. It must also fail a happy-path-correct, adversarial-unsafe stand-in — the lean version that breaks on the trust-boundary case.
 
 ## 8. Domain portrait — when heavy defense is the optimum
 

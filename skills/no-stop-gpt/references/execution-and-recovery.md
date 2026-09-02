@@ -1,4 +1,4 @@
-# Execution and Recovery
+# Execution and recovery
 
 Purpose: retire each proved obligation completely, validate the surviving system in widening rings, and leave a recovery path proportional to every side effect.
 

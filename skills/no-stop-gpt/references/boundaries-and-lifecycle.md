@@ -1,4 +1,4 @@
-# Boundaries and Lifecycle
+# Boundaries and lifecycle
 
 Purpose: prove which boundary or lifecycle mechanisms protect distinct owners and transitions. Finish with every mechanism in the selected candidates mapped to a guarantee or classified as redundant.
 

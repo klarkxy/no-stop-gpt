@@ -1,4 +1,4 @@
-# Decision Record Cleanup
+# Decision record cleanup
 
 Purpose: keep the repository's current design owner accurate without erasing historical rationale that still prevents mistakes.
 

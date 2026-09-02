@@ -1,4 +1,4 @@
-# Investigation Playbook
+# Investigation playbook
 
 Purpose: produce a bounded coverage map in which every in-scope domain is inspected or explicitly excluded, then rank only candidates supported by contract evidence.
 
@@ -91,4 +91,4 @@ Score independently:
 - validation strength;
 - implementation and migration cost.
 
-Do not reward raw deleted lines, candidate count, or dramatic scope. Occam's razor counts entities — types, states, layers, flags, dependencies, assumptions — so a cut that retires one concept outranks a cut that deletes 400 lines and keeps every concept. No safe candidate is a valid evidence-backed result.
+Do not reward raw deleted lines, candidate count, or dramatic scope. Occam's razor counts entities — types, states, layers, flags, dependencies, assumptions — so a cut that retires one concept outranks a cut that deletes 400 lines and keeps every concept. Finding no safe candidate is a valid, evidence-backed result.

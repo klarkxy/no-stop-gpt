@@ -37,7 +37,7 @@ Sweep 途中遇到单个机制拿不准，会就地调一次 Audit。
 4. **具名消费者** — 说出一个会因为这个 hash / flag / gate 改变决策的人。说不出，就别建。
 5. **“它真触发了，我会做什么不一样的事？”** — 答不上来，这个检查就别跑。
 
-五问背后有两件工具。**奥卡姆剃刀** 在满足同一契约的设计之间做选择：实体最少者胜——类型、状态、层、flag、依赖——它剃的是实体，从来不剃需求。**消融试验** 判定已经存在的东西是否真在承重：拿掉它，跑一个真能失败的检查，看结果。测试套件因为从没碰到过这个机制而保持绿色，那是沉默，不是证据——所以单凭消融永远删不掉任何硬例外。
+五问背后有两件工具。**奥卡姆剃刀**在满足同一契约的设计之间做选择：实体最少者胜——类型、状态、层、flag、依赖——它剃的是实体，从来不剃需求。**消融试验**判定已经存在的东西是否真在承重：拿掉它，跑一个真能失败的检查，看结果。测试套件因为从没碰到过这个机制而保持绿色，那是沉默，不是证据——所以单凭消融永远删不掉任何硬例外。
 
 硬例外——边界校验、authn/authz、数据防丢失……——永远不在谈判桌上。完整规则在 [SKILL.md](./skills/no-stop-gpt/SKILL.md)。
 
@@ -66,7 +66,7 @@ Copy-Item -Recurse skills/no-stop-gpt ~/.agents/skills/
 
 ## 使用
 
-- 平时写代码它自己就在（Prevent）；也可以喊一声 `no-stop-gpt` 或 `反过度设计`。
+- 平时写代码它自己就在（Prevent）；也可以喊一声 `no-stop-gpt`、`anti-overengineering` 或 `反过度设计`。
 - 丢给它一个 diff 或 PR → 每个机制给一条 keep / remove / downgrade 判定。只读，不动手。
 - 问它 *“这个 retry 还有必要吗？”* → 一次 focused defensive audit。
 - 说 *“简化一下代码库”* 或 *“熵回收”* → Sweep：先只读勘察，交出带证据的候选清单，你点头之后才删。
@@ -98,4 +98,4 @@ Sweep 的行为验证记录在 [docs/sweep-validation.zh-CN.md](./docs/sweep-val
 
 ## 许可证
 
-[SATA 2.1](./LICENSE.txt)
+[SATA 2.1](./LICENSE.txt)（[上游源码](https://github.com/klarkxy/sata-license)）—— Star And Thank Author License v2.1：自由使用（等同 MIT 条款）。Star 与致谢是邀请、不是条件——你可以给，甚至可以说应该给，但给不给，许可证都同样有效。
