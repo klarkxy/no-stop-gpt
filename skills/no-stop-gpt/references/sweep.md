@@ -1,6 +1,6 @@
 # Sweep: repository-scale simplification
 
-Read when the request is repo-scale simplification: 代码简化, 熵回收, dead code, duplicate state, redundant layers, ownerless abstractions. Reduce the number of concepts and obligations a codebase must keep coherent. Line-count reduction is supporting evidence, not the objective. A successful run may conclude that the inspected surface is already justified.
+Read when the request is repo-scale simplification: 代码简化, 熵回收, dead code, duplicate state, redundant layers, ownerless abstractions. Reduce the number of concepts and obligations a codebase must keep coherent — Occam's razor at repository scale, where the unit is the entity (a type, state, layer, flag, dependency, or assumption), not the line. Line-count reduction is supporting evidence, not the objective. A successful run may conclude that the inspected surface is already justified.
 
 When a single defensive guard, test, retry, fallback, or compatibility mechanism needs its own keep/remove verdict during a sweep, run the focused defensive audit ([defensive-audit.md](defensive-audit.md)) for that mechanism, then continue the sweep.
 
@@ -49,7 +49,7 @@ Rationale: why it exists and whether that reason remains current
 Cut: declarations, implementations, branches, artifacts, docs, and dependencies affected
 Consequence: observable capability or compatibility behavior surrendered
 Confidence / risk: evidence strength, uncertainty, blast radius, and reversibility
-Proof: the smallest check that would expose an incorrect cut
+Proof: the smallest check that would expose an incorrect cut — normally an ablation run ([defensive-audit.md](defensive-audit.md) §6)
 Net effect: maintenance concepts removed minus replacement or migration machinery added
 ```
 

@@ -35,6 +35,8 @@ Before any mechanism gets added — or kept:
 4. **Named consumer** — name someone whose live decision changes because of this hash / flag / gate. Can't? Don't build it.
 5. **"What would I do differently if this fired?"** — no answer, no check.
 
+Two instruments back the tests. **Occam's razor** picks between designs that honor the same contract: fewest entities wins — types, states, layers, flags, dependencies — and it cuts entities, never requirements. **Ablation** decides whether something already there is load-bearing: remove it, run a check that can actually fail, look. A suite that stays green because it never reached the mechanism is silence, not evidence — which is why ablation alone never removes a hard exception.
+
 Hard exceptions — boundary validation, authn/authz, data-loss prevention, … — are never on the table. Full ruleset: [SKILL.md](./skills/no-stop-gpt/SKILL.md).
 
 ## Install
@@ -74,6 +76,8 @@ Sweep's behavioral validation: [docs/sweep-validation.md](./docs/sweep-validatio
 The rules are adapted from 2025–2026 community practice and classic texts. Thanks, in no particular order:
 
 - Andrej Karpathy — Simplicity First / Surgical Changes
+- William of Ockham — the razor cuts entities, not requirements; count concepts, not lines
+- ML ablation studies — remove one thing, hold the rest constant, measure before you decide
 - [HERO-Anti-OverDefense](https://github.com/wanshuiyin/HERO-Anti-OverDefense) — reachable vs constructible
 - Joe Armstrong / Erlang — Let it crash (fail the isolated unit; recover outside it)
 - LessWrong, pathological guardrailing — fail early and visibly

@@ -5,15 +5,15 @@ description: >-
   evidence-backed repository simplification, so complexity stays proportional
   to the request and the real trust boundary; failures stay early and visible.
   Targets the optimal proportional solution, not lazy minimalism. Three modes:
-  Prevent (in-change discipline while writing code), Audit (decide whether one
-  specific defensive guard, test, retry, fallback, or compatibility mechanism
-  is still necessary — focused defensive audit, read-only), and Sweep
+  Prevent (discipline while writing code), Audit (decide whether one
+  defensive guard, test, retry, fallback, or compatibility mechanism is
+  still necessary — focused defensive audit, read-only), and Sweep
   (repo-scale removal of dead code, duplicate state, redundant layers, and
-  ownerless abstractions — prove first, then delete). Use when writing or
-  editing code; reviewing a diff or PR for over-design or over-defense;
+  ownerless abstractions — prove first, then delete). Use when writing
+  code; reviewing a diff or PR for over-design or over-defense;
   auditing one defensive mechanism; or simplifying a codebase — including
   反过度设计, 过度防御, 防御性代码审计, 代码简化, 熵回收, anti-overengineering,
-  let it crash, 任其崩溃.
+  let it crash, 任其崩溃, Occam's razor, 奥卡姆剃刀, ablation, 消融试验.
   Do not use for general style review, performance tuning, or requested
   security, auth, crypto, migration, or verification work.
 license: SATA 2.1
@@ -26,6 +26,8 @@ Spend the complexity budget on the requested work. Fail early and visibly, at th
 Models optimize for looking complete and not exploding: tests stay green, nobody gets blamed. RL punishes crashes, trust boundaries stay invisible, and agent-authored scaffolding gets treated as proof a capability is required. Invert that. Complexity must stay proportional to the request and the real trust boundary.
 
 The target is the optimal solution to the stated problem — the design a senior engineer would defend — not the smallest possible diff. Under-engineering (stubs, dropped requirements, symptom patches, skipped requested work) violates proportionality exactly like gold-plating does. Simplicity is how you reach the optimum, not a license to under-deliver.
+
+Two instruments run through every mode. **Occam's razor** chooses between designs: of the designs that honor the same stated contract, ship the one with the fewest entities — types, states, layers, flags, dependencies, assumptions. Count entities, not lines. The razor cuts entities, never requirements: a design that drops a stated requirement is not simpler, it is wrong. **Ablation** decides whether a mechanism that already exists is load-bearing: remove it, run the check that would fail if it mattered, look. No observable change under a check that can fail → no named consumer. Silence from a check that could never have failed is not evidence.
 
 ## Mode selection
 
@@ -56,7 +58,7 @@ Run all five before adding or keeping a mechanism:
 4. **Named consumer.** Whose live decision changes based on this hash, flag, gate, or ledger? No named consumer → do not build it.
 5. **"What would I do differently if this check fired?"** No answer → do not run the check.
 
-A mechanism that fails any test does not ship. In Audit mode, record the failing test as evidence. **Downgrade** means keep the check that sits on the real trust boundary and drop the inner copy.
+A mechanism that fails any test does not ship. When reading cannot settle test 4 or 5, ablate: remove the mechanism, run the check that should fail, and let the result answer. In Audit mode, record the failing test — or the silent ablation — as evidence. **Downgrade** means keep the check that sits on the real trust boundary and drop the inner copy.
 
 ## Change discipline
 
@@ -65,7 +67,9 @@ Prevent-mode rails. Every changed line traces to the request.
 - Read the task and the code it touches; trace the real flow end to end before choosing a design. Judgement comes after reading.
 - Write the simplest complete solution to the stated problem. Nothing speculative, nothing stubbed.
 - Reuse before writing: this codebase, the standard library, the platform, an installed dependency. Rewriting what already exists is over-engineering too. Reuse only on contract match: a parser is not a validator — pick the tool whose failure modes fit the request, not the one that merely compiles.
-- When two designs cost the same, take the one that is correct on the reachable edge cases. Equal size is not a license to pick the flimsier algorithm.
+- Occam's razor breaks ties between designs that honor the same contract: fewer entities wins. A flat 60-line function with one state is simpler than three 15-line classes and a registry that wires them. Prove the candidates honor the same contract on the reachable cases before shaving; shaving first is how a stub gets called minimalism.
+- When two designs are equally small, take the one that is correct on the reachable edge cases. Equal size is not a license to pick the flimsier algorithm.
+- Build without the mechanism first. Add a guard, cache, lock, layer, or parameter only when a check you can run fails without it. If it is already written and you cannot name the check that fails on its removal, remove it now.
 - A small diff in the wrong place is a second bug. Fix the shared cause, not the visible symptom.
 - If a cheaper design honors the same stated contract, name it in one line and let the user choose. Never silently ship a reduced contract; never use the question to dodge requested hard work.
 - Do not abstract single-use code. Inline first; abstract at 3+ real call sites. When a real second implementation or failure window exists, build the harder design — dodging requested work is not simplicity.
@@ -118,7 +122,7 @@ A Hard exception in the requested work is in-scope work. Implement it. Do not "s
 
 Stop when one of these is true:
 
-- Prevent: the change solves the request, and one final sweep of your own diff finds no placeholder-on-failure, trusted-path guard, request-scoped process abort, or speculative machinery left from this change. Models rarely write cleanly on the first pass but recognize violations on a re-read.
+- Prevent: the change solves the request, and one final sweep of your own diff finds no placeholder-on-failure, trusted-path guard, request-scoped process abort, or speculative machinery left from this change. Ablate the diff as you read it: for each guard, layer, flag, and parameter the change introduced, name the check that fails without it or delete it. Models rarely write cleanly on the first pass but recognize violations on a re-read.
 - Audit: every named mechanism has a verdict, including keeps, each with a check that would expose a wrong removal.
 - The user set an explicit budget (files, lines, scope) and the honest solution does not fit — stop before editing and report the blocker with the smallest viable alternative.
 - A Hard exception is the mechanism under discussion and no separate deletion authorization exists — keep it.
@@ -131,8 +135,8 @@ In long sessions or right after context compaction, re-run the diff sweep; drift
 Read the one reference the need calls for. Do not load them all by default.
 
 - Classifying and fixing antipatterns (reviewing a diff, cleaning AI slop): read [antipatterns.md](references/antipatterns.md).
-- Deciding whether one defensive mechanism stays (focused defensive audit): read [defensive-audit.md](references/defensive-audit.md).
-- Choosing a design shape in Prevent (abstract or not, module boundaries, new dependency, error contract): read [design-heuristics.md](references/design-heuristics.md).
+- Deciding whether one defensive mechanism stays (focused defensive audit), or running an ablation whose result must count as evidence: read [defensive-audit.md](references/defensive-audit.md).
+- Choosing a design shape in Prevent (abstract or not, module boundaries, new dependency, error contract, applying Occam's razor between candidates): read [design-heuristics.md](references/design-heuristics.md).
 - Running a Sweep: read [sweep.md](references/sweep.md); it names its own deeper references (investigation, boundaries-and-lifecycle, execution-and-recovery, decision-records, integrating-findings) per phase.
 
 ## Deliverables

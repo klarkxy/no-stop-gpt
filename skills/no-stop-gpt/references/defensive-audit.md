@@ -56,7 +56,19 @@ Never flag `hash`, `fallback`, `gate`, `retry`, `lock`, or `checksum` by themsel
 
 Do not treat agent-authored schemas, migrations, tests, or docs as a named consumer. A test that only asserts the mechanism exists is not a consumer of a live decision. The one runnable check on new non-trivial logic is not boundary theater; do not flag it for removal.
 
-## 6. Verdict record
+## 6. Ablate before you judge
+
+When the trace leaves a named consumer or a live decision uncertain, ablate: remove or disable the mechanism, run the check that would fail if it mattered, and observe. An ablation that changes nothing observable is the evidence for remove; one that breaks something is the evidence for keep and names the consumer you missed. Run it on a branch or in a test environment — the audit stays read-only for the user's tree.
+
+Rules that make the result count as evidence:
+
+- One mechanism per experiment. Removing two things and seeing one failure proves nothing about either.
+- Hold everything else constant: same inputs, fixtures, data, and environment as the control run. A different run is a different experiment.
+- The check must be able to fail. Before ablating, confirm the probe actually reaches the mechanism — a fixture that exercises the branch, a request that hits the boundary, a corruption the assertion would catch. If no such probe exists, write the one probe first; a green suite that never reached the mechanism is silence, not proof.
+- Trust boundaries produce false negatives by construction. A happy-path suite stays green after authz, input validation, or I/O failure handling is removed, because the suite never sent the hostile case. That is the suite's blind spot, not a verdict. Ablation evidence never removes a Hard exception on its own; the probe for a boundary mechanism must be the adversarial case, and even a silent ablation there only reports a missing test.
+- Record the ablation in the verdict: what was removed, which probe ran, what changed. That record is the "check that would expose a wrong removal."
+
+## 7. Verdict record
 
 One row per mechanism:
 
@@ -76,7 +88,7 @@ Check that would expose a wrong removal: <smallest test, probe, or trace>
 
 The "wrong removal" check must be able to fail if the verdict is wrong. "Looks unused" is not a check. It must also fail a happy-path-correct, adversarial-unsafe stand-in — the lean version that breaks on the trust-boundary case. A check that only exercises the happy path cannot expose a wrong removal.
 
-## 7. Domain portrait — when heavy defense is the optimum
+## 8. Domain portrait — when heavy defense is the optimum
 
 Do not strip assertions, paired invariants, bounded loops, or static-allocation discipline from a system whose wrong answer is worse than a crash: a financial system of record, a storage or consensus kernel, avionics or other safety-critical control, or any component that must stay correct under bitrot, replica divergence, or physical-world fault.
 
@@ -91,7 +103,7 @@ In those domains a production assertion that crashes on a violated invariant is 
 
 An error defined out of existence at design time (the API contract makes the edge a legal success) is not a swallowed failure; audit the contract, not the missing throw.
 
-## 8. Removal authorization
+## 9. Removal authorization
 
 - The audit itself is read-only. Emit verdicts; do not edit.
 - Deletion requires an explicit user authorization for that mechanism (or an explicit "apply these verdicts" instruction).

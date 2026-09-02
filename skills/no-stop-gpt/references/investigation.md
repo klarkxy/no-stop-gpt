@@ -46,6 +46,8 @@ Classify each lead by the strongest evidence reached:
 
 Smells and static leads are not deletion authority. High-confidence application normally requires contract proof and behavior proof.
 
+Behavior proof is normally obtained by ablation: remove or disable the candidate in isolation, hold the workload constant, and run a check that reaches it. A suite that stays green because it never reached the candidate is a finding about the suite, not proof about the candidate. Procedure and the trust-boundary false-negative rules: [defensive-audit.md](defensive-audit.md) §6.
+
 ## Classify consumers
 
 Classify every hit instead of counting it:
@@ -89,4 +91,4 @@ Score independently:
 - validation strength;
 - implementation and migration cost.
 
-Do not reward raw deleted lines, candidate count, or dramatic scope. No safe candidate is a valid evidence-backed result.
+Do not reward raw deleted lines, candidate count, or dramatic scope. Occam's razor counts entities — types, states, layers, flags, dependencies, assumptions — so a cut that retires one concept outranks a cut that deletes 400 lines and keeps every concept. No safe candidate is a valid evidence-backed result.

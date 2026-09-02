@@ -10,6 +10,21 @@ Read when choosing a design shape in Prevent mode: whether to abstract, how to s
 - Premature flexibility is worse than premature optimization: optimization can be deleted, flexibility grows dependents that freeze the wrong shape. Do not build a plugin, registry, or loader for a closed known set; write the three call sites.
 - When you extract a higher-level helper, keep the lower entry point. Callers who need a different grain must not be forced through a hole.
 
+## Occam's razor: count entities, not lines
+
+Among designs that honor the same stated contract, ship the one with the fewest entities. An entity is anything a reader must hold in their head to predict behavior: a type, a state, a layer, a flag, a config knob, a dependency, an assumption about the environment. Lines are not entities — a 60-line function with one state is simpler than three 15-line classes and a registry that wires them, even when the classes total fewer lines.
+
+Two blades agents forget:
+
+- The razor cuts entities, not requirements. "As simple as possible, but not simpler": a design that satisfies fewer of the stated requirements is not the simpler design, it is a different, wrong design. Never use the razor to argue a Hard exception or a requested feature away.
+- The razor only compares designs of equal explanatory power. First prove both candidates honor the same contract on the reachable cases (Core test 2); then shave. Shaving before the comparison is how a stub gets called minimalism.
+
+Ties after the razor go to the design that is correct on the reachable edge cases.
+
+## Ablation while designing
+
+When unsure whether a component belongs — a cache, a lock, a retry, an abstraction layer, an extra parameter — do not argue; ablate. Build the version without it, run the check that would fail if it mattered, and add the component only when that check fails. For a component already written, run the experiment in reverse: remove it, run the check, keep it only if something observable breaks. The check must be one that can fail; a green suite that never reached the component is silence, not evidence. Procedure and the false-negative rules for trust boundaries: [defensive-audit.md](defensive-audit.md) §6.
+
 ## When the abstraction is already wrong
 
 The tell: a shared helper grows parameters and conditionals so different callers run different subsets of it.
