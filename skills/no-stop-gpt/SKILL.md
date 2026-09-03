@@ -34,7 +34,7 @@ Two instruments run through every mode. **Occam's razor** chooses between design
 Pick one mode before touching code:
 
 - **Prevent** (default while writing or changing code): apply Change discipline and the Core decision tests. Do not introduce over-design.
-- **Audit** (named diff, PR, or mechanism; or a single-mechanism question inside a Sweep): emit keep / remove / downgrade plus evidence for each suspect mechanism. Stay read-only unless the user explicitly authorizes edits.
+- **Audit** (named diff, PR, or mechanism; or a single-mechanism question inside a Sweep): emit keep / remove / downgrade / decide plus evidence for each suspect mechanism. Stay read-only unless the user explicitly authorizes edits.
 - **Sweep** (repo-scale simplification): read [sweep.md](references/sweep.md) and follow it end to end — Survey is read-only ranked evidence, Change requires explicit authorization and validates every cut.
 
 Map the request to a mode, then stop expanding:
@@ -42,11 +42,12 @@ Map the request to a mode, then stop expanding:
 - "add / fix / implement X" → Prevent
 - "is this guard, test, retry, fallback, or shim still needed?" → Audit
 - "review this diff or PR for over-engineering" → Audit first; edit only after explicit authorization
-- "cut the over-engineering" on a diff or subsystem with no prior verdicts → Audit first; apply cuts only after the verdicts are accepted; escalate a large accepted batch to Sweep
+- "全面审查过度防御" / audit a whole repo or several subsystems for over-defense with no named diff → Sweep in Survey mode, with the defensive audit applied per mechanism; the verdict rows are its proof records. Audit is for one diff, PR, or mechanism.
+- "cut the over-engineering" on a diff or subsystem with no prior verdicts → Audit first; apply cuts only after the verdicts are accepted; when the accepted verdicts span more than one ownership boundary, switch to Sweep Change before the first edit — read [sweep.md](references/sweep.md) and its execution reference then, not after the tree is half-cut
 - "simplify the repo" / 熵回收 / 代码简化 / dead-code or duplicate-state cleanup → Sweep
 - vague product scope ("what should this feature even include?") → product scope is not code scope; settle the requirement first, then apply Prevent to the implementation
 
-If Audit finds many unrelated cuts, report them and let the user decide whether to escalate to Sweep. Do not quietly expand a single-mechanism audit into a repo-wide delete.
+If Audit finds many unrelated cuts, report them and let the user decide whether to escalate to Sweep. Do not quietly expand a single-mechanism audit into a repo-wide delete. "你自行决定" / "use your judgement" on a multi-boundary verdict list is that escalation: it makes the batch a Sweep Change with proof records and per-boundary validation, not a faster Audit.
 
 ## Core decision tests
 
@@ -116,6 +117,8 @@ Requested security, migration, or verification work **is** the work, not scope c
 
 Aggressive minimalism must never remove boundary validation. "Write the fewest lines" is not a license to delete user-input checks. "Let it crash" is not a license to skip owned-boundary I/O handling, or to abort a process for a request-scoped error.
 
+I/O failure handling means the failure reaches the caller as a typed error it can act on. A catch that turns an I/O failure into the permissive answer — an empty set of protected roots, an unknown errno read as "process dead", `EACCES` read as "not found" — is not handling, it is a swallow whose failure direction loosens a protection. The exception does not cover it; Failure semantics does.
+
 A Hard exception in the requested work is in-scope work. Implement it. Do not "simplify" it away to look lean, and do not hide it behind extra wrappers, flags, or fallbacks.
 
 ## Stop conditions
@@ -128,7 +131,7 @@ Stop when one of these is true:
 - A Hard exception is the mechanism under discussion and no separate deletion authorization exists — keep it.
 - The user asked for a verdict, not a patch — emit the table only.
 
-In long sessions or right after context compaction, re-run the diff sweep; drift toward defensive bloat and scope growth is monotonic.
+In long sessions or right after context compaction, re-run the diff sweep; drift toward defensive bloat and scope growth is monotonic. A cut whose rationale you can no longer state from the proof record is not proved — re-trace it before editing near it. The transcript is not a record; if you find yourself searching it to recall why a `revalidate` or `verify` path was dead, the record should have existed.
 
 ## When to read references
 
@@ -136,6 +139,7 @@ Read the one reference the need calls for. Do not load them all by default.
 
 - Classifying and fixing antipatterns (reviewing a diff, cleaning AI slop): read [antipatterns.md](references/antipatterns.md).
 - Deciding whether one defensive mechanism stays (focused defensive audit), or running an ablation whose result must count as evidence: read [defensive-audit.md](references/defensive-audit.md).
+- Auditing a whole repository or several subsystems for over-defense: read [sweep.md](references/sweep.md) for coverage and proof records and [defensive-audit.md](references/defensive-audit.md) for the per-mechanism verdict. Neither alone covers it.
 - Choosing a design shape in Prevent (abstract or not, module boundaries, new dependency, error contract, applying Occam's razor between candidates): read [design-heuristics.md](references/design-heuristics.md).
 - Running a Sweep: read [sweep.md](references/sweep.md); it names its own deeper references (investigation, boundaries-and-lifecycle, execution-and-recovery, decision-records, integrating-findings) per phase.
 
@@ -152,10 +156,14 @@ Mechanism:
 Trust boundary it sits on:
 Unit that should fail:
 Named consumer:
-Verdict: keep | remove | downgrade
+Verdict: keep | remove | downgrade | decide
 Evidence:
 Check that would expose a wrong removal:
 ```
+
+**decide** is for a mechanism whose liveness the code and a stated contract disagree on: the architecture doc names it as a gate, nothing constructs it; the changelog calls it advisory, the security doc calls it required. A document is a claim, not a consumer, so the row does not pick a winner — it states both readings and the cut each implies. If the user delegates the choice, decide from the product's shipped core path and release history, then correct the losing artifact in the same change.
+
+Dozens of rows: open with the posture — which boundaries were checked and stay — then group rows by verdict and category, and put the `decide` rows last as the user's list. A report file or host artifact may carry the table; the row fields do not shrink.
 
 Stay read-only until the user authorizes a removal. Authorization to audit is not authorization to delete. Removing a Hard exception always requires its own explicit, separate authorization.
 

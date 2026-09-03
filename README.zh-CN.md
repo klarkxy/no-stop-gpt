@@ -22,7 +22,7 @@
 | 模式 | 干什么 | 权限 |
 |---|---|---|
 | **Prevent** | 写代码时的默认护栏：变更纪律 + 五问决策测试，过度设计从源头就不进来 | 默认生效 |
-| **Audit** | 裁决单个防御机制（guard / retry / fallback / 兼容层）：keep / remove / downgrade，附证据 | 只读；删东西要你点头 |
+| **Audit** | 裁决单个防御机制（guard / retry / fallback / 兼容层）：keep / remove / downgrade / decide，附证据 | 只读；删东西要你点头 |
 | **Sweep** | 全库熵回收：死代码、重复状态、冗余层、无主抽象——先证明，再删除 | Survey 只读勘察 / Change 授权删改 |
 
 Sweep 途中遇到单个机制拿不准，会就地调一次 Audit。
@@ -67,8 +67,9 @@ Copy-Item -Recurse skills/no-stop-gpt ~/.agents/skills/
 ## 使用
 
 - 平时写代码它自己就在（Prevent）；也可以喊一声 `no-stop-gpt`、`anti-overengineering` 或 `反过度设计`。
-- 丢给它一个 diff 或 PR → 每个机制给一条 keep / remove / downgrade 判定。只读，不动手。
+- 丢给它一个 diff 或 PR → 每个机制给一条 keep / remove / downgrade / decide 判定。只读，不动手。`decide` 是指代码和设计文档对“这东西还活着吗”说法不一——这一票归你。
 - 问它 *“这个 retry 还有必要吗？”* → 一次 focused defensive audit。
+- 说 *“全面审查一下过度防御”* → Sweep 勘察，每个机制一条判定；之后说“你自行决定”，就变成 Sweep 删改：带证明记录，按 ownership 边界逐个验证。
 - 说 *“简化一下代码库”* 或 *“熵回收”* → Sweep：先只读勘察，交出带证据的候选清单，你点头之后才删。
 
 Sweep 的行为验证记录在 [docs/sweep-validation.zh-CN.md](./docs/sweep-validation.zh-CN.md)。

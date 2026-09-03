@@ -16,7 +16,7 @@ Start with the largest or most central production surfaces, then partition the r
 
 Adapt the domains to the repository. For each domain, name the entrypoints inspected, central production paths read, searches run, history or decision records consulted, and unresolved blind spots. The coverage pass is complete when every in-scope domain is inspected or explicitly excluded with a reason.
 
-When breadth warrants parallel investigation and the user has authorized it, give each worker a non-overlapping domain and require the same proof record. Aggregate by confidence and ownership boundary rather than arrival order or raw finding count.
+When breadth warrants parallel investigation and the user has authorized it, give each worker a non-overlapping domain and require the same proof record. Aggregate by confidence and ownership boundary rather than arrival order or raw finding count. A worker's "never read" or "N call sites" is a static lead until you reproduce it: re-trace every claim you will act on or report as high confidence — one re-trace in a four-worker run turned "dead" into "written, read once" — and label a count you did not reproduce as approximate.
 
 ## Hunt for maintenance burdens
 

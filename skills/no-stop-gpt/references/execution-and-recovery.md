@@ -8,6 +8,10 @@ Prefer one high-confidence ownership boundary over a mixed cleanup batch. The se
 
 Pause application when dynamic or external consumers remain unknown, stored data lacks a migration story, baseline failures erase the intended signal, the cut crosses unrelated ownership boundaries, or rollback would be impractical. Convert the result into an evidence report with the exact missing decision or fact.
 
+## Parallel workers
+
+When the user has authorized several boundaries and workers edit concurrently, partition by behavior owner, not by file list. Every test, doc line, and caller that pins a boundary's behavior belongs to that boundary's worker wherever it lives — a spec in another directory that asserts the guard the worker is collapsing breaks on the merged tree, not in the worker's partition. Give shared artifacts — changelog, architecture and security docs, cross-cutting contracts, generated inventories — one owner; two writers on one doc produce a failed edit and a lost rationale. A worker's green gate proves its partition, nothing about the union: run the residue check and repository gates once on the merged tree. Red typecheck or tests inside a partition still in flight are unknown, not a defect to patch from outside.
+
 ## Remove the obligation vertically
 
 Follow the contract from outside inward and back out. Account for:

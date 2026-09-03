@@ -20,7 +20,7 @@ This skill is the hand in the picture. It keeps complexity proportional to the r
 | Mode | What it does | Permissions |
 |---|---|---|
 | **Prevent** | Default rails while writing code: change discipline + five decision tests, so over-design never lands | Always on |
-| **Audit** | Judges one defensive mechanism (guard / retry / fallback / shim): keep / remove / downgrade, with evidence | Read-only; deleting needs your go-ahead |
+| **Audit** | Judges one defensive mechanism (guard / retry / fallback / shim): keep / remove / downgrade / decide, with evidence | Read-only; deleting needs your go-ahead |
 | **Sweep** | Repo-wide entropy cleanup: dead code, duplicate state, redundant layers, ownerless abstractions — prove first, then delete | Survey (read-only) / Change (authorized) |
 
 When a Sweep hits a single mechanism it's unsure about, it runs a focused Audit on the spot.
@@ -65,8 +65,9 @@ For a project-level install, drop it in the repo's `.cursor/skills/`, `.claude/s
 ## Usage
 
 - It's already active while you code (Prevent). Or call it by name: `no-stop-gpt`, `anti-overengineering`, `反过度设计`.
-- Hand it a diff or PR → a keep / remove / downgrade verdict per mechanism. Read-only; it won't touch anything.
+- Hand it a diff or PR → a keep / remove / downgrade / decide verdict per mechanism. Read-only; it won't touch anything. `decide` means the code and a design doc disagree about whether the thing is live — that call is yours.
 - Ask *"is this retry still necessary?"* → a focused defensive audit.
+- Say *"audit the whole repo for over-defense"* → a Sweep survey with a per-mechanism verdict; saying "go ahead" afterwards makes it a Sweep change, with proof records and per-boundary validation.
 - Say *"simplify the codebase"* → Sweep: a read-only survey with ranked evidence first, deletion only after you authorize it.
 
 Sweep's behavioral validation: [docs/sweep-validation.md](./docs/sweep-validation.md).

@@ -77,14 +77,15 @@ Mechanism: <symbol or site>
 Trust boundary it sits on: <owned boundary | borrowed handoff | none>
 Unit that should fail: <request | job | worker | process>
 Named consumer: <who, what decision> | none
-Verdict: keep | remove | downgrade
+Verdict: keep | remove | downgrade | decide
 Evidence: <producer, consumer, failure model, live decision — or which Core test failed>
 Check that would expose a wrong removal: <smallest test, probe, or trace>
 ```
 
 - **keep** — owned boundary, or a borrowed-handoff check that still changes a live decision in a reachable failure. A catch at the request or job boundary that becomes a typed error the caller or operator sees (4xx, job failure, dead-letter) is keep.
-- **remove** — no named consumer, unreachable case, or theater on a borrowed handoff. A catch, retry, or fallback inside the unit that just failed, inventing a patched value so execution can continue, is remove.
-- **downgrade** — keep the owned-boundary check; delete inner copies, same-level re-validation, or same-shaped defaults. A process abort on a request- or job-scoped error downgrades to failing that request or job; keep process abort only when the process itself is untrustworthy (see Domain portrait).
+- **remove** — no named consumer, unreachable case, or theater on a borrowed handoff. A catch, retry, or fallback inside the unit that just failed, inventing a patched value so execution can continue, is remove. So is a catch on an owned boundary that answers a failure with the permissive value (`catch → []` for a protected-roots set, unknown errno → "process dead", `EACCES` → "not found"): the I/O Hard exception protects handling, not a swallow that loosens the protection. Removing such a catch may leave a raw platform error (`SyntaxError`, `ENOENT`) crossing the boundary; translating it once, there, into the typed error the caller reads — naming the file, key, or record — is part of the remove, not new defense. A translation that produces a same-shaped default is the swallow again.
+- **downgrade** — keep the owned-boundary check; delete inner copies, same-level re-validation, or same-shaped defaults. A process abort on a request- or job-scoped error downgrades to failing that request or job; keep process abort only when the process itself is untrustworthy (see Domain portrait). A branch that only a public entry point can reach (internal producers never emit the value) downgrades to one validation at that entry point plus deletion of every inner branch — do not call it unreachable while the export is supported.
+- **decide** — the code and a stated contract disagree about whether the mechanism is live: a design doc names it as a gate and nothing constructs it, or two documents assign it different authority. A document is a claim, not a consumer. State both readings and the cut each implies; the choice is the user's (definition in SKILL.md, Deliverables).
 
 The "wrong removal" check must be able to fail if the verdict is wrong. "Looks unused" is not a check. It must also fail a happy-path-correct, adversarial-unsafe stand-in — the lean version that breaks on the trust-boundary case.
 
@@ -108,5 +109,6 @@ An error defined out of existence at design time (the API contract makes the edg
 - The audit itself is read-only. Emit verdicts; do not edit.
 - Deletion requires an explicit user authorization for that mechanism (or an explicit "apply these verdicts" instruction).
 - Deleting a Hard exception (authz, trust-boundary validation, security isolation, crypto, data-loss prevention, stored-format compatibility, accessibility essentials, external I/O failure handling, startup config validation, quiescence-establishing cleanup) is always its own explicitly authorized objective. An audit of "is this retry needed?" is not authorization to strip authz.
+- "Anything the docs call a contract" is not a Hard exception. Do not hand that rule to a worker; it shields dead paths that only a document still describes. A doc-versus-code conflict is a `decide` row.
 - Quiescence cleanup is never theater: a dispose/shutdown path that guarantees no owned timer, listener, worker, or pending task can still publish or mutate after the terminal boundary protects a real failure window, even though it sits inside one process.
 - If the authorized removal is one mechanism among many accidental-complexity cuts, finish this verdict and escalate the rest to Sweep mode ([sweep.md](sweep.md)).

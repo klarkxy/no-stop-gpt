@@ -104,8 +104,9 @@ The consumer of a test is an observable behavior, not a coverage gauge. Core tes
 - Tests on pure getters/setters/DTOs to feed a coverage number → do not test accessors with no branches; exclude DTO packages from the gate. Coverage is a lead, not an acceptance criterion.
 - `assertEqual(0)` on a catch branch, or reflection into private methods, to reach 100% → assert the throw or delete the private test.
 - One test class mirroring every helper of the implementation, all red on any refactor → organize suites by behavior and scenario, not by file structure.
+- Production signature carrying a parameter, injection hook, or `_testing` export whose only caller is a test (an optional `profileDependencySpec` the type makes impossible in production, a lock wrapper only specs call) → inject at the existing constructor or options boundary, or test the public behavior; delete the seam. A test-only branch in production is dead code the type checker cannot see, and the spec that reaches it is support drag, not a consumer.
 
-Grep: `toHaveBeenCalled` / `verify\(` with no assertion on a business value; `test.*get[A-Z]` on branchless classes; coverage gates pinned at `100`; `getDeclaredMethod`.
+Grep: `toHaveBeenCalled` / `verify\(` with no assertion on a business value; `test.*get[A-Z]` on branchless classes; coverage gates pinned at `100`; `getDeclaredMethod`; `_testing` / `forTest` / `__test` exports; optional parameters whose only non-`undefined` producer is under `tests/`.
 
 ## Dependency bloat
 
