@@ -84,6 +84,7 @@ The rules are adapted from 2025–2026 community practice and classic texts. Tha
 - LessWrong, pathological guardrailing — fail early and visibly
 - [ponytail](https://github.com/DietrichGebert/ponytail) — reuse ladder, ceiling comment, runnable check (this skill rejects its "laziness" philosophy)
 - Sandi Metz — The Wrong Abstraction
+- Robert C. Martin — Clean Code: one level of abstraction per function, a flag argument does two things, a name is a contract, delete commented-out code (this skill scopes the Boy Scout Rule to the lines you changed, and keeps duplication over the wrong abstraction)
 - John Ousterhout — A Philosophy of Software Design
 - Rob Pike — Go proverbs
 - Martin Fowler — YAGNI's four costs

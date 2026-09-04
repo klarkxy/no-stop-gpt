@@ -86,6 +86,7 @@ Sweep 的行为验证记录在 [docs/sweep-validation.zh-CN.md](./docs/sweep-val
 - LessWrong pathological guardrailing — fail early and visibly
 - [ponytail](https://github.com/DietrichGebert/ponytail) — reuse ladder、ceiling comment、runnable check（本套件反其“懒惰”哲学而行）
 - Sandi Metz — The Wrong Abstraction
+- Robert C. Martin — Clean Code《代码整洁之道》：一个函数一层抽象、旗标参数即两件事、名字就是契约、注释掉的代码直接删（本套件把童子军军规限定在你改过的那几行，并在重复与错误抽象之间选重复）
 - John Ousterhout — A Philosophy of Software Design
 - Rob Pike — Go proverbs
 - Martin Fowler — YAGNI 四成本

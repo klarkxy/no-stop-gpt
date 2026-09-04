@@ -65,6 +65,7 @@ Rules that make the result count as evidence:
 - One mechanism per experiment. Removing two things and seeing one failure proves nothing about either.
 - Hold everything else constant: same inputs, fixtures, data, and environment as the control run. A different run is a different experiment.
 - The check must be able to fail. Before ablating, confirm the probe actually reaches the mechanism — a fixture that exercises the branch, a request that hits the boundary, a corruption the assertion would catch. If no such probe exists, write the one probe first; a green suite that never reached the mechanism is silence, not proof.
+- The probe must be self-validating and repeatable. A check whose verdict a human has to read out of a log is not a check; a check that passes on some runs and fails on others has not answered — run it until it is deterministic, or fix the interleaving, before its result counts for either verdict.
 - Trust boundaries produce false negatives by construction. A happy-path suite stays green after authz, input validation, or I/O failure handling is removed, because the suite never sent the hostile case. That is the suite's blind spot, not a verdict. Ablation evidence never removes a Hard exception on its own; the probe for a boundary mechanism must be the adversarial case, and even a silent ablation there only reports a missing test.
 - Record the ablation in the verdict: what was removed, which probe ran, what changed. That record is the "check that would expose a wrong removal."
 
