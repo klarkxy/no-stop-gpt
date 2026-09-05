@@ -1,75 +1,149 @@
 # Sweep: subsystem and repository simplification
 
 Reduce unnecessary concepts and coordination obligations while preserving the
-requested behavior. Finding no justified deletion is a valid outcome. Follow
-[SKILL.md](../SKILL.md) for authority, common principles, and protected outcomes.
+requested behavior. [SKILL.md](../SKILL.md) owns common principles, authority,
+and protected outcomes. This reference covers investigation through delivery.
 
-## Select scope and outcome
+## Scope and outcome
 
-- **Survey:** a request to audit, investigate, or propose simplification. Stay
-  read-only and return evidence-backed findings.
-- **Change:** an explicit request to simplify, remove, consolidate, refactor, or
-  apply findings. Investigate and implement within that authorization without
-  waiting for separate approval of intermediate findings.
-- **Focused:** cover the named subsystem or mechanism and its affected consumers.
-- **Broad:** account for the requested repository domains, including blind spots;
+- **Survey:** audit, investigate, or propose simplification. Stay read-only and
+  return evidence-backed findings; do not create repository files unless requested.
+- **Change:** an explicit request to simplify, remove, consolidate, or apply
+  findings authorizes investigation and changes within that scope.
+- **Focused:** cover the named boundary and its affected consumers.
+- **Broad:** cover the requested repository domains, including blind spots;
   do not stop at the first easy candidate.
 
-Mode changes do not reset permissions. Retiring a supported capability, weakening
-protection, or surrendering compatibility is a material choice unless already
-chosen by the user. Resolve it while continuing independent authorized work.
+Intermediate findings and mode changes do not reset authorization. Hold only cuts
+that depend on unresolved material choices, such as retiring supported behavior
+or compatibility, and continue independent authorized work.
 
-## Establish the affected contract
+## Investigate the contract
 
-Read applicable repository instructions and inspect working-tree state before
-editing. Consult architecture, manifests, test guidance, generated-file conventions,
-and decision records where they affect the candidate; do not require a full
-repository map for a small cleanup.
+Read applicable instructions and working-tree state. Consult manifests, test and
+generation conventions, architecture, or history where they affect the change.
+Distinguish user changes, generated files, and externally maintained surfaces.
 
-Trace the relevant entrypoints, consumers, state, and failure behavior. Include
-dynamic loading, public interfaces, persisted data, and compatibility when present.
-Distinguish user changes and generated or externally maintained surfaces.
+For broad work, partition by responsibility: entrypoints and public interfaces,
+configuration, domain state, persistence, protocols and dynamic loading, background
+work and resource ownership, packages, tests, and operational documentation.
+Record the relevant paths examined and meaningful blind spots. A local cleanup
+does not need a full repository inventory.
 
-For broad work, use [investigation.md](investigation.md) to organize coverage.
-For focused work, consult it only when discovery, external consumers, or dependency
-substitution needs more guidance. Use [boundaries-and-lifecycle.md](boundaries-and-lifecycle.md)
-when ownership, concurrent transitions, or disposal determines whether a cut is safe.
-A named mechanism can use [defensive-audit.md](defensive-audit.md) without pausing the sweep.
+Look for dormant contracts, duplicate state, ownerless flexibility, forwarding
+layers without a boundary, parallel state machines, repeated defense, custom
+infrastructure with a suitable existing replacement, and support artifacts left
+after feature retirement. These are leads, not deletion verdicts.
 
-## Select supported cuts
+Trace relevant producers, consumers, and failures; classify matches by actual use:
 
-For a meaningful candidate, capture enough evidence to explain:
+- **Runtime:** shipped entrypoints, configuration, loaders, and migrations.
+- **Support:** tests, comments, documentation, snapshots, and examples.
+- **Uncertain:** public exports, registrations, reflection, generated code,
+  operational examples, and external consumers.
 
-- the obligation and maintenance burden removed;
-- consumers and required guarantees, including uncertain or external ones;
-- the declarations, implementations, callers, and artifacts affected;
-- preserved behavior and any capability or compatibility surrendered;
-- evidence supporting the choice, relevant checks, and remaining uncertainty.
+Search alternate call forms, dispatch keys, serialized fields, and manifests when
+the system uses them. Read surrounding flow rather than counting hits. Resolve
+uncertain use through loaders, publication boundaries, compatibility policy,
+history, or downstream evidence within scope. If external use cannot be bounded,
+state that limit rather than calling the surface dead. A document or test may
+describe a real requirement; artifacts referring to one another are not independent
+proof of one. Age alone does not establish obsolescence.
 
-A short explanation is sufficient for a small local cut. Broad or consequential
-work benefits from a durable record so it can be continued without rediscovery.
-Do not create ledgers or numerical scoring systems for ordinary edits.
+Use [defensive-audit.md](defensive-audit.md) for a disputed mechanism and
+[boundaries-and-lifecycle.md](boundaries-and-lifecycle.md) when ownership,
+concurrent transitions, cancellation, or disposal determines whether a cut is safe.
 
-Contract and consumer analysis come first. Use ablation only when a suitable
-experiment could resolve remaining uncertainty. Green checks alone do not prove
-absence of consumers. Keep or mark unresolved when the missing evidence matters.
+## Choose justified cuts
 
-Compare benefit with confidence, consequence, and effort. Moving complexity into
-a replacement wrapper is not necessarily an improvement. Prove candidate-exclusive
-members inside shared files rather than deleting an entire mixed artifact.
+For each meaningful candidate, explain the obligation and burden removed,
+consumers and guarantees, affected artifacts, preserved behavior, any capability
+surrendered, supporting evidence, and remaining uncertainty. A small cut needs a
+short explanation; broad work may need a durable record for continuation. Do not
+invent a score or optimize for finding counts and deleted lines.
 
-## Act and finish
+Weigh confidence separately from benefit, consequence, reversibility, and effort.
+Similarity is not redundancy: implementations may protect different owners or
+failure windows. Prove candidate-exclusive members within shared files instead
+of deleting mixed artifacts wholesale. Retain useful rejected findings and name
+the missing fact for unresolved ones.
 
-Survey ends with findings, important retained candidates, and unresolved questions.
-Change continues through all authorized boundaries using
-[execution-and-recovery.md](execution-and-recovery.md). One reviewable boundary is
-a useful batch size, not a limit on completion.
+For replacement dependencies, compare exact semantics, residual local policy,
+platform support, maintenance, footprint, and migration cost. Reuse reduces burden
+only when it removes responsibility rather than moving it into a wrapper.
 
-When requested documentation consolidation or a cut affects a design record,
-use [decision-records.md](decision-records.md). When importing findings from another
-branch or task, use [integrating-findings.md](integrating-findings.md). Neither is
-a prerequisite for an ordinary local cleanup.
+Contract and consumer analysis come first. Use
+[ablation](defensive-audit.md#6-use-ablation-when-it-can-resolve-uncertainty) only
+when a bounded experiment can resolve material uncertainty. Green checks establish
+only exercised cases, not absence of unexercised or external consumers.
 
-Report what changed or was retained, the evidence reached, and concrete blockers.
-Distinguish source conclusions from checks and real runtime observations. Do not
-stop after an initial implementation when requested work remains.
+## Implement and verify
+
+Group changes by the behavior or ownership boundary they retire. Follow affected
+declarations through registration, dispatch, implementation, state, imports,
+exports, generated inventories, callers, examples, documentation, and tests.
+Preserve unrelated work and unique behavior checks; remove artifacts that only
+pin intentionally retired behavior. Finish all authorized boundaries.
+
+Remove compatibility glue only when its obligation is absent or retirement is
+authorized with a suitable transition. Redirect consumers to the surviving state
+owner instead of adding a synchronization layer. If workers are already involved,
+give shared artifacts one owner and check interactions in the combined result;
+this workflow does not require delegation.
+
+Choose checks that could expose a real regression: residue searches, a compiler,
+existing tests, a build, protocol comparison, or a real workflow as appropriate.
+Capture a baseline when it helps distinguish prior failure from regression. Honor
+the user's verification constraints; do not run every category mechanically.
+Controlled measurements are needed for performance improvement claims.
+
+When a check fails, determine whether the premise was wrong, the edit regressed
+behavior, or the failure predates it. Repair or undo the affected cut; do not weaken
+assertions, extend timeouts, or retry blindly to make it pass. A failing baseline
+limits the evidence without blocking unrelated supported changes. Repeat passing
+checks only for new changes, failures, or unresolved concerns.
+
+For source-only changes, the diff can provide recovery. Data, configuration,
+deployment, and publication need recovery appropriate to their side effects and
+authority for those actions. Cleanup permission does not authorize publication.
+
+## When consolidating design records
+
+Establish the current owner from implementation, newer decisions, compatibility
+policy, and inbound links. Classify records by which contracts and useful rationale
+survive, not their titles or dates. Preserve immutable historical records; update
+current owners and links instead of rewriting frozen history.
+
+Before retiring a displaced record, carry forward unique rationale, alternatives,
+consequences, useful warnings, known gaps, and conditions that could change the
+decision. Repair links, indexes, paired translations, and metadata. Keep distinct
+records where merging would hide a live contract or meaningful historical decision.
+Use existing documentation conventions; a small item need not become a new ADR.
+
+## When importing findings
+
+Use the source's merge base or recorded filesystem basis to distinguish its own
+contribution from inherited changes. Check whether its symbols, consumers, dynamic
+paths, and compatibility obligations still match the destination. Treat stale
+conclusions as hypotheses without repeating an entire audit unnecessarily.
+
+Consolidate overlaps under the current owner; retain counterarguments and uncertainty.
+Account for requested findings as retained, consolidated, rejected, superseded, or
+unresolved. Distinguish proposals, applied changes, and exercised behavior. Apply
+authorized changes according to current contracts and check interactions introduced
+by combining them. Isolated success does not prove the combined result; unchanged
+independent evidence need not be rerun without reason. External review updates
+require authority beyond permission to inspect their findings.
+
+## Deliver the result
+
+Survey ends with coverage, supported findings, important retained candidates, and
+unresolved questions. Change ends with the completed cuts, affected artifacts,
+preserved or intentionally changed behavior, checks and baseline failures, limits,
+and recovery for material side effects. A diff and concise response can carry this
+record; no separate receipt file is required.
+
+Distinguish source inspection, automated checks, build success, and real operation.
+Report concrete blockers without presenting a partial slice as completion. Finding
+no justified deletion is valid. After interruption, restore completed work and
+pending decisions; reinvestigate only missing or invalidated evidence.
