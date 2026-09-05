@@ -3,7 +3,7 @@
 # No, Stop! GPT!
 
 [![Agent Skill](https://img.shields.io/badge/Agent-Skill-22c55e?style=flat-square)](./skills/no-stop-gpt/SKILL.md)
-[![License: SATA 2.1](https://img.shields.io/badge/License-SATA%202.1-0f172a?style=flat-square)](./LICENSE.txt)
+[![License: SATA 2.0 (modified)](https://img.shields.io/badge/License-SATA%202.0%20%28modified%29-0f172a?style=flat-square)](./LICENSE.txt)
 
 [English](./README.md)
 
@@ -65,5 +65,5 @@ npx skills add klarkxy/no-stop-gpt
 
 ## 许可证
 
-[SATA 2.1](./LICENSE.txt)（[上游源码](https://github.com/klarkxy/sata-license)）—— Star And Thank Author License v2.1：自由使用（等同 MIT 条款）。Star 与致谢是邀请、不是条件——你可以给，甚至可以说应该给，但给不给，许可证都同样有效。
+[SATA 2.0（本项目修改版）](./LICENSE.txt)，基于[原版 SATA 许可证](https://github.com/zTrix/sata-license)。给项目点个 Star，再谢谢作者——当然，只在心里感谢也可以。本项目版本仅补充明确：Star 与致谢均为自愿。
 

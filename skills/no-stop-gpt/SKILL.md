@@ -5,7 +5,7 @@ description: >-
   changes, reviews for overengineering or unnecessary defense, and codebase
   simplification. Do not trigger for pure explanation, formatting, or unrelated
   prose edits, or turn a specialist security or migration task into a cleanup.
-license: SATA 2.1
+license: SATA 2.0 (modified)
 ---
 
 # No, Stop! GPT!

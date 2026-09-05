@@ -3,7 +3,7 @@
 # No, Stop! GPT!
 
 [![Agent Skill](https://img.shields.io/badge/Agent-Skill-22c55e?style=flat-square)](./skills/no-stop-gpt/SKILL.md)
-[![License: SATA 2.1](https://img.shields.io/badge/License-SATA%202.1-0f172a?style=flat-square)](./LICENSE.txt)
+[![License: SATA 2.0 (modified)](https://img.shields.io/badge/License-SATA%202.0%20%28modified%29-0f172a?style=flat-square)](./LICENSE.txt)
 
 [简体中文](./README.zh-CN.md)
 
@@ -76,5 +76,5 @@ The rules are adapted from 2025–2026 community practice and classic texts. Tha
 
 ## License
 
-[SATA 2.1](./LICENSE.txt) ([source](https://github.com/klarkxy/sata-license)) — The Star And Thank Author License, v2.1: use it freely (MIT terms). Starring and thanking are an invitation, not a condition — you may, arguably you should, but the license holds either way.
+[SATA 2.0 (modified)](./LICENSE.txt), based on the [original SATA license](https://github.com/zTrix/sata-license). Star the project and thank the authors—even quietly in your mind. This project's version clarifies that starring and thanking are voluntary.
 
