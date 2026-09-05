@@ -1,78 +1,75 @@
-# Sweep: repository-scale simplification
+# Sweep: subsystem and repository simplification
 
-Read when the request is repo-scale simplification: 代码简化, 熵回收, dead code, duplicate state, redundant layers, ownerless abstractions. Reduce the number of concepts and obligations a codebase must keep coherent — Occam's razor at repository scale, where the unit is the entity (a type, state, layer, flag, dependency, or assumption), not the line. Line-count reduction is supporting evidence, not the objective. A successful run may conclude that the inspected surface is already justified.
+Reduce unnecessary concepts and coordination obligations while preserving the
+requested behavior. Finding no justified deletion is a valid outcome. Follow
+[SKILL.md](../SKILL.md) for authority, common principles, and protected outcomes.
 
-When a single defensive guard, test, retry, fallback, or compatibility mechanism needs its own keep/remove verdict during a sweep, run the focused defensive audit ([defensive-audit.md](defensive-audit.md)) for that mechanism, then continue the sweep.
+## Select scope and outcome
 
-## Select mode and scope
+- **Survey:** a request to audit, investigate, or propose simplification. Stay
+  read-only and return evidence-backed findings.
+- **Change:** an explicit request to simplify, remove, consolidate, refactor, or
+  apply findings. Investigate and implement within that authorization without
+  waiting for separate approval of intermediate findings.
+- **Focused:** cover the named subsystem or mechanism and its affected consumers.
+- **Broad:** account for the requested repository domains, including blind spots;
+  do not stop at the first easy candidate.
 
-First choose the authority mode:
+Mode changes do not reset permissions. Retiring a supported capability, weakening
+protection, or surrendering compatibility is a material choice unless already
+chosen by the user. Resolve it while continuing independent authorized work.
 
-- **Survey** for simplification audit, investigation, or candidate-finding requests. Remain read-only and return ranked evidence.
-- **Change** for explicit simplify, remove, consolidate, refactor, or repository-documentation edit requests. Prove each cut, implement it within the authorized scope, and validate the surviving contract.
+## Establish the affected contract
 
-Then choose the coverage scope:
+Read applicable repository instructions and inspect working-tree state before
+editing. Consult architecture, manifests, test guidance, generated-file conventions,
+and decision records where they affect the candidate; do not require a full
+repository map for a small cleanup.
 
-- **Focused** when the user names a subsystem, symbol, state machine, dependency, or suspected duplication. Cover that boundary thoroughly before expanding outward.
-- **Broad** when the request spans the repository or asks for multiple candidates. Partition the system and account for every in-scope domain.
+Trace the relevant entrypoints, consumers, state, and failure behavior. Include
+dynamic loading, public interfaces, persisted data, and compatibility when present.
+Distinguish user changes and generated or externally maintained surfaces.
 
-Deleting a reachable capability, supported interface, stored representation, or compatibility path is a product decision. Describe the consequence and obtain direction unless the user has already chosen it.
+For broad work, use [investigation.md](investigation.md) to organize coverage.
+For focused work, consult it only when discovery, external consumers, or dependency
+substitution needs more guidance. Use [boundaries-and-lifecycle.md](boundaries-and-lifecycle.md)
+when ownership, concurrent transitions, or disposal determines whether a cut is safe.
+A named mechanism can use [defensive-audit.md](defensive-audit.md) without pausing the sweep.
 
-## Establish the contract
+## Select supported cuts
 
-1. Read the repository's instructions, architecture and decision records, manifests, test guidance, and generated-file conventions.
-2. Inspect version-control state and preserve unrelated work. Identify vendored, generated, migration, fixture, and public-package surfaces before classifying them.
-3. Trace the runtime path from entrypoints through configuration, registration, dispatch, persistence, processes, and wire boundaries. Record public, dynamic, persisted, generated, and compatibility-sensitive contracts.
-4. In Change mode, discover the repository's real verification commands and capture a proportional baseline when feasible. A failing baseline narrows what the final checks can prove.
+For a meaningful candidate, capture enough evidence to explain:
 
-Preserve authorization, trust-boundary validation, security isolation, accessibility essentials, data-loss prevention, stored-format compatibility, and cleanup that establishes quiescence. Treat changes to these protections as their own explicitly authorized objective, not an incidental simplification.
+- the obligation and maintenance burden removed;
+- consumers and required guarantees, including uncertain or external ones;
+- the declarations, implementations, callers, and artifacts affected;
+- preserved behavior and any capability or compatibility surrendered;
+- evidence supporting the choice, relevant checks, and remaining uncertainty.
 
-The contract map is complete when all in-scope entrypoints and authority boundaries are enumerated, each is traced far enough to name its owner and observable contract, and every uninspected or externally unknowable surface is recorded as a blind spot.
+A short explanation is sufficient for a small local cut. Broad or consequential
+work benefits from a durable record so it can be continued without rediscovery.
+Do not create ledgers or numerical scoring systems for ordinary edits.
 
-## Cover the relevant surface
+Contract and consumer analysis come first. Use ablation only when a suitable
+experiment could resolve remaining uncertainty. Green checks alone do not prove
+absence of consumers. Keep or mark unresolved when the missing evidence matters.
 
-For every Broad engagement, and for Focused work involving dynamic architecture or dependency substitution, read [investigation.md](investigation.md). Build a coverage map before ranking findings; the first plausible deletion must not end the survey.
+Compare benefit with confidence, consequence, and effort. Moving complexity into
+a replacement wrapper is not necessarily an improvement. Prove candidate-exclusive
+members inside shared files rather than deleting an entire mixed artifact.
 
-For concurrency, cancellation, readiness, cleanup, defensive copies, validation, authorization, security isolation, accessibility, data-loss prevention, or cross-process data, also read [boundaries-and-lifecycle.md](boundaries-and-lifecycle.md).
+## Act and finish
 
-Use repository-native search, compiler and linter output, dependency metadata, and history as discovery instruments. Treat their findings as leads until runtime consumers and contracts have been examined.
+Survey ends with findings, important retained candidates, and unresolved questions.
+Change continues through all authorized boundaries using
+[execution-and-recovery.md](execution-and-recovery.md). One reviewable boundary is
+a useful batch size, not a limit on completion.
 
-## Build a proof record
+When requested documentation consolidation or a cut affects a design record,
+use [decision-records.md](decision-records.md). When importing findings from another
+branch or task, use [integrating-findings.md](integrating-findings.md). Neither is
+a prerequisite for an ordinary local cleanup.
 
-For every in-scope lead that reaches consumer-map evidence or could retire a meaningful contract, record:
-
-```text
-Candidate: the exact contract, representation, or layer to remove or merge
-Burden: the concepts, synchronization, publication, or testing cost it creates
-Reachability: production, non-production, dynamic, external, and persisted consumers
-Rationale: why it exists and whether that reason remains current
-Cut: declarations, implementations, branches, artifacts, docs, and dependencies affected
-Consequence: observable capability or compatibility behavior surrendered
-Confidence / risk: evidence strength, uncertainty, blast radius, and reversibility
-Proof: the smallest check that would expose an incorrect cut — normally an ablation run ([defensive-audit.md](defensive-audit.md) §6)
-Net effect: maintenance concepts removed minus replacement or migration machinery added
-```
-
-Prove cut boundaries below file granularity when the candidate shares an artifact with surviving consumers. Account for candidate-exclusive selectors, members, fields, keys, registry entries, generated fragments, and fixtures without disturbing the surviving owners.
-
-Keep or downgrade the candidate when a real consumer exists, dynamic reachability remains unresolved, a current decision still owns the design, the change merely relocates complexity, the result is outside scope or retires no meaningful obligation, or the available check cannot distinguish success from accidental breakage.
-
-Rank confidence separately from benefit. A high-value guess does not outrank a smaller proved cut.
-
-Candidate proof is complete when every qualifying lead is classified as ranked, rejected, or unresolved, and every unresolved lead names the fact required to decide it.
-
-## Decide and act
-
-In Survey mode, stop after reporting the ranked evidence. Include important rejected candidates when the rejection teaches something or identifies a concrete missing fact.
-
-In Change mode, read [execution-and-recovery.md](execution-and-recovery.md) and select the strongest authorized cut. One ownership boundary is the default batch size, not a run limit: for an explicitly requested set of cuts, finish and validate each boundary before starting the next.
-
-If the user requests a simplification proposal, local cleanup annotation, or design-record consolidation, or if a selected change invalidates an ADR, RFC, design note, or architectural inventory, read [decision-records.md](decision-records.md). Do not turn an ordinary code audit into a repository-wide documentation purge.
-
-If the user asks to combine findings from another branch, pull request, task, or agent run, read [integrating-findings.md](integrating-findings.md). Preserve evidence, not finding counts.
-
-## Deliver the result
-
-For a survey, report coverage, ranked proof records, rejected or unresolved high-value leads, and the next fact needed for each uncertainty.
-
-For a change, complete the validation and operation receipt defined in [execution-and-recovery.md](execution-and-recovery.md). Report each validation layer separately; a narrow green check does not establish broader runtime, deployment, or user acceptance.
+Report what changed or was retained, the evidence reached, and concrete blockers.
+Distinguish source conclusions from checks and real runtime observations. Do not
+stop after an initial implementation when requested work remains.

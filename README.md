@@ -11,34 +11,43 @@
 
 </div>
 
-Coding agents love doing more than you asked. A one-line change grows a factory. A call that can't fail gets three layers of try-catch and a fallback. Scaffolding the agent wrote last turn becomes "proof" the capability is required. They're not broken — they're trained to look complete and never crash. Your codebase pays for it.
-
-This skill is the hand in the picture. It keeps complexity proportional to the request and the real trust boundary, and when something goes wrong it fails early and loudly, at the unit that owns the work. It's not a license to slack off: requested hard work is the work, and heavy assertions in a ledger kernel are the optimum. The goal is the design a senior engineer would defend — not the smallest diff.
+Coding agents can turn small changes into unnecessary factories, duplicate state,
+and fallback paths that hide failure. This skill helps keep complexity proportional
+to the requested behavior and its real boundaries. It also guards against the
+opposite mistake: dropping requirements or leaving hard work unfinished.
 
 ## Three modes
 
-| Mode | What it does | Permissions |
+| Mode | Purpose | Authority |
 |---|---|---|
-| **Prevent** | Default rails while writing code: change discipline + five decision tests, so over-design never lands | Always on |
-| **Audit** | Judges one defensive mechanism (guard / retry / fallback / shim): keep / remove / downgrade / decide, with evidence | Read-only; deleting needs your go-ahead |
-| **Sweep** | Repo-wide entropy cleanup: dead code, duplicate state, redundant layers, ownerless abstractions — prove first, then delete | Survey (read-only) / Change (authorized) |
+| **Prevent** | Lightweight principles for substantive code changes | Uses the coding task's existing scope |
+| **Audit** | Judge a mechanism, diff, or PR with evidence | Review requests are read-only |
+| **Sweep** | Simplify a subsystem or repository | Survey is read-only; explicit cleanup requests authorize scoped changes |
 
-When a Sweep hits a single mechanism it's unsure about, it runs a focused Audit on the spot.
+Routine Prevent work needs only the main skill file. References provide design
+examples, focused audits, or deeper cleanup guidance when the task needs them.
 
-### The five decision tests
+### Decision principles
 
-Before any mechanism gets added — or kept:
+Consider the relevant dimensions rather than running a checklist on every line:
 
-1. **Trust boundary** — did this data just cross a user / network / disk / third-party boundary? Validate if it did; trust the caller if it didn't.
-2. **Reachability** — can this project's real usage actually produce this case? "Constructible in principle" doesn't count.
-3. **Failure semantics** — can the caller tell failure from success? If not, throw out of the unit that owns the work; a same-shaped default (`0`, `""`, `'free'`) is a lie.
-4. **Named consumer** — name someone whose live decision changes because of this hash / flag / gate. Can't? Don't build it.
-5. **"What would I do differently if this fired?"** — no answer, no check.
+- **Boundary and ownership:** input trust, mutation, lifetime, concurrency, and failure ownership.
+- **Reachability:** cases supported use can produce, including dynamic and external consumers.
+- **Failure semantics:** callers can distinguish real failure from legal success or absence.
+- **Consumer and purpose:** the behavior or guarantee a mechanism serves.
+- **Decision value:** what new evidence would change the choice.
 
-Two instruments back the tests. **Occam's razor** picks between designs that honor the same contract: fewest entities wins — types, states, layers, flags, dependencies — and it cuts entities, never requirements. **Ablation** decides whether something already there is load-bearing: remove it, run a check that can actually fail, look. A suite that stays green because it never reached the mechanism is silence, not evidence — which is why ablation alone never removes a hard exception.
+Prefer fewer concepts among designs that satisfy the same requirements. Caller
+counts and line counts are clues, not design rules. A single-use abstraction can
+protect a useful boundary, and two similar checks can protect different failure windows.
 
-Hard exceptions — boundary validation, authn/authz, data-loss prevention, … — are never on the table. Full ruleset: [SKILL.md](./skills/no-stop-gpt/SKILL.md).
+Use contract and consumer evidence first. Ablation is an optional bounded experiment
+for suitable unresolved questions. Passing checks support only the cases exercised;
+they do not establish that no consumer exists or that a deletion is safe.
 
+Preserve necessary security, data integrity, compatibility, accessibility, and
+lifecycle guarantees. Redundant implementations may be simplified when the same
+outcomes survive. Full guidance: [SKILL.md](./skills/no-stop-gpt/SKILL.md).
 ## Install
 
 With the open [skills CLI](https://github.com/vercel-labs/skills):
@@ -64,14 +73,32 @@ For a project-level install, drop it in the repo's `.cursor/skills/`, `.claude/s
 
 ## Usage
 
-- It's already active while you code (Prevent). Or call it by name: `no-stop-gpt`, `anti-overengineering`, `反过度设计`.
-- Hand it a diff or PR → a keep / remove / downgrade / decide verdict per mechanism. Read-only; it won't touch anything. `decide` means the code and a design doc disagree about whether the thing is live — that call is yours.
-- Ask *"is this retry still necessary?"* → a focused defensive audit.
-- Say *"audit the whole repo for over-defense"* → a Sweep survey with a per-mechanism verdict; saying "go ahead" afterwards makes it a Sweep change, with proof records and per-boundary validation.
-- Say *"simplify the codebase"* → Sweep: a read-only survey with ranked evidence first, deletion only after you authorize it.
+- Invoke `no-stop-gpt` explicitly, or let a host that supports automatic discovery
+  select it for substantive coding work. Installation does not guarantee activation.
+- Ask "review this diff for overengineering" or "is this retry necessary?" for
+  read-only conclusions: **keep**, **remove**, **downgrade**, or **decide**. Simple
+  questions get concise evidence; complex findings get structured records.
+- Ask "audit the repository for unnecessary defense" for a Sweep survey covering
+  the requested domains, including retained candidates and unresolved questions.
+- Ask "simplify this subsystem" or "apply these findings" to authorize investigation
+  and changes within that scope. Intermediate findings do not require another
+  approval. Mode switches do not reset existing authorization.
+- Routine reversible choices stay with the executor. Changes to requirements,
+  compatibility, authority, or irreversible effects need direction if not already
+  authorized. Publication and deployment are separate actions.
 
-Sweep's behavioral validation: [docs/sweep-validation.md](./docs/sweep-validation.md).
+Completion follows the request: finish the implementation or all authorized cleanup
+boundaries, using relevant checks within user constraints. Do not repeat successful
+checks without new changes or uncertainty. A read-only audit completes with its
+answers; no justified deletion is a valid result.
 
+Pure explanation, formatting, and unrelated prose edits do not trigger the skill.
+Security or storage in ordinary code does not exclude proportionality guidance,
+but specialist security or migration work must not be redirected into cleanup.
+
+Historical validation is recorded in [docs/sweep-validation.md](./docs/sweep-validation.md).
+Those results cover the earlier version, not this revision. No structural or
+behavioral validation was performed for this revision.
 ## Credits
 
 The rules are adapted from 2025–2026 community practice and classic texts. Thanks, in no particular order:
@@ -84,7 +111,7 @@ The rules are adapted from 2025–2026 community practice and classic texts. Tha
 - LessWrong, pathological guardrailing — fail early and visibly
 - [ponytail](https://github.com/DietrichGebert/ponytail) — reuse ladder, ceiling comment, runnable check (this skill rejects its "laziness" philosophy)
 - Sandi Metz — The Wrong Abstraction
-- Robert C. Martin — Clean Code: one level of abstraction per function, a flag argument does two things, a name is a contract, delete commented-out code (this skill scopes the Boy Scout Rule to the lines you changed, and keeps duplication over the wrong abstraction)
+- Robert C. Martin — Clean Code: abstraction levels, flag-argument tradeoffs, meaningful names, and local cleanup (used as contextual heuristics, not universal deletion rules)
 - John Ousterhout — A Philosophy of Software Design
 - Rob Pike — Go proverbs
 - Martin Fowler — YAGNI's four costs
@@ -99,3 +126,4 @@ The rules are adapted from 2025–2026 community practice and classic texts. Tha
 ## License
 
 [SATA 2.1](./LICENSE.txt) ([source](https://github.com/klarkxy/sata-license)) — The Star And Thank Author License, v2.1: use it freely (MIT terms). Starring and thanking are an invitation, not a condition — you may, arguably you should, but the license holds either way.
+

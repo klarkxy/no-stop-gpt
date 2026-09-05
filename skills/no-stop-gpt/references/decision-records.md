@@ -1,33 +1,41 @@
 # Decision record cleanup
 
-Purpose: keep the repository's current design owner accurate without erasing historical rationale that still prevents mistakes.
-
-Follow the repository's native lifecycle, naming, pairing, and archival conventions. Historical records may be intentionally immutable; update their current owner and links instead of rewriting frozen history.
+Use when requested documentation consolidation or an authorized cut affects a
+design record. Preserve useful rationale and follow the repository's conventions;
+[SKILL.md](../SKILL.md) governs scope and authorization.
 
 ## Find the current owner
 
-Trace shipped code, configuration, schemas, generated catalogs, package documentation, newer decisions, and inbound links. Titles and dates help discovery but do not prove ownership.
+Trace the relevant implementation, compatibility policy, newer decisions, and
+inbound links. Consult configuration, schemas, or release evidence where needed.
+Dates and titles help discovery but do not establish ownership.
 
-Classify the older record:
+Classify a record as current, partly displaced, or fully displaced according to
+which contracts and useful rationale survive. Historical records may intentionally
+be immutable: update current owners and links instead of rewriting frozen history.
+A document's claim is evidence to reconcile, not automatic proof of a live consumer.
 
-- **Current** when it still owns a live contract, compatibility rule, durable representation, or independently useful rejected alternative.
-- **Partly displaced** when some of its behavior survives under a newer owner.
-- **Fully displaced** when no production, configuration, schema, persisted, wire, migration, compatibility, or documented capability remains and a current record can carry all durable rationale.
+## Consolidate useful information
 
-## Consolidate without erasing lessons
+Before retiring a displaced record, carry forward unique rationale, alternatives,
+consequences, known gaps, and conditions that could change the decision. Preserve
+supported compatibility and independently useful warnings. Inventories dedicated
+to retired implementation details need not become permanent design obligations.
 
-Before retiring a fully displaced record, transfer unique rationale, alternatives, consequences, shipped evidence, known gaps, capability surrendered, conditions for reintroduction, and the reason the original motivation no longer wins. Implementation inventories and tests that described only deleted behavior need not survive as design rationale.
+Repair affected links, indexes, paired translations, and repository metadata as
+part of the change. Keep separate records when they still own distinct behavior
+or when merging would hide a meaningful historical decision.
 
-Repair inbound links, indexes, generated catalogs, paired translations, and consistency metadata as required by the repository. Search exact filenames, symbols, configuration keys, protocol strings, and record titles afterward.
+## Match the artifact to the need
 
-Keep records separate when the underlying feature survives through another delivery route or implementation, when stored or compatibility behavior remains, or when consolidation would hide a still-useful warning against reintroducing a failed design.
+Use the existing decision mechanism. A durable proposal should explain the current
+contract, evidence, proposed change, strongest reason to retain the design, material
+consequences, and remaining uncertainty. A small actionable item may need only a
+local TODO or issue under existing conventions, not a new architectural record.
+Do not scatter speculative cleanup annotations through unrelated code.
 
-Report the old and current owners, evidence for the classification, rationale transferred, links repaired, validation performed, and any record deliberately retained.
-
-## Match the artifact to the decision
-
-Use the repository's existing decision mechanism. A durable proposal should identify the present contract and consumer evidence, the exact removal or consolidation, the strongest reason to keep the design, the capability surrendered, acceptance criteria, risks, and verification boundary. Consolidate overlapping proposals under the record that already owns the decision instead of creating competing sources of truth.
-
-Use a short local TODO, FIXME, issue, or equivalent only for a small actionable cleanup that does not need a durable architectural decision. Give it a stable searchable topic tag when repository conventions allow, then name the concrete burden and the condition that would make the change safe. Keep uncertain or product-level questions in the evidence report rather than depositing speculative annotations throughout the codebase.
-
-Respect the selected authority mode: Survey mode reports the appropriate artifact without creating it unless the user requested repository edits.
+For a small edit, describe the updated owner and material rationale in the response.
+For broader consolidation, also identify retired or retained records and evidence
+limits. Read-only Survey reports findings without creating files unless repository
+edits were requested; authorized documentation work needs no additional approval
+of its intermediate classification.

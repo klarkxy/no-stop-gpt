@@ -1,94 +1,87 @@
 # Investigation playbook
 
-Purpose: produce a bounded coverage map in which every in-scope domain is inspected or explicitly excluded, then rank only candidates supported by contract evidence.
+Use for broad coverage or a focused candidate whose consumers are difficult to
+establish. Apply [Sweep](sweep.md) scope and the common rules in [SKILL.md](../SKILL.md).
 
-## Build a coverage map
+## Cover the requested surface
 
-Start with the largest or most central production surfaces, then partition the relevant system by responsibility rather than file type. Typical domains are:
+Partition broad work by responsibility rather than file extension. Depending on
+the repository, relevant domains include entrypoints, public APIs, configuration,
+domain state, persistence, protocols, dynamic loading, background execution,
+resource ownership, packages, tests, and operational documentation.
 
-- entrypoints, orchestration, and runtime control;
-- public APIs, commands, configuration, and feature selection;
-- domain state, caches, events, and lifecycle transitions;
-- persistence, schemas, migrations, replay, and compatibility;
-- protocols, plugins, dependency injection, reflection, and code generation;
-- foreground and background execution, workers, processes, and resource ownership;
-- packages, adapters, examples, scripts, tests, snapshots, and documentation.
+For each in-scope domain, identify the paths examined and meaningful blind spots.
+Focused work needs only its affected boundary and consumers. Read history or
+additional documents when they could resolve a current uncertainty, not as a
+mandatory prelude to every finding.
 
-Adapt the domains to the repository. For each domain, name the entrypoints inspected, central production paths read, searches run, history or decision records consulted, and unresolved blind spots. The coverage pass is complete when every in-scope domain is inspected or explicitly excluded with a reason.
+If authorized parallel work is already in use, give evidence contributors bounded
+domains and integrate findings by contract and owner. Assess the evidence behind
+material claims; do not accept a search count as a liveness conclusion or duplicate
+all investigation when a precise, current trace already establishes the fact.
 
-When breadth warrants parallel investigation and the user has authorized it, give each worker a non-overlapping domain and require the same proof record. Aggregate by confidence and ownership boundary rather than arrival order or raw finding count. A worker's "never read" or "N call sites" is a static lead until you reproduce it: re-trace every claim you will act on or report as high confidence — one re-trace in a four-worker run turned "dead" into "written, read once" — and label a count you did not reproduce as approximate.
+## Find maintenance burdens
 
-## Hunt for maintenance burdens
+Useful leads include:
 
-Use these lenses to generate leads:
+- dormant exports, hooks, options, commands, and fields;
+- duplicate representations that must remain synchronized;
+- flexibility with no current product or operational purpose;
+- forwarding layers that neither reduce coupling nor establish a boundary;
+- parallel state machines describing the same transition;
+- repeated validation or copying within an already maintained guarantee;
+- custom infrastructure duplicated by a suitable platform facility;
+- support artifacts remaining after their feature has actually retired.
 
-- **Dormant contract**: an export, hook, event, option, package, protocol field, or command has no current production consumer.
-- **Split truth**: multiple states, summaries, caches, formats, or event families encode one fact and must remain synchronized.
-- **Ownerless flexibility**: an abstraction, fallback, strategy, flag, or extension point promises possibilities no current product path owns.
-- **Relay layer**: a wrapper, package, service, or route forwards behavior without reducing coupling or establishing a boundary.
-- **Parallel state machine**: flags, promises, queues, sentinels, controllers, or callbacks describe the same transition.
-- **Boundary theater**: validation, copying, rollback, or hostile-object defense sits on a trusted handoff rather than a real trust or ownership boundary.
-- **Local infrastructure**: custom parsing, retry, framing, matching, diffing, scheduling, or collection code duplicates a suitable platform feature or dependency.
-- **Support drag**: tests, examples, snapshots, generated expectations, or documentation are the only reason an otherwise unused surface remains.
-- **Feature fossil**: implementation was abandoned or removed while schema, configuration, tests, compatibility logic, or design records still preserve its outline.
+Similarity is not redundancy. Separate implementations can protect different
+owners, failure windows, compatibility requirements, or independent checks.
 
-Do not equate visual similarity with duplication. Independent implementations may test an interface, isolate failure domains, protect different owners, or support distinct compatibility contracts.
+## Distinguish evidence strength
 
-## Climb the evidence ladder
+Visible complexity and analyzer results are leads. Consumer traces explain use;
+contract evidence establishes obligations; targeted observations support behavior
+for the cases exercised. These are evidence categories, not mandatory stages.
 
-Classify each lead by the strongest evidence reached:
+Inspect relevant callers and classify hits by their actual role:
 
-1. **Smell**: complexity, duplication, or awkwardness is visible.
-2. **Static lead**: a search or analyzer reports no or limited use.
-3. **Consumer map**: every repository hit is classified and relevant callers and callees have been read.
-4. **Contract proof**: dynamic loading, external use, persistence, compatibility, ownership, and design history have been resolved.
-5. **Behavior proof**: a decisive check and recovery path demonstrate what would reveal a wrong change.
+- **Runtime:** entrypoints, operational config, loaders, migrations, and shipped code.
+- **Support:** tests, comments, documentation, snapshots, and illustrative examples.
+- **Uncertain:** public exports, registrations, reflection, generated code,
+  examples that might run operationally, and external package consumers.
 
-Smells and static leads are not deletion authority. High-confidence application normally requires contract proof and behavior proof.
+Support artifacts can document real requirements but cannot create independent
+product justification merely by referring to each other. Search alternate call
+forms, registration keys, serialized fields, or manifests when the system uses them.
+Read surrounding flow rather than inferring semantics from hit counts.
 
-Behavior proof is normally obtained by ablation: remove or disable the candidate in isolation, hold the workload constant, and run a check that reaches it. A suite that stays green because it never reached the candidate is a finding about the suite, not proof about the candidate. Procedure and the trust-boundary false-negative rules: [defensive-audit.md](defensive-audit.md) §6.
+Resolve uncertain use through the relevant loader, publication boundary, release
+history, compatibility policy, or downstream evidence within scope. If external
+use cannot be bounded, report that limitation rather than calling the surface dead.
 
-## Classify consumers
+Use [ablation](defensive-audit.md#6-use-ablation-when-it-can-resolve-uncertainty)
+only if an experiment can answer the remaining question. A passing suite does
+not prove that an unexercised or external consumer is absent.
 
-Classify every hit instead of counting it:
+## Consult history where it matters
 
-- **Runtime**: shipped code, operational configuration, migrations, loaders, deployment scripts, and real entrypoints.
-- **Support**: tests, documentation, comments, snapshots, examples proved to be illustrative only, and generated expectations.
-- **Uncertain**: fixtures, public exports, examples that may double as smoke paths, plugin registrations, reflection, lazy imports, string dispatch, manifests, generated code, and external package consumers.
+Use decisions, commits, issues, and comments to identify the original requirement,
+whether its conditions still exist, and the present owner of the decision. An old
+date does not prove obsolescence. Preserve rejected alternatives when they still
+explain a useful constraint. Follow [decision-records.md](decision-records.md) if
+record consolidation is part of the authorized change.
 
-Search exact symbols and their alternate call forms, file and package names, configuration and environment keys, event and protocol strings, serialized field names, registry identifiers, and documentation examples. Read the surrounding control flow; search counts do not establish semantics.
+## Compare replacement dependencies
 
-Resolve uncertain consumers by inspecting registration and loading code, package publication boundaries, downstream repositories when in scope, persisted data, compatibility policy, and release history. If external consumption cannot be bounded, state the uncertainty and lower confidence.
+Compare contract semantics and residual behavior before choosing a substitute.
+Consider platform support, maintenance, dependencies, migration cost, and the local
+policy that would remain. Prefer an existing suitable facility when it actually
+reduces ownership. A wrapper retaining most custom behavior may simply relocate complexity.
 
-## Read history as design evidence
+## Rank without optimizing for deletion
 
-Use blame, log, pull requests, issues, ADRs, RFCs, and comments to answer:
+Explain confidence separately from maintenance benefit. Weigh consequence,
+reversibility, effort, and available checks without inventing a score. A smaller
+supported cut can be preferable to a valuable but uncertain one. Preserve important
+rejected findings and name the fact needed for unresolved choices.
 
-- What failure, requirement, or future plan introduced this surface?
-- Does that condition still exist?
-- Which current artifact owns the decision?
-- What new evidence outweighs the original reason?
-- What capability would become expensive to restore?
-
-An old date or quiet file is only a discovery hint. A rejected historical alternative may still be valuable if it prevents a recurring mistake.
-
-## Evaluate replacement dependencies
-
-A standard-library feature or maintained dependency can reduce local responsibility, but only when it removes more obligation than it adds.
-
-Compare exact semantics, unsupported residual behavior, maintenance and adoption, release cadence, security posture, transitive footprint, platform compatibility, migration cost, wrapper size, dedicated tests retired, and supply-chain exposure. Prefer platform facilities, then already-present dependencies, then a new dependency when the net ownership reduction is clear.
-
-A wrapper that preserves most local policy while delegating a small primitive is not a simplification. Record the residual contract explicitly.
-
-## Rank without gaming the result
-
-Score independently:
-
-- confidence in reachability and contract evidence;
-- blast radius and reversibility;
-- maintenance concepts retired;
-- observable behavior or optionality surrendered;
-- validation strength;
-- implementation and migration cost.
-
-Do not reward raw deleted lines, candidate count, or dramatic scope. Occam's razor counts entities — types, states, layers, flags, dependencies, assumptions — so a cut that retires one concept outranks a cut that deletes 400 lines and keeps every concept. Finding no safe candidate is a valid, evidence-backed result.
+Complete the requested coverage, not a target number of findings or deleted lines.

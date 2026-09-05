@@ -1,68 +1,77 @@
 # Execution and recovery
 
-Purpose: retire each proved obligation completely, validate the surviving system in widening rings, and leave a recovery path proportional to every side effect.
+Finish the authorized simplification and preserve the surviving contract. Follow
+[SKILL.md](../SKILL.md) for permissions and [Sweep](sweep.md) for scope.
 
-## Choose a reviewable cut
+## Choose a reviewable batch
 
-Prefer one high-confidence ownership boundary over a mixed cleanup batch. The selected change should retire a complete obligation and have a decisive check. If investigation reveals a larger product choice or broader migration than the user authorized, present the ranked plan and obtain one scope confirmation before applying it.
+Group changes by the behavior or ownership boundary they retire. Include affected
+callers, tests, and documentation even when they live in other directories. A batch
+is an integration unit, not a reason to stop before the remaining authorized work.
 
-Pause application when dynamic or external consumers remain unknown, stored data lacks a migration story, baseline failures erase the intended signal, the cut crosses unrelated ownership boundaries, or rollback would be impractical. Convert the result into an evidence report with the exact missing decision or fact.
+If a candidate depends on unknown external use, unsupported data conversion, or
+an unresolved product choice, hold that cut and state the missing fact. Continue
+independent supported cuts. A failing baseline limits the evidence but does not
+by itself make every unrelated change impossible.
 
-## Parallel workers
+When already-authorized workers are involved, give shared artifacts one owner and
+integrate against current contracts. Worker success establishes only its reported
+scope; choose relevant checks for the combined result. This reference does not
+require delegation or create a separate orchestration workflow.
 
-When the user has authorized several boundaries and workers edit concurrently, partition by behavior owner, not by file list. Every test, doc line, and caller that pins a boundary's behavior belongs to that boundary's worker wherever it lives — a spec in another directory that asserts the guard the worker is collapsing breaks on the merged tree, not in the worker's partition. Give shared artifacts — changelog, architecture and security docs, cross-cutting contracts, generated inventories — one owner; two writers on one doc produce a failed edit and a lost rationale. A worker's green gate proves its partition, nothing about the union: run the residue check and repository gates once on the merged tree. Red typecheck or tests inside a partition still in flight are unknown, not a defect to patch from outside.
+## Retire the complete obligation
 
-## Remove the obligation vertically
+Follow affected declarations through registration, dispatch, implementation, state,
+imports, exports, generated inventories, examples, documentation, and tests. Include
+only surfaces tied to the cut. Preserve unrelated working-tree changes.
 
-Follow the contract from outside inward and back out. Account for:
+Remove compatibility glue only when its obligation is absent or its retirement
+has been authorized with a suitable transition. Update the surviving state owner
+instead of adding another synchronization layer. Preserve unique behavior checks;
+remove tests that exclusively pin behavior intentionally retired.
 
-- public declaration, schema, route, command, option, or manifest;
-- registration, dispatch, parsing, and compatibility paths;
-- implementations, adapters, state, caches, events, and cleanup;
-- imports, exports, packages, build and generated inventories;
-- migrations, fixtures, examples, documentation, and operational configuration;
-- tests dedicated to the retired behavior and tests protecting the surviving contract;
-- dependencies and scripts that become unnecessary.
+For source-only work, the diff can be the recovery path. Data, configuration,
+deployment, or publication effects need recovery appropriate to those effects
+and user authority for the action. A cleanup request is not publication permission.
 
-Delete compatibility glue when no compatibility obligation exists. When one does exist, preserve it or provide an explicit migration with an end condition. Do not replace two representations with a new synchronization layer.
+## Choose relevant checks
 
-Keep unrelated working-tree changes intact. Do not commit, push, publish, deploy, or alter protected environments unless the user separately authorizes that action.
+Select checks that could expose a real failure in this change, honoring user
+constraints. Depending on the cut, these may be residue searches, a compiler or
+analyzer, existing tests, a build, a protocol comparison, or a real workflow.
+Capture a baseline when it helps distinguish pre-existing failure from regression.
+Do not mechanically run every category for every batch.
 
-The cut is structurally complete when every affected declaration, consumer, artifact, owner, and compatibility obligation is either changed, deliberately retained with a reason, or explicitly excluded as outside scope.
+Broader integration checks are useful when the change crosses contracts; controlled
+measurements are needed to claim a performance improvement. Ablation is optional,
+using the conditions in [defensive-audit.md](defensive-audit.md#6-use-ablation-when-it-can-resolve-uncertainty).
 
-## Verify in widening rings
+Once relevant checks pass, repeat or broaden them only after a new change, failure,
+or unresolved concern. Source inspection, test success, build success, deployment,
+and real operation are different evidence levels; report only those reached.
 
-1. **Residue check**: search removed names, strings, paths, formats, flags, and docs.
-2. **Decisive check**: run the smallest test or probe that would fail if the cut were incorrect.
-3. **Lead check**: re-run any analyzer or query that produced the original candidate.
-4. **Local gates**: run the affected package's type, lint, unit, integration, build, generation, or smoke commands.
-5. **Repository gates**: run the broader relevant suite when cost and scope justify it.
-6. **Boundary comparison**: compare public output, persisted representation, wire behavior, operational lifecycle, and user-visible behavior.
-7. **Diff audit**: inspect every changed file, whitespace integrity, generated artifacts, and dependency lock changes.
+If a check fails, determine whether it exposes a regression, a pre-existing issue,
+or a mistaken removal premise. Repair or undo the affected change. Do not weaken
+a meaningful assertion, enlarge a timeout, or retry blindly to make the cut pass.
 
-When the simplification claims a latency, throughput, memory, startup, or other performance effect, add a controlled before-and-after measurement whose workload and environment make that claim meaningful.
+## Complete and report
 
-Report each gate separately. Passing a narrow unit test does not establish build, integration, runtime, deployment, or user acceptance.
+Finish affected callers and artifacts, then account for all authorized boundaries.
+Report concrete blockers without presenting an initial slice as the whole result.
+A user-imposed verification limit should be stated, not bypassed by extra checks.
 
-If a post-change check fails, compare it with the baseline and decide whether the failure was pre-existing, the implementation is incomplete, or the candidate was load-bearing. Repair the current batch or undo it using the recorded recovery path. Preserve the meaningful check and revise the proof instead of weakening the gate to make the deletion pass.
-
-## Produce an operation receipt
-
-Record:
+Small changes need a short account of what changed, relevant evidence, and limits.
+For broad or consequential changes, retain enough detail to support continuation:
 
 ```text
-Scope: ownership boundary changed
-Baseline: commands and pre-existing failures
-Retired obligation: contract, state, layer, or dependency removed
-Artifacts: files and generated outputs changed
-Realized net effect: concepts, artifacts, lines, and dependencies removed minus replacement or migration machinery added, where measurable
-Behavior: preserved and intentionally changed observations
-Verification: exact commands, probes, and results
-Residual risk: untested boundaries or external uncertainty
-Retained candidates: high-value items kept and why
-Undo: files or commit range to reverse and any data/config restoration required
+Scope and obligation retired:
+Affected artifacts and surviving owners:
+Preserved behavior and authorized behavior changes:
+Evidence reached, checks performed, and relevant baseline failures:
+Remaining candidates, uncertainty, or blockers:
+Recovery for material side effects:
 ```
 
-The undo path must match the side effects. Source-only changes may be reversible from the diff; migrations, published packages, deployments, and durable data require explicit restoration steps and separate authorization.
-
-The batch is complete only when the structural cut criterion, every applicable verification ring, the complete diff audit, and the operation receipt are all satisfied or reported as unavailable with the resulting evidence limitation.
+No separate receipt file is required when the diff and response carry the needed
+information. After compaction, restore completed work and pending decisions;
+reinvestigate only missing or invalidated evidence.

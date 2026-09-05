@@ -1,45 +1,50 @@
 # Boundaries and lifecycle
 
-Purpose: prove which boundary or lifecycle mechanisms protect distinct owners and transitions. Finish with every mechanism in the selected candidates mapped to a guarantee or classified as redundant.
+Use when ownership, concurrency, publication, cancellation, or disposal determines
+whether a mechanism is redundant. Protected outcomes and authority are defined in
+[SKILL.md](../SKILL.md).
 
-## Locate the real boundary
+## Locate the guarantee
 
-For every validator, copy, freeze, capture, retry, rollback, or containment layer, identify the value's origin, current owner, next owner, mutation rights, lifetime, and failure domain.
+For the selected mechanism, establish relevant origins, owners, mutation rights,
+lifetimes, and failure domains. Same-process code may still cross a mutable-state,
+plugin, asynchronous, or resource-ownership boundary.
 
-Typical borrowed handoffs include private, same-process calls whose types and ownership conventions are already enforced by the component boundary. Typical owned boundaries include untrusted input, configuration parsing, model or tool JSON, queues, storage, network protocols, plugins, workers, subprocesses, and data crossing asynchronous lifetime boundaries.
+A private borrowed handoff may rely on already enforced guarantees. A hostile
+getter, forged typed value, or post-handoff mutation in a test is evidence of an
+assumed contract; determine whether supported use promises that contract. Do not
+infer either safety or redundancy from process location alone.
 
-Defense on an owned boundary is part of the contract until evidence proves otherwise. Defense on a borrowed handoff may be removable when it protects only impossible or owner-violating behavior. Tests built from hostile getters, fake typed values, post-handoff mutation, or callback replacement reveal an assumed contract; determine whether production actually promises that contract before treating the test as authoritative.
+## Compare transitions
 
-Never trade away authorization, input trust validation, data-loss prevention, accessibility essentials, durable-format compatibility, or security isolation as an incidental cleanup.
-
-## Draw the lifecycle graph
-
-List the actors that can create, publish, start, settle, cancel, stop, flush, and dispose the resource. Then map every flag, promise, queue, sentinel, callback, controller, and terminal result to:
-
-- the owner that writes it;
-- readers that make decisions from it;
-- the transition it represents;
-- the race or failure it prevents;
-- the cleanup or quiescence guarantee it completes.
-
-Two mechanisms are redundant only when they represent the same transition for the same owner and protect the same failure window. Similar names are not enough. The lifecycle analysis is complete when every mechanism in scope is mapped to an owner, transition, failure window, and terminal guarantee, with unknowns made explicit.
-
-Preserve distinct mechanisms when they separately guarantee atomic publication and rollback, isolate callback failures, arbitrate competing terminal outcomes, own a worker or process, bridge different durability levels, or make disposal wait until no work can escape.
-
-When several mechanisms truly mirror one fact, choose the representation already observed at the strongest boundary. Route other readers to that owner and remove synchronization glue rather than creating another coordinator that leaves both truths alive.
-
-## Prove quiescence
-
-For cleanup changes, completion means more than returning from `dispose` or setting a stopped flag. Establish that no owned task can publish, mutate durable state, retain resources, or invoke callbacks after the terminal boundary.
-
-Inspect timers, event listeners, streams, child processes, workers, pending promises, queues, retries, abort handlers, file descriptors, and deferred writes. Name the check that would reveal a late effect.
-
-## Model races before deletion
-
-For asynchronous candidates, write a small event table when ordering matters:
+Map relevant state to its writer, decision-making readers, represented transition,
+and failure window. Use a compact event table when ordering is difficult to follow:
 
 ```text
-Event or transition | owner | allowed predecessors | terminal effect | late-event behavior
+Transition | owner | allowed predecessors | terminal effect | late-event behavior
 ```
 
-Exercise at least the normal path, cancellation before start, cancellation during work, competing terminal outcomes, partial publication failure, and repeated cleanup when those states are reachable. Remove a branch only after its ordering guarantee is represented elsewhere or proven unnecessary.
+Two representations are redundant only when they protect the same guarantee for
+the same owner and window. Preserve distinct responsibilities such as atomic
+publication, rollback, callback failure containment, terminal outcome arbitration,
+process ownership, and durability boundaries.
+
+Where several mechanisms truly mirror one fact, choose the representation that
+already owns the guarantee and redirect readers. Remove synchronization glue
+instead of creating another coordinator while leaving duplicate truths alive.
+
+## Preserve terminal guarantees
+
+For disposal, establish what the contract promises after completion. A stopped flag
+alone may not prevent owned tasks from publishing, writing, retaining resources,
+or invoking callbacks. Inspect the relevant timers, listeners, streams, workers,
+pending operations, abort paths, and deferred writes.
+
+Consider normal completion, cancellation before or during work, competing terminal
+outcomes, partial publication failure, and repeated cleanup where reachable and
+affected. Choose observations or checks that can reveal a late effect; do not
+require an unrelated lifecycle test matrix for a local change.
+
+A cleanup mechanism may be replaced or deduplicated only if its terminal guarantee
+survives. Unknown ordering is a reason to keep or mark unresolved, not to delete
+because the happy path stays green.

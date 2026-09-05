@@ -4,6 +4,8 @@
 
 This document records the behavioral validation completed before the initial open-source release (the Sweep scenarios were exercised under the former `simplify-codebase` skill, now merged into `no-stop-gpt` as Sweep mode). It is not a permanent quality claim; relevant results should be rechecked as repositories and agent runtimes evolve.
 
+The instruction revision dated 2026-09-05 was not structurally or behaviorally validated. The historical results below were preserved and do not establish the revised skill's quality.
+
 ## Scenarios
 
 ### Change
@@ -45,3 +47,4 @@ This document records the behavioral validation completed before the initial ope
 - Dynamic consumers outside the inspected repository can remain unknowable without external evidence.
 - Deployment, production health, and end-user acceptance remain separate gates from repository tests.
 - A user must still authorize product or compatibility changes.
+

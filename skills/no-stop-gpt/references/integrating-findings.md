@@ -1,24 +1,39 @@
 # Integrating findings
 
-Purpose: map every imported finding to retained, consolidated, rejected, superseded, or unresolved against the destination's current contracts.
+Use when combining findings or changes from another branch, task, or review.
+Apply [SKILL.md](../SKILL.md) authority and assess the destination's current contracts.
 
-## Establish independent contribution
+## Establish source and contribution
 
-Compare each source with its own merge base or authoritative default branch, not only with the current working branch. Identify which code changes, proof records, design records, annotations, and validation results belong uniquely to that source. Treat stale findings as hypotheses against the current tree.
+Use each source's merge base or recorded filesystem basis to distinguish its
+contribution from changes it inherited. Identify findings, patches, rationale,
+and observations attributable to the source. Treat stale conclusions as hypotheses.
 
-For every imported candidate:
+For each relevant candidate, establish whether its symbols, consumers, dynamic
+paths, and compatibility obligations still match the destination. Inspect history
+or additional paths when they could change the conclusion, rather than repeating
+a full repository audit for every imported item.
 
-- re-check symbols, consumers, dynamic entrypoints, history, and compatibility in the destination state;
-- retain non-overlapping evidence that meets the current confidence bar;
-- merge overlapping rationale into the record that owns the contract;
-- discard duplicates, weaker restatements, and findings invalidated by newer code;
-- preserve the strongest counterargument, tradeoff, verification boundary, and unresolved uncertainty;
-- distinguish a ported proposal from a change already implemented and validated.
+Retain useful evidence, consolidate overlaps under the current contract owner,
+and reject duplicates or conclusions invalidated by current behavior. Preserve
+material counterarguments and uncertainty. Distinguish a proposal from an applied
+change and distinguish both from behavior that was actually exercised.
 
-The integrated result is complete when every source finding is mapped to retained, consolidated, rejected, superseded, or unresolved, with a reason. Raw candidate count is not a preservation requirement.
+## Integrate within authority
 
-## Integrate changes safely
+Apply authorized code and documentation according to current ownership and
+behavior, not source arrival order. Cover interactions introduced by combining
+changes with the relevant checks described in
+[execution-and-recovery.md](execution-and-recovery.md). Isolated results do not
+establish the combined result; unchanged independent evidence need not be rerun
+without a reason. Honor explicit verification constraints and state their limits.
 
-Apply only the code or documentation the user authorized. Resolve overlaps according to current ownership and behavior rather than source order. Re-run residue searches and validation on the combined state; results from an isolated branch do not prove the integrated tree.
+Classify requested source findings as retained, consolidated, rejected, superseded,
+or unresolved, with enough explanation to understand the result. Small imports
+need a short account; large imports need a durable mapping. Finding counts are
+not a preservation target.
 
-When updating a pull request, report the true retained scope, sources surveyed, consolidations and rejections, intentional exclusions, current-head validation, and remaining review gaps. Keep work draft or otherwise marked incomplete while the candidate set or verification is still changing. Close, supersede, comment on, or otherwise mutate external reviews only with the user's authority.
+If updating an authorized pull request, describe the retained scope and actual
+validation state. Do not represent unresolved work as ready. Posting, closing,
+publishing, or otherwise changing external reviews requires user authority;
+permission to inspect their findings alone is insufficient.

@@ -1,115 +1,127 @@
 # Focused defensive audit
 
-Use when asked to decide whether **one** defensive mechanism (guard, test, retry, fallback, copy, rollback, compatibility shim) is still necessary. Stay read-only unless the user explicitly authorizes a change.
+Use for a guard, test, retry, fallback, copy, rollback, or compatibility mechanism
+whose necessity is in question. Follow [SKILL.md](../SKILL.md) for authority and
+protected outcomes. Read-only questions end in verdicts; authorized cleanup may
+continue into changes without another approval stage.
 
-Key terms: **borrowed handoff**, **owned boundary**, **boundary theater**.
+## 1. Locate the boundary
 
-## 1. Locate the real boundary first
+Trace the value's origin, owners, mutation rights, lifetime, and failure domain
+as needed to understand the guarantee. Focus on dimensions that could change
+the verdict rather than filling a checklist for its own sake.
 
-For each validator, copy, retry, rollback, or guard, name:
+## 2. Borrowed handoffs and owned boundaries
 
-- origin of the value
-- current owner
-- next owner
-- mutation rights
-- lifetime
-- failure domain
+A **borrowed handoff** relies on guarantees already established and maintained
+by the caller or component. Private same-process calls can qualify only when
+types, ownership, and lifetime support that conclusion.
 
-Do not classify the mechanism until those six are named. "It looks defensive" is not a location.
+An **owned boundary** establishes a guarantee for incoming data or work: input,
+configuration, tool output, storage, queues, protocols, plugins, workers, or
+asynchronous lifetimes. One process can contain several boundaries.
 
-## 2. Borrowed handoff vs owned boundary
+## 3. Identify unnecessary duplication
 
-**Borrowed handoff** — same process, private, types and ownership already enforced by the component boundary. Defense here that only prevents "this cannot happen" behavior is removable.
+Re-validating unchanged data, copying an object whose mutation is controlled,
+or catching errors a helper cannot produce can be redundant. Verify the premise:
+earlier validation does not protect against later mutation, other callers, or
+new failure windows.
 
-**Owned boundary** — untrusted input, config parsing, model/tool JSON, queues, storage, network protocols, plugins, workers, subprocesses, or data crossing asynchronous lifetime boundaries. Defense here is part of the contract. Keep unless proven otherwise.
+## 4. Compare guarantees and failure windows
 
-## 3. Boundary theater is the primary prey
+Identify the owner, transition, and failure window each mechanism protects.
+HTTP validation and worker queue validation can both be necessary. An inner
+duplicate is removable only if the surviving owner covers all supported paths.
 
-**Boundary theater** is validation, copying, rollback, or hostile-object defense sitting on a trusted handoff rather than a real trust boundary.
+For cancellation, publication, rollback, or disposal, consult
+[boundaries-and-lifecycle.md](boundaries-and-lifecycle.md) when those guarantees
+are material to the decision.
 
-Examples of theater: re-validating a struct the constructor already made; defensive-copying an object the owner will not mutate; catching exceptions a pure helper cannot raise; treating a teammate's in-process call like hostile plugin input.
+## 5. Establish contract and consumer evidence
 
-Theater is not "any check." An owned-boundary check with no inner copy is not theater.
+Follow producers, consumers, failures, and the decision the mechanism changes.
+Keywords such as `hash`, `lock`, or `fallback` identify leads, not defects. Include
+dynamic and external consumers when the surface supports them.
 
-## 4. Redundancy needs the same window
+Tests and documents can explain requirements, but their existence alone does not
+prove one. An agent-created artifact supporting another agent-created mechanism
+is not independent product evidence. Useful behavior checks still matter regardless
+of who wrote them.
 
-Two mechanisms are redundant only when they share:
+If evidence settles the question, report it. If a missing fact changes whether
+removal is safe, retain the mechanism pending that fact or use `decide`.
 
-- the same owner
-- the same transition
-- the same failure window
+## 6. Use ablation when it can resolve uncertainty
 
-Similar names are not enough. `validateUser` in the HTTP adapter and `validateUser` in a worker that reads the queue are different owners and different trust boundaries.
+An ablation removes or disables a mechanism in a bounded experiment. Use it when
+contract and consumer analysis leave a material question the experiment can answer,
+not as a requirement for every verdict or change.
 
-## 5. Trace, do not keyword-hunt
+- Isolate the changed mechanism and keep workload and environment comparable to
+  the control. Identify the behavior that could expose a wrong cut.
+- Establish that the probe reaches the relevant path and detects the lost guarantee.
+  A green suite that misses the path says nothing about that mechanism.
+- Use an authorized isolated copy or test environment for read-only audits.
+  Switching branches in the user's working tree does not make edits read-only.
+  If isolation or authority is unavailable, report the evidence gap.
+- Reuse a probe where possible; add one only when permitted and useful. Honor
+  user constraints excluding verification rather than inventing experiments.
+- Report uncertainty from flaky or uncontrolled observations. Investigate ordering
+  when feasible; do not repeat until a desired result appears. Reproducible manual
+  observations can be evidence when their limits are stated.
+- A regression supports the need for a guarantee, though its implementation may
+  still be replaceable. No observed change supports only the exercised cases,
+  not absence of consumers or universal safety of deletion.
+- Happy-path success cannot establish that authorization, input validation,
+  corruption detection, or cleanup is unnecessary. Exercise relevant failure cases
+  when needed and preserve required outcomes regardless of representation.
 
-For every candidate, trace:
+Record what changed, what was observed, and what remains untested. Stop when the
+experiment answers the question or cannot produce a useful signal.
 
-- producer
-- consumer
-- failure model
-- trust boundary
-- the unit that should fail (request, job, worker, process)
-- the live decision the mechanism changes
+## 7. State the verdict
 
-Never flag `hash`, `fallback`, `gate`, `retry`, `lock`, or `checksum` by themselves. No named consumer → the mechanism is a candidate for removal. A named consumer whose live decision changes → keep or downgrade, with evidence.
+- **keep:** a supported behavior needs the mechanism, or available evidence does
+  not justify removal. Distinguish those reasons.
+- **remove:** evidence supports removal while preserving required outcomes.
+  Removing an error-swallowing catch may need propagation or one boundary
+  translation; failure reporting must survive.
+- **downgrade:** retain the guarantee with less machinery, such as one validation
+  instead of inner copies, or request failure instead of aborting a healthy process.
+- **decide:** unresolved evidence or a material contract conflict prevents a justified
+  choice. State the missing fact or alternatives and consequences. Resolve routine
+  ambiguity within existing authority; ask the user only for material choices.
 
-Do not treat agent-authored schemas, migrations, tests, or docs as a named consumer. A test that only asserts the mechanism exists is not a consumer of a live decision. The one runnable check on new non-trivial logic is not boundary theater; do not flag it for removal.
-
-## 6. Ablate before you judge
-
-When the trace leaves a named consumer or a live decision uncertain, ablate: remove or disable the mechanism, run the check that would fail if it mattered, and observe. An ablation that changes nothing observable is the evidence for remove; one that breaks something is the evidence for keep and names the consumer you missed. Run it on a branch or in a test environment — the audit stays read-only for the user's tree.
-
-Rules that make the result count as evidence:
-
-- One mechanism per experiment. Removing two things and seeing one failure proves nothing about either.
-- Hold everything else constant: same inputs, fixtures, data, and environment as the control run. A different run is a different experiment.
-- The check must be able to fail. Before ablating, confirm the probe actually reaches the mechanism — a fixture that exercises the branch, a request that hits the boundary, a corruption the assertion would catch. If no such probe exists, write the one probe first; a green suite that never reached the mechanism is silence, not proof.
-- The probe must be self-validating and repeatable. A check whose verdict a human has to read out of a log is not a check; a check that passes on some runs and fails on others has not answered — run it until it is deterministic, or fix the interleaving, before its result counts for either verdict.
-- Trust boundaries produce false negatives by construction. A happy-path suite stays green after authz, input validation, or I/O failure handling is removed, because the suite never sent the hostile case. That is the suite's blind spot, not a verdict. Ablation evidence never removes a Hard exception on its own; the probe for a boundary mechanism must be the adversarial case, and even a silent ablation there only reports a missing test.
-- Record the ablation in the verdict: what was removed, which probe ran, what changed. That record is the "check that would expose a wrong removal."
-
-## 7. Verdict record
-
-One row per mechanism:
+A simple question needs a concise verdict, evidence, and meaningful limitation.
+For multiple or consequential findings, use a record such as:
 
 ```text
-Mechanism: <symbol or site>
-Trust boundary it sits on: <owned boundary | borrowed handoff | none>
-Unit that should fail: <request | job | worker | process>
-Named consumer: <who, what decision> | none
+Mechanism and scope:
+Guarantee, owner, and failure unit:
+Consumer and reachable cases:
 Verdict: keep | remove | downgrade | decide
-Evidence: <producer, consumer, failure model, live decision — or which Core test failed>
-Check that would expose a wrong removal: <smallest test, probe, or trace>
+Evidence and uncertainty:
+Relevant check or trace, with result if performed:
+Consequence and authorization needed, if any:
 ```
 
-- **keep** — owned boundary, or a borrowed-handoff check that still changes a live decision in a reachable failure. A catch at the request or job boundary that becomes a typed error the caller or operator sees (4xx, job failure, dead-letter) is keep.
-- **remove** — no named consumer, unreachable case, or theater on a borrowed handoff. A catch, retry, or fallback inside the unit that just failed, inventing a patched value so execution can continue, is remove. So is a catch on an owned boundary that answers a failure with the permissive value (`catch → []` for a protected-roots set, unknown errno → "process dead", `EACCES` → "not found"): the I/O Hard exception protects handling, not a swallow that loosens the protection. Removing such a catch may leave a raw platform error (`SyntaxError`, `ENOENT`) crossing the boundary; translating it once, there, into the typed error the caller reads — naming the file, key, or record — is part of the remove, not new defense. A translation that produces a same-shaped default is the swallow again.
-- **downgrade** — keep the owned-boundary check; delete inner copies, same-level re-validation, or same-shaped defaults. A process abort on a request- or job-scoped error downgrades to failing that request or job; keep process abort only when the process itself is untrustworthy (see Domain portrait). A branch that only a public entry point can reach (internal producers never emit the value) downgrades to one validation at that entry point plus deletion of every inner branch — do not call it unreachable while the export is supported.
-- **decide** — the code and a stated contract disagree about whether the mechanism is live: a design doc names it as a gate and nothing constructs it, or two documents assign it different authority. A document is a claim, not a consumer. State both readings and the cut each implies; the choice is the user's (definition in SKILL.md, Deliverables).
+Separate suggested checks from performed checks. Do not fabricate results to fill fields.
 
-The "wrong removal" check must be able to fail if the verdict is wrong. "Looks unused" is not a check. It must also fail a happy-path-correct, adversarial-unsafe stand-in — the lean version that breaks on the trust-boundary case.
+## 8. Correctness-critical domains
 
-## 8. Domain portrait — when heavy defense is the optimum
+Ledgers, storage and consensus kernels, physical control, and other systems can
+need production assertions, paired invariants, bounded execution, and fault
+detection because corruption costs more than lost availability. Establish the
+actual failure model: bitrot, replica divergence, and hardware drift can justify
+mechanisms unnecessary in routine application paths.
 
-Do not strip assertions, paired invariants, bounded loops, or static-allocation discipline from a system whose wrong answer is worse than a crash: a financial system of record, a storage or consensus kernel, avionics or other safety-critical control, or any component that must stay correct under bitrot, replica divergence, or physical-world fault.
+Preserve these guarantees. A request-scoped error alone does not justify process
+termination, and a safety-critical label does not justify unrelated layers.
 
-The portrait, in full or mostly:
+## 9. Continue within scope
 
-- correctness failure costs far more than availability failure
-- this process is the source of truth, or the only place corruption can be detected
-- the failure model includes bit flips, disk corruption, replica divergence, or hardware drift — not merely a teammate's bad call
-- assertions are load-bearing in the verification strategy (simulation, fuzzing, production crash-on-violation)
-
-In those domains a production assertion that crashes on a violated invariant is a Hard exception: it downgrades a correctness disaster into a liveness failure. This portrait does not license assertion theater on a CRUD trusted path — apply it only when the process is the source of truth and the failure model includes corruption. A request-scoped or job-scoped error is not this portrait; do not cite it to justify aborting the process in a request handler.
-
-An error defined out of existence at design time (the API contract makes the edge a legal success) is not a swallowed failure; audit the contract, not the missing throw.
-
-## 9. Removal authorization
-
-- The audit itself is read-only. Emit verdicts; do not edit.
-- Deletion requires an explicit user authorization for that mechanism (or an explicit "apply these verdicts" instruction).
-- Deleting a Hard exception (authz, trust-boundary validation, security isolation, crypto, data-loss prevention, stored-format compatibility, accessibility essentials, external I/O failure handling, startup config validation, quiescence-establishing cleanup) is always its own explicitly authorized objective. An audit of "is this retry needed?" is not authorization to strip authz.
-- "Anything the docs call a contract" is not a Hard exception. Do not hand that rule to a worker; it shields dead paths that only a document still describes. A doc-versus-code conflict is a `decide` row.
-- Quiescence cleanup is never theater: a dispose/shutdown path that guarantees no owned timer, listener, worker, or pending task can still publish or mutate after the terminal boundary protects a real failure window, even though it sits inside one process.
-- If the authorized removal is one mechanism among many accidental-complexity cuts, finish this verdict and escalate the rest to Sweep mode ([sweep.md](sweep.md)).
+Use [SKILL.md](../SKILL.md) as the authority for edits and protections. Continue
+multiple authorized cleanup boundaries through [Sweep](sweep.md); that changes
+organization, not permissions. For a read-only request, deliver the answer without
+silently applying the recommendation.
