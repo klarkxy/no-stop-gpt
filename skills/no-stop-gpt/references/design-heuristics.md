@@ -14,6 +14,12 @@ Compare the obligations an interface introduces with those it removes. A closed
 set may need only direct dispatch; a registry needs a current registration or
 discovery requirement. Do not preserve unused lower-level entrypoints for imagined callers.
 
+Narrowing visibility is different from deleting implementation: a helper still
+used within its module can lose an unnecessary export. If only tests import it,
+inspect the behavior they protect and whether an existing entrypoint can cover
+it; test-only use does not prove dead code. Check public package consumers and
+compatibility obligations before withdrawing an exported API.
+
 When callers use different subsets of a helper, inspect whether they share a
 contract. A boolean can express a coherent option; several flags selecting
 unrelated workflows suggest separate functions. Move differing behavior back to
@@ -24,6 +30,11 @@ its owners and extract the common part, without mechanically inlining every call
 Count concepts a maintainer must coordinate: states, types, layers, flags,
 dependencies, and assumptions. Prefer the simpler complete design while keeping
 reachable edge cases and required protections. No fixed line count determines quality.
+
+Compare how easily a maintainer can follow branches, inspect intermediate values,
+and locate failure. Flatten nesting when it clarifies the flow, but avoid dense
+conditional expressions or merged concerns that make debugging harder. A named
+intermediate or explicit branch can be simpler than a shorter expression.
 
 Split at a meaningful level of abstraction or ownership boundary. Tiny forwarding
 functions can add indirection, but short adapters can provide stable public

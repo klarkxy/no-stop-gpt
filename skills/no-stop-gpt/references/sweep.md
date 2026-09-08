@@ -24,6 +24,9 @@ Read applicable instructions and working-tree state. Consult manifests, test and
 generation conventions, architecture, or history where they affect the change.
 Distinguish user changes, generated files, and externally maintained surfaces.
 
+For a diff-scoped request, follow the
+[diff scope guidance](antipatterns.md#establish-the-diff-scope).
+
 For broad work, partition by responsibility: entrypoints and public interfaces,
 configuration, domain state, persistence, protocols and dynamic loading, background
 work and resource ownership, packages, tests, and operational documentation.
@@ -97,6 +100,16 @@ Capture a baseline when it helps distinguish prior failure from regression. Hono
 the user's verification constraints; do not run every category mechanically.
 Controlled measurements are needed for performance improvement claims.
 
+Before deduplicating CI checks, confirm that the surviving run covers the target
+commit and relevant platform, build configuration, and dependencies, and actually
+runs on the required path. Identical commands in different jobs are not enough:
+a Linux pass may leave macOS behavior untested, and an older pass does not cover
+later edits. Reuse applicable evidence without turning deduplication into a gap.
+
+For documentation-only edits, check changed facts, links, and paired translations
+where maintained. Run documentation generation or rendering when affected; an
+unrelated application build does not verify prose.
+
 When a check fails, determine whether the premise was wrong, the edit regressed
 behavior, or the failure predates it. Repair or undo the affected cut; do not weaken
 assertions, extend timeouts, or retry blindly to make it pass. A failing baseline
@@ -134,6 +147,10 @@ authorized changes according to current contracts and check interactions introdu
 by combining them. Isolated success does not prove the combined result; unchanged
 independent evidence need not be rerun without reason. External review updates
 require authority beyond permission to inspect their findings.
+
+If a finding's target no longer matches, recheck whether the issue survives;
+a missing text anchor does not prove another edit fixed it. Reconcile conflicting
+proposals against the contract before choosing a rewrite.
 
 ## Deliver the result
 

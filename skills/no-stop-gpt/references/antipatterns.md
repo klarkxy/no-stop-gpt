@@ -5,6 +5,13 @@ keyword. Apply [SKILL.md](../SKILL.md) for authority and protected outcomes.
 The examples below are conditional: supported contracts, ownership, platform
 semantics, or failure windows can justify an otherwise suspicious form.
 
+## Establish the diff scope
+
+Establish the requested comparison and include relevant new files; ordinary diffs
+omit untracked files. An empty diff is not permission to widen the review. Judge
+preservation against the user's intended result and current supported contract:
+deleted lines can contain the bug being fixed.
+
 ## Swallowed failures
 
 Investigate catches that return `0`, an empty list, a free plan, or a cached value
@@ -85,11 +92,31 @@ messages may be part of the product.
 
 Leave unrelated cosmetic cleanup outside the assignment.
 
+## Shorter expressions with different behavior
+
+Check accepted inputs, evaluation order, and effects before replacing an explicit
+branch with shorthand or an existing helper. For example, `value || fallback`
+also replaces `0`, `false`, and `""`, while `value ?? fallback` replaces only nullish
+values in JavaScript. Neither is a universal cleanup of the other. Compare error
+types and absence values too; similar names do not establish helper equivalence.
+
 ## Test bloat
 
 Investigate checks that mirror helpers, assert incidental call order, or exist
 only to raise coverage. Keep interaction assertions when the interaction itself
 is the contract, such as preventing duplicate side effects.
+
+Judge an assertion by the distinct regression it can detect. When status and
+error code already identify the required failure, pinning incidental prose may
+add no coverage. Wording and constant assertions can still protect serialized
+values, stable identifiers, redaction, or required diagnostics; distinguish an
+external contract from a copy of the implementation before removing them.
+
+Contract tests should observe the interface consumers actually use. Helpers may
+explicitly extract a required response field, but should fail when its shape is
+wrong. Silently renaming fields, accepting old and new envelopes, or filling
+missing values can hide a broken contract. Test intentional compatibility at its
+production boundary rather than recreating it in the test harness.
 
 Prefer observable behavior and existing test seams. Test-only production hooks
 may be unnecessary, but a seam enabling deterministic time, fault injection, or
@@ -102,6 +129,11 @@ flaky tests, or weaken assertions merely to make a cleanup pass. Diagnose the
 failure and preserve unique behavior coverage.
 
 ## Dependency and performance overhead
+
+Look for repeated reads, per-item requests where a matching batch operation exists,
+or updates that notify consumers despite unchanged state. Check snapshot freshness,
+ordering, failure handling, and notification semantics before eliminating work.
+Prefer removing waste over adding a cache or worker pool.
 
 A tiny package or thin wrapper can cost more than the responsibility it removes;
 a maintained implementation can also prevent subtle local bugs. Compare semantics,

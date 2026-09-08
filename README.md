@@ -23,7 +23,9 @@ npx skills add klarkxy/no-stop-gpt
 ```
 
 For manual installation, copy the entire `skills/no-stop-gpt/` directory into your
-agent's skill directory. Keep `SKILL.md`, `references/`, and `agents/` together.
+agent's skill directory. Keep `SKILL.md`, `references/`, `agents/`, and `LICENSE.txt`
+together. To upgrade, replace that entire installed directory with the new copy
+so retired reference files do not linger. Preserve any local customizations first.
 
 ## Use
 
@@ -49,6 +51,21 @@ to remove; no justified deletion is a valid result.
 Start with [SKILL.md](./skills/no-stop-gpt/SKILL.md). It links to optional design
 examples, focused defense and lifecycle guidance, and the consolidated Sweep
 workflow. Pure explanation, formatting, and unrelated prose do not trigger the skill.
+
+## Related tools and adopted ideas
+
+Compared against upstream instructions on 2026-09-08. These are design references,
+not dependencies or a measured ranking; the guidance here is written for this skill.
+
+| Reference | Adopted here | Adaptation |
+| --- | --- | --- |
+| [Karpathy Guidelines](https://github.com/forrestchang/andrej-karpathy-skills/blob/main/skills/karpathy-guidelines/SKILL.md) | Observable success criteria and local conventions. | Keep useful single-use boundaries; clarify only material choices. |
+| [Anthropic code-simplifier](https://github.com/anthropics/claude-plugins-official/blob/main/plugins/code-simplifier/agents/code-simplifier.md) | Readability and ease of debugging when simplifying control flow. | Follow the target project's language and style conventions. |
+| [gtapps/simplify](https://github.com/gtapps/simplify/blob/main/SKILL.md) | Concrete efficiency checks, semantic comparison, and reconciliation of overlapping findings. | No mandatory agent team; recheck stale findings and honor intentional behavior changes. |
+| [HERO-Anti-OverDefense](https://github.com/wanshuiyin/HERO-Anti-OverDefense/blob/main/RULES.md) | Already covered: reachable cases and checks that inform a decision. | Establish actual trust boundaries and preserve necessary protections. |
+
+The entrypoint covers success criteria; the existing design, antipattern, and Sweep
+references contain the conditional examples. No additional runtime is required.
 
 ## Credits
 

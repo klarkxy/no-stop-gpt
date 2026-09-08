@@ -6,6 +6,8 @@ description: >-
   simplification. Do not trigger for pure explanation, formatting, or unrelated
   prose edits, or turn a specialist security or migration task into a cleanup.
 license: SATA 2.0 (modified)
+metadata:
+  version: "0.1.6"
 ---
 
 # No, Stop! GPT!
@@ -22,7 +24,7 @@ under-delivery, not simplification.
 - **Audit:** answer a question about a mechanism, diff, or PR. Read-only requests
   produce conclusions and evidence. Read [defensive-audit.md](references/defensive-audit.md)
   for a focused mechanism decision; use [antipatterns.md](references/antipatterns.md)
-  when concrete examples would help a diff review.
+  for diff scope and concrete review examples.
 - **Sweep:** simplify a subsystem or repository. Read [sweep.md](references/sweep.md).
   Survey requests are read-only. Explicit requests to simplify, remove,
   consolidate, or apply findings authorize investigation and changes in that scope.
@@ -63,10 +65,17 @@ platform facilities, and dependencies when their semantics fit. An abstraction
 can serve a meaningful boundary with one caller; repeated syntax alone does not
 justify sharing different behavior.
 
+Before editing, identify the observable result that would satisfy the request
+and an appropriate way to check it. For a bug, use the failing scenario when
+available; for a refactor, identify the behavior to preserve. State assumptions
+that materially affect that result, using the authority rules above to decide
+whether clarification is needed. Small tasks need no separate plan or new test suite.
+
 Read enough of the affected flow to understand the change and its consequences.
 Investigate more deeply when ownership, compatibility, or failure behavior is
 unclear. Fix the shared cause and remove residue created by the change; leave
-unrelated cleanup outside the assignment.
+unrelated cleanup outside the assignment. Follow the project's conventions;
+personal style preferences alone do not justify a rewrite.
 
 Add guards, retries, caches, flags, and layers for current requirements or supported
 failure modes. Do not use them to mask a root cause. Explain material tradeoffs

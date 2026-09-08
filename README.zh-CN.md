@@ -21,7 +21,7 @@
 npx skills add klarkxy/no-stop-gpt
 ```
 
-也可以把整个 `skills/no-stop-gpt/` 目录复制到所用智能体的技能目录中，保留其中的 `SKILL.md`、`references/` 和 `agents/`。
+也可以把整个 `skills/no-stop-gpt/` 目录复制到所用智能体的技能目录中，保留其中的 `SKILL.md`、`references/`、`agents/` 和 `LICENSE.txt`。升级时用新目录整体替换旧目录，避免留下已退役的参考文件；先保存自己的本地定制。
 
 ## 使用
 
@@ -38,6 +38,19 @@ npx skills add klarkxy/no-stop-gpt
 在满足同一需求的方案中，优先选择概念更少的设计。保留必要的安全、数据完整性、可访问性、兼容性和生命周期保证。搜索命中数与测试通过不能单独证明删除安全；没有合理删除项也是有效结果。
 
 从 [SKILL.md](./skills/no-stop-gpt/SKILL.md) 开始，按需读取设计案例、防御与生命周期指引，以及合并后的 Sweep 流程。纯解释、格式调整和无关文字修改不触发技能。
+
+## 同类工具与借鉴
+
+2026-09-08 对照上游指令。这些是设计参考，不是运行依赖或实测排名；本项目按自身用途重新编写规则。
+
+| 参考项目 | 吸收的做法 | 本项目的取舍 |
+| --- | --- | --- |
+| [Karpathy Guidelines](https://github.com/forrestchang/andrej-karpathy-skills/blob/main/skills/karpathy-guidelines/SKILL.md) | 先明确可观察的成功条件，遵循局部约定。 | 保留有价值的单次使用边界，只为实质性分歧澄清。 |
+| [Anthropic code-simplifier](https://github.com/anthropics/claude-plugins-official/blob/main/plugins/code-simplifier/agents/code-simplifier.md) | 简化控制流时兼顾可读性和调试便利。 | 语言和风格遵循目标项目自身约定。 |
+| [gtapps/simplify](https://github.com/gtapps/simplify/blob/main/SKILL.md) | 具体的效率检查、语义比较，以及重叠审查结论的协调。 | 不强制智能体团队；重新核对过时结论，尊重有意的行为变更。 |
+| [HERO-Anti-OverDefense](https://github.com/wanshuiyin/HERO-Anti-OverDefense/blob/main/RULES.md) | 已覆盖：按实际可达情况判断，让检查服务于决策。 | 核实真实信任边界，保留必要保护。 |
+
+成功条件放在技能入口；条件性例子归入已有的设计、反模式和 Sweep 参考文档，无需新增运行组件。
 
 ## 思想来源
 
