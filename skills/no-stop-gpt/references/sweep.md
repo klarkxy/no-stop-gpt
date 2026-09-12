@@ -2,7 +2,8 @@
 
 Reduce unnecessary concepts and coordination obligations while preserving the
 requested behavior. [SKILL.md](../SKILL.md) owns common principles, authority,
-and protected outcomes. This reference covers investigation through delivery.
+and protected outcomes. Use the relevant sections for investigation and delivery;
+they do not require a separate artifact or approval at each step.
 
 ## Scope and outcome
 
@@ -13,10 +14,6 @@ and protected outcomes. This reference covers investigation through delivery.
 - **Focused:** cover the named boundary and its affected consumers.
 - **Broad:** cover the requested repository domains, including blind spots;
   do not stop at the first easy candidate.
-
-Intermediate findings and mode changes do not reset authorization. Hold only cuts
-that depend on unresolved material choices, such as retiring supported behavior
-or compatibility, and continue independent authorized work.
 
 ## Investigate the contract
 
@@ -59,11 +56,10 @@ concurrent transitions, cancellation, or disposal determines whether a cut is sa
 
 ## Choose justified cuts
 
-For each meaningful candidate, explain the obligation and burden removed,
-consumers and guarantees, affected artifacts, preserved behavior, any capability
-surrendered, supporting evidence, and remaining uncertainty. A small cut needs a
-short explanation; broad work may need a durable record for continuation. Do not
-invent a score or optimize for finding counts and deleted lines.
+For a meaningful candidate, explain why the change removes burden while preserving
+the contract. Include affected consumers, evidence, and uncertainty when they matter
+to the decision. A small cut needs a short explanation; broad work may benefit from
+a durable record. Do not optimize for finding counts or deleted lines.
 
 Weigh confidence separately from benefit, consequence, reversibility, and effort.
 Similarity is not redundancy: implementations may protect different owners or
@@ -76,7 +72,7 @@ platform support, maintenance, footprint, and migration cost. Reuse reduces burd
 only when it removes responsibility rather than moving it into a wrapper.
 
 Contract and consumer analysis come first. Use
-[ablation](defensive-audit.md#6-use-ablation-when-it-can-resolve-uncertainty) only
+[ablation](defensive-audit.md#use-ablation-when-it-can-resolve-uncertainty) only
 when a bounded experiment can resolve material uncertainty. Green checks establish
 only exercised cases, not absence of unexercised or external consumers.
 
@@ -161,6 +157,4 @@ and recovery for material side effects. A diff and concise response can carry th
 record; no separate receipt file is required.
 
 Distinguish source inspection, automated checks, build success, and real operation.
-Report concrete blockers without presenting a partial slice as completion. Finding
-no justified deletion is valid. After interruption, restore completed work and
-pending decisions; reinvestigate only missing or invalidated evidence.
+Report concrete blockers without presenting a partial slice as completion.

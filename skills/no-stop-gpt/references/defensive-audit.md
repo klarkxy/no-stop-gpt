@@ -5,13 +5,15 @@ whose necessity is in question. Follow [SKILL.md](../SKILL.md) for authority and
 protected outcomes. Read-only questions end in verdicts; authorized cleanup may
 continue into changes without another approval stage.
 
-## 1. Locate the boundary
+Use the sections that can change the verdict; they are not a required sequence.
+
+## Locate the boundary
 
 Trace the value's origin, owners, mutation rights, lifetime, and failure domain
 as needed to understand the guarantee. Focus on dimensions that could change
 the verdict rather than filling a checklist for its own sake.
 
-## 2. Borrowed handoffs and owned boundaries
+## Borrowed handoffs and owned boundaries
 
 A **borrowed handoff** relies on guarantees already established and maintained
 by the caller or component. Private same-process calls can qualify only when
@@ -21,14 +23,14 @@ An **owned boundary** establishes a guarantee for incoming data or work: input,
 configuration, tool output, storage, queues, protocols, plugins, workers, or
 asynchronous lifetimes. One process can contain several boundaries.
 
-## 3. Identify unnecessary duplication
+## Identify unnecessary duplication
 
 Re-validating unchanged data, copying an object whose mutation is controlled,
 or catching errors a helper cannot produce can be redundant. Verify the premise:
 earlier validation does not protect against later mutation, other callers, or
 new failure windows.
 
-## 4. Compare guarantees and failure windows
+## Compare guarantees and failure windows
 
 Identify the owner, transition, and failure window each mechanism protects.
 HTTP validation and worker queue validation can both be necessary. An inner
@@ -38,7 +40,7 @@ For cancellation, publication, rollback, or disposal, consult
 [boundaries-and-lifecycle.md](boundaries-and-lifecycle.md) when those guarantees
 are material to the decision.
 
-## 5. Establish contract and consumer evidence
+## Establish contract and consumer evidence
 
 Follow producers, consumers, failures, and the decision the mechanism changes.
 Keywords such as `hash`, `lock`, or `fallback` identify leads, not defects. Include
@@ -52,7 +54,7 @@ of who wrote them.
 If evidence settles the question, report it. If a missing fact changes whether
 removal is safe, retain the mechanism pending that fact or use `decide`.
 
-## 6. Use ablation when it can resolve uncertainty
+## Use ablation when it can resolve uncertainty
 
 An ablation removes or disables a mechanism in a bounded experiment. Use it when
 contract and consumer analysis leave a material question the experiment can answer,
@@ -80,7 +82,7 @@ not as a requirement for every verdict or change.
 Record what changed, what was observed, and what remains untested. Stop when the
 experiment answers the question or cannot produce a useful signal.
 
-## 7. State the verdict
+## State the verdict
 
 - **keep:** a supported behavior needs the mechanism, or available evidence does
   not justify removal. Distinguish those reasons.
@@ -108,7 +110,7 @@ Consequence and authorization needed, if any:
 
 Separate suggested checks from performed checks. Do not fabricate results to fill fields.
 
-## 8. Correctness-critical domains
+## Correctness-critical domains
 
 Ledgers, storage and consensus kernels, physical control, and other systems can
 need production assertions, paired invariants, bounded execution, and fault
@@ -118,10 +120,3 @@ mechanisms unnecessary in routine application paths.
 
 Preserve these guarantees. A request-scoped error alone does not justify process
 termination, and a safety-critical label does not justify unrelated layers.
-
-## 9. Continue within scope
-
-Use [SKILL.md](../SKILL.md) as the authority for edits and protections. Continue
-multiple authorized cleanup boundaries through [Sweep](sweep.md); that changes
-organization, not permissions. For a read-only request, deliver the answer without
-silently applying the recommendation.

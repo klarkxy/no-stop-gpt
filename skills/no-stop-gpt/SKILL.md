@@ -1,136 +1,97 @@
 ---
 name: no-stop-gpt
 description: >-
-  Keep code complexity proportional to requirements. Use during substantive code
-  changes, reviews for overengineering or unnecessary defense, and codebase
-  simplification. Do not trigger for pure explanation, formatting, or unrelated
-  prose edits, or turn a specialist security or migration task into a cleanup.
+  Review overengineering and simplify code. Use for complexity reviews, scoped
+  cleanup, or implementation choices about added layers, state, or defenses.
 license: SATA 2.0 (modified)
 metadata:
-  version: "0.1.6"
+  version: "0.1.7"
 ---
 
 # No, Stop! GPT!
 
-Deliver the complete requested behavior with the least unnecessary complexity.
-Extra layers, duplicate state, speculative flexibility, and hidden failures make
-changes harder to maintain. Dropping requirements or patching only a symptom is
+Deliver the complete requested behavior with the fewest unnecessary concepts and
+coordination obligations. Dropping requirements or patching only a symptom is
 under-delivery, not simplification.
 
-## Mode and authority
+## Use only the guidance the task needs
 
-- **Prevent:** lightweight guidance during substantive code changes. Ordinary
-  edits need only the common principles below, with no separate report.
-- **Audit:** answer a question about a mechanism, diff, or PR. Read-only requests
-  produce conclusions and evidence. Read [defensive-audit.md](references/defensive-audit.md)
-  for a focused mechanism decision; use [antipatterns.md](references/antipatterns.md)
-  for diff scope and concrete review examples.
-- **Sweep:** simplify a subsystem or repository. Read [sweep.md](references/sweep.md).
-  Survey requests are read-only. Explicit requests to simplify, remove,
-  consolidate, or apply findings authorize investigation and changes in that scope.
+- **Prevent:** apply the principles below while implementing the request. Read
+  [design-heuristics.md](references/design-heuristics.md) if an abstraction, reuse,
+  or error-contract tradeoff needs more detail. No separate audit report is needed.
+- **Audit:** answer the named complexity question with evidence. Use
+  [defensive-audit.md](references/defensive-audit.md) for a disputed mechanism or
+  [antipatterns.md](references/antipatterns.md) for diff scope and review examples.
+- **Sweep:** use [sweep.md](references/sweep.md) for subsystem or repository cleanup.
+- For cuts involving ownership, concurrent transitions, cancellation, or disposal,
+  consult [boundaries-and-lifecycle.md](references/boundaries-and-lifecycle.md).
 
-Authority follows the user's request, not the mode name. Authorized cleanup does
-not need a second approval of intermediate findings. Switching modes or moving
-to the next authorized boundary does not reset authorization. A review request
-alone does not authorize edits to the user's working tree, even for an experiment.
+These are reference routes, not stages to complete in sequence. Read only what
+can resolve a question in the current task; a local edit needs no repository map.
+Do not turn specialist security or migration work into a general cleanup.
 
-Choose routine reversible implementation details. Ask when an unresolved choice
-changes requirements, supported compatibility, authority, or irreversible effects.
-Continue independent authorized work while that choice is open. Do not expand a
-focused request into unrelated cleanup.
+## Scope and completion
 
-## Common decision principles
+Use the request to establish the observable result: an evidence-backed answer for
+a review, or working behavior with affected callers and supporting artifacts
+updated for an implementation. Infer routine reversible details without a separate
+planning or approval step.
 
-Use the relevant dimensions as reasoning aids, not five gates every line must pass.
+A review or survey is read-only. Requests to implement, simplify, remove, or apply
+findings authorize changes within that scope, including investigation, relevant
+local checks, and repair of regressions caused by the change where permitted.
+Continue through that result; a first patch, intermediate finding, or successful
+cut is not a handoff point. Do not ask again for already authorized work.
 
-1. **Boundary and ownership:** which guarantees hold here? Consider input trust,
-   mutation rights, lifetime, concurrency, and the unit that owns failure.
-   Same-process calls are not automatically trusted or immutable.
-2. **Reachability:** can supported use produce the case? Include dynamic,
-   external, persisted, and concurrent paths when relevant. A constructible test
-   input alone does not establish a production requirement.
-3. **Failure semantics:** can the caller distinguish failure from legitimate
-   success or absence? Do not invent a permissive default to hide an error.
-   Propagate or translate at the responsible boundary; fail a request or job
-   without aborting a healthy process. Recover where state is known good.
-4. **Consumer and purpose:** which behavior, guarantee, or operational decision
-   needs the mechanism? Missing evidence makes it an investigation candidate,
-   not an instruction to delete it immediately.
-5. **Decision value:** what would a check's result change? Choose evidence that
-   answers an outstanding question; avoid repeating settled checks.
+Pause only the dependent action when a material question about requirements,
+compatibility, authority, or irreversible effects needs the user's decision.
+Continue independent authorized work. Cleanup alone does not authorize retiring
+supported capabilities, publication, deployment, or unrelated changes.
 
-Compare designs that satisfy the same contract. Prefer fewer concepts and
-coordination obligations, not fewer lines at the expense of clarity. Reuse code,
-platform facilities, and dependencies when their semantics fit. An abstraction
-can serve a meaningful boundary with one caller; repeated syntax alone does not
-justify sharing different behavior.
+## Complexity decisions
 
-Before editing, identify the observable result that would satisfy the request
-and an appropriate way to check it. For a bug, use the failing scenario when
-available; for a refactor, identify the behavior to preserve. State assumptions
-that materially affect that result, using the authority rules above to decide
-whether clarification is needed. Small tasks need no separate plan or new test suite.
+- Compare designs that satisfy the same contract. Prefer readable control flow
+  and fewer responsibilities over fewer lines. Follow project conventions; reuse
+  existing facilities when their semantics fit. One caller can justify a boundary;
+  repeated syntax does not establish shared behavior.
+- Judge guards, retries, caches, flags, and layers by a current consumer, guarantee,
+  or supported failure mode. Trace the affected flow when the purpose is unclear.
+  Missing evidence makes a mechanism an investigation candidate, not dead code.
+- Compare the owner and failure window before removing duplicate checks or state.
+  Same-process data is not automatically trusted or immutable. A constructible
+  test input alone does not establish a supported production case.
+- Preserve the caller's distinction between failure, valid absence, and success.
+  Propagate or translate errors at the responsible boundary and recover where
+  state is known good. Do not hide a root cause behind a permissive default or
+  abort a healthy process for a request-scoped failure.
 
-Read enough of the affected flow to understand the change and its consequences.
-Investigate more deeply when ownership, compatibility, or failure behavior is
-unclear. Fix the shared cause and remove residue created by the change; leave
-unrelated cleanup outside the assignment. Follow the project's conventions;
-personal style preferences alone do not justify a rewrite.
+## Evidence and protections
 
-Add guards, retries, caches, flags, and layers for current requirements or supported
-failure modes. Do not use them to mask a root cause. Explain material tradeoffs
-or hidden ceilings where useful, without mandatory comments for routine choices.
-Read [design-heuristics.md](references/design-heuristics.md) only when a design
-question needs more detail.
+Tests, schemas, and documents can describe a contract; their existence alone is
+not independent proof that a mechanism is required. Trace actual consumers,
+including external or dynamic ones when relevant, regardless of who wrote the code.
+Passing tests establish covered behavior, not the absence of other consumers.
+Retain a mechanism or mark it unresolved when a material evidence gap remains.
 
-## Evidence and necessary protections
+Preserve required security, data integrity and loss prevention, stored-format
+compatibility, accessibility, I/O failure handling, startup validation, and lifecycle
+guarantees. Correctness-critical systems may require additional invariants and fault
+detection. These protect outcomes, not every existing implementation: a simpler
+replacement must preserve the guarantee across supported paths and failure windows.
 
-An agent-authored schema, test, migration, or document is an artifact, not
-independent proof of a requirement. Trace the contract and actual consumers;
-do not dismiss a real requirement merely because an agent implemented it.
+Choose verification that can change the decision or expose a relevant regression.
+Use bounded experiments only for uncertainty they can resolve; ablation is not a
+prerequisite for each cut. Once applicable checks pass, repeat or broaden them only
+for a new change, failure, unresolved concern, or explicit verification requirement.
+Honor the user's verification constraints and distinguish performed checks from proposals.
 
-Use contract and consumer evidence first. If a material uncertainty is suitable
-for an experiment, consider [ablation](references/defensive-audit.md#6-use-ablation-when-it-can-resolve-uncertainty).
-A green check supports only its covered cases. It does not prove that no consumer
-exists or that deletion is safe. Retain or mark unresolved when missing evidence matters.
-
-Preserve required input validation, authentication and authorization, security
-isolation, cryptography, data integrity and loss prevention, stored-format
-compatibility, accessibility, I/O failure handling, startup validation, and cleanup
-guarantees. Physical-world and correctness-critical systems may need fault
-detection and invariants beyond ordinary application assumptions.
-
-These are protected outcomes, not exemptions for every existing implementation.
-Remove a duplicate only when the surviving owner preserves the same guarantee
-and failure window. General cleanup does not authorize withdrawing a protection
-or supported capability. Requested security, migration, or verification is work
-to complete, not scope creep.
-
-## Complete the request
-
-- **Prevent:** complete the implementation and applicable checks. Inspect changed
-  behavior for speculative machinery or hidden failures; do not require ablation
-  for every guard, parameter, or layer.
-- **Audit:** answer the named questions with evidence and material uncertainty.
-  Use keep / remove / downgrade / decide. Simple questions need short answers;
-  multiple or consequential findings need structured records.
-- **Sweep Change:** finish all authorized boundaries, including affected callers
-  and supporting artifacts. Report concrete blockers and evidence limits rather
-  than stopping after the first implementation or successful cut.
-
-Reuse checks that can expose a relevant regression. Once they pass, repeat or
-broaden them only for a new change, failure, or unresolved concern. Honor explicit
-verification constraints and state what was not checked. A supported conclusion
-that nothing should be removed is a valid result.
-
-After interruption or context compaction, restore the objective, accepted
-decisions, completed work, and remaining items. Revisit missing or invalidated
-evidence; compaction alone does not require another full review.
+Deliver the answer or completed change with material evidence, limitations, and
+blockers. Finding nothing justified to remove is a valid result. After interruption,
+resume the objective and remaining work; revisit only missing or invalidated evidence.
 
 ## Maintain the skill
 
-Add guidance for concrete recurring failures not covered by existing principles.
-Keep examples conditional, avoid model-specific assumptions, and give each rule
-one authoritative home. Merge repetitions, downgrade overly broad rules, and
-remove instructions whose motivating conditions no longer hold. Use a script
-only when repeated deterministic work justifies maintaining it.
+Keep instructions that change decisions for this workflow. Revisit old workarounds
+as models and tools improve; remove obsolete scaffolding and repeated generic advice.
+Keep discovery concise, route conditional detail to its existing reference, and
+preserve real constraints for all supported agents without a model-specific recipe.

@@ -30,7 +30,8 @@ so retired reference files do not linger. Preserve any local customizations firs
 ## Use
 
 Invoke `no-stop-gpt` explicitly, or let a host that supports automatic discovery
-select it for substantive coding work. Installation does not guarantee activation.
+select it for complexity reviews, scoped cleanup, or implementation choices about
+added layers, state, or defenses. Installation does not guarantee activation.
 
 | Mode | Example request | Result |
 | --- | --- | --- |
@@ -51,6 +52,12 @@ to remove; no justified deletion is a valid result.
 Start with [SKILL.md](./skills/no-stop-gpt/SKILL.md). It links to optional design
 examples, focused defense and lifecycle guidance, and the consolidated Sweep
 workflow. Pure explanation, formatting, and unrelated prose do not trigger the skill.
+
+The skill follows OpenAI's [Rethinking skills and prompts for GPT-6 Astra](https://developers.openai.com/blog/rethinking-skills-and-prompts-for-gpt-6-astra):
+keep discovery concise, load detail only for the question at hand, and replace
+fixed itineraries with decision criteria. Authorized implementation continues
+through relevant checks and repairs; intermediate findings do not require another
+approval. Contract and protection requirements still apply across supported agents.
 
 ## Related tools and adopted ideas
 

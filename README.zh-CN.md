@@ -25,7 +25,7 @@ npx skills add klarkxy/no-stop-gpt
 
 ## 使用
 
-可以显式调用 `no-stop-gpt`，也可由支持自动发现的宿主在实质编程任务中选择它。安装不代表每次都会启用。
+可以显式调用 `no-stop-gpt`，也可由支持自动发现的宿主在复杂度审查、指定范围的清理，或涉及新增层次、状态、防御机制的实现选择中启用它。安装不代表每次都会启用。
 
 | 模式 | 请求示例 | 结果 |
 | --- | --- | --- |
@@ -38,6 +38,8 @@ npx skills add klarkxy/no-stop-gpt
 在满足同一需求的方案中，优先选择概念更少的设计。保留必要的安全、数据完整性、可访问性、兼容性和生命周期保证。搜索命中数与测试通过不能单独证明删除安全；没有合理删除项也是有效结果。
 
 从 [SKILL.md](./skills/no-stop-gpt/SKILL.md) 开始，按需读取设计案例、防御与生命周期指引，以及合并后的 Sweep 流程。纯解释、格式调整和无关文字修改不触发技能。
+
+技能参考 OpenAI 的 [Rethinking skills and prompts for GPT-6 Astra](https://developers.openai.com/blog/rethinking-skills-and-prompts-for-gpt-6-astra)：缩短触发描述，按当前问题加载细节，用决策依据替代固定步骤。已授权的实现持续推进到相关验证和问题修复完成，中间发现无需再次审批；契约和保护要求仍适用于所有支持的智能体。
 
 ## 同类工具与借鉴
 

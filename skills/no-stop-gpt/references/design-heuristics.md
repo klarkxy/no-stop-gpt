@@ -90,7 +90,7 @@ Start with the contract and affected code. Use measurements for claimed performa
 benefits and lifecycle reasoning for locks or cancellation. Known capacity or
 correctness requirements can justify a design before a benchmark exists.
 
-Use [ablation](defensive-audit.md#6-use-ablation-when-it-can-resolve-uncertainty)
+Use [ablation](defensive-audit.md#use-ablation-when-it-can-resolve-uncertainty)
 when a bounded comparison could settle the remaining question. Do not require
 building a knowingly incorrect version before implementing a necessary guard.
 No observed difference supports only the exercised cases.
