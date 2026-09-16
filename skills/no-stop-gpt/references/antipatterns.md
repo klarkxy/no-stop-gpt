@@ -142,8 +142,7 @@ maintenance, platform support, and existing use before replacing it.
 Caches, pools, memoization, and custom protocols need a workload or contract reason.
 Measurements are needed to claim improvements, but known capacity and semantic
 requirements can justify mechanisms before profiling. Preserve identity guarantees
-and invalidation behavior when changing a cache. Do not treat missing nearby
-benchmark comments as evidence that no justification exists.
+and invalidation behavior when changing a cache.
 
 ## API and data-model complexity
 
@@ -183,3 +182,35 @@ Logs, metrics, and dashboards should support diagnosis or decisions. They need
 not each have an alert or permanent reader to be useful. Remove repetitive
 narration where it adds noise, preserve required audit and failure evidence, and
 choose severity according to the actual outcome.
+
+## Agent-generated elaboration
+
+Models hedge: unable to rule out imagined edge cases, they add code as
+insurance, and training rewards answers that look thorough. Judge every addition
+by a named requirement, consumer, or failure mode rather than by apparent rigor.
+Common tells:
+
+- A one-line fix returning with a new helper directory, a custom error class, a
+  retry wrapper, and a config flag. Working code is not the deliverable; the
+  requested change is.
+- Guards against impossible states: catches around code that cannot throw, null
+  checks on values the type system guarantees, default branches for exhaustively
+  handled enums. Together they bury the logic and can swallow real failures;
+  see swallowed failures and repeated defense.
+- File sprawl: a two-line helper given its own module, one config value given a
+  loader. Prefer editing an existing file.
+- Scope drift: unrelated renames, reformatting, and pattern upgrades noticed
+  during the task. Judge scope by relevance to the requested outcome, not file
+  count: one shared-contract fix may require changes across callers, types, tests,
+  and documentation. Group a broad diff for review without dropping necessary work.
+- Compatibility theater: shims for a signature with one caller, versioned
+  internal APIs, old paths kept just in case. Internal compatibility without an
+  external consumer is a candidate for removal; see unrequested machinery.
+- Future-proofing: abstraction and configuration bought for imagined callers,
+  scale, or platforms. Buy flexibility when the requirement exists.
+- Comment and docstring inflation: narration of what the code plainly says.
+  See noise and misleading names.
+
+Subtraction is a valid outcome of any change: delete what the change makes
+obsolete instead of keeping it for safety. When reviewing an agent-written
+diff, review in a fresh context; an author tends to defend its own additions.

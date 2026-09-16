@@ -5,6 +5,10 @@ requested behavior. [SKILL.md](../SKILL.md) owns common principles, authority,
 and protected outcomes. Use the relevant sections for investigation and delivery;
 they do not require a separate artifact or approval at each step.
 
+Do not sweep where the result cannot change decisions: code that already serves
+its contract clearly, modules about to be rewritten wholesale, or paths the
+investigation cannot yet explain; resolve the open questions first.
+
 ## Scope and outcome
 
 - **Survey:** audit, investigate, or propose simplification. Stay read-only and
@@ -20,6 +24,11 @@ they do not require a separate artifact or approval at each step.
 Read applicable instructions and working-tree state. Consult manifests, test and
 generation conventions, architecture, or history where they affect the change.
 Distinguish user changes, generated files, and externally maintained surfaces.
+
+Use blame and commit context to recover why a mechanism or shape exists: a
+performance need, a platform constraint, an incident. The recorded reason may no
+longer hold, and a missing reason is a lead to investigate, not proof the code
+is dead.
 
 For a diff-scoped request, follow the
 [diff scope guidance](antipatterns.md#establish-the-diff-scope).
@@ -84,6 +93,24 @@ exports, generated inventories, callers, examples, documentation, and tests.
 Preserve unrelated work and unique behavior checks; remove artifacts that only
 pin intentionally retired behavior. Finish all authorized boundaries.
 
+Choose sequencing for the actual dependencies and risks. These techniques are
+options, not stages every replacement must pass:
+
+- Use a preparatory refactor when tangled dependencies prevent a safe direct
+  change; create only the seam the change needs.
+- Use parallel change when consumers cannot migrate in one safe step. Introduce
+  the replacement, migrate consumers, and retire the old path when its supported
+  obligations end. Complete the authorized transition; retain a temporary path
+  only for a concrete remaining obligation. A direct replacement can be preferable
+  when all consumers can move together.
+- Add characterization tests when behavior to preserve lacks useful coverage and
+  the uncertainty matters to the cut. Reuse existing tests or other relevant
+  checks when they already answer the question; do not freeze a bug the user
+  requested fixing.
+- When analysis leaves the dependency order unclear, a bounded attempt can expose
+  blockers. Isolate it or undo only the experimental edits, preserve unrelated
+  work, and resolve the discovered prerequisites before retrying.
+
 Remove compatibility glue only when its obligation is absent or retirement is
 authorized with a suitable transition. Redirect consumers to the surviving state
 owner instead of adding a synchronization layer. If workers are already involved,
@@ -95,6 +122,10 @@ existing tests, a build, protocol comparison, or a real workflow as appropriate.
 Capture a baseline when it helps distinguish prior failure from regression. Honor
 the user's verification constraints; do not run every category mechanically.
 Controlled measurements are needed for performance improvement claims.
+
+Keep cleanup commits separate from feature and fix work so each stays reviewable
+and revertible. When a cut spans hundreds of sites, prefer a codemod or scripted
+transform over manual edits, and spot-check the transformed output.
 
 Before deduplicating CI checks, confirm that the surviving run covers the target
 commit and relevant platform, build configuration, and dependencies, and actually

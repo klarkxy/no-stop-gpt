@@ -27,8 +27,12 @@ asynchronous lifetimes. One process can contain several boundaries.
 
 Re-validating unchanged data, copying an object whose mutation is controlled,
 or catching errors a helper cannot produce can be redundant. Verify the premise:
-earlier validation does not protect against later mutation, other callers, or
-new failure windows.
+rule out later mutation, other callers, and new failure windows.
+
+Where a failure unit has an owner that can re-establish known-good state,
+interior defensive code is a downgrade candidate: let the unit fail visibly at
+its boundary and recover at the owner. Let it crash replaces scattered guards,
+not boundary validation or recovery itself.
 
 ## Compare guarantees and failure windows
 
@@ -73,7 +77,7 @@ not as a requirement for every verdict or change.
   when feasible; do not repeat until a desired result appears. Reproducible manual
   observations can be evidence when their limits are stated.
 - A regression supports the need for a guarantee, though its implementation may
-  still be replaceable. No observed change supports only the exercised cases,
+  still be replaceable. Observing no change supports only the exercised cases,
   not absence of consumers or universal safety of deletion.
 - Happy-path success cannot establish that authorization, input validation,
   corruption detection, or cleanup is unnecessary. Exercise relevant failure cases

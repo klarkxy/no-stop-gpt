@@ -25,20 +25,40 @@ contract. A boolean can express a coherent option; several flags selecting
 unrelated workflows suggest separate functions. Move differing behavior back to
 its owners and extract the common part, without mechanically inlining every caller.
 
+When an abstraction has accumulated parameters and conditionals that select
+per-caller behavior, first establish whether the branches still serve a coherent
+shared contract. Options within that contract do not by themselves justify
+splitting it. If the abstraction couples unrelated responsibilities, consider
+inlining the differing paths into their callers and re-extracting any genuinely
+shared behavior. Preserve logic that still needs one owner; sunk cost alone is
+not a reason to keep the wrong abstraction.
+
 ## Compare complete designs
 
 Count concepts a maintainer must coordinate: states, types, layers, flags,
-dependencies, and assumptions. Prefer the simpler complete design while keeping
-reachable edge cases and required protections. No fixed line count determines quality.
+dependencies, and assumptions. Complexity comes from dependencies and obscurity;
+a design that reduces either while keeping reachable edge cases and required
+protections is usually the simpler complete one. No fixed line count determines
+quality.
+
+When the current structure is the problem, compare the full cost of living with
+it against restructuring, including migration and verification. A larger change
+can remove the cause of repeated patches; a local repair can be sufficient when
+the surrounding design still serves its contract.
 
 Compare how easily a maintainer can follow branches, inspect intermediate values,
 and locate failure. Flatten nesting when it clarifies the flow, but avoid dense
 conditional expressions or merged concerns that make debugging harder. A named
-intermediate or explicit branch can be simpler than a shorter expression.
+intermediate or explicit branch can be simpler than a shorter expression. Judge
+with an unfamiliar reader in mind: would a newcomer understand this version
+faster? Familiarity with the existing shape is not evidence of simplicity.
 
 Split at a meaningful level of abstraction or ownership boundary. Tiny forwarding
 functions can add indirection, but short adapters can provide stable public
-contracts. Distinguish them by their callers and responsibilities.
+contracts. Distinguish them by their callers and responsibilities. The opposite
+failure is a swarm of shallow modules whose interfaces cost as much to learn as
+their implementations; a few deep modules behind simple interfaces can carry less
+total burden. Depth, not size, justifies a boundary.
 
 Names should reveal consequential effects. A validator that repairs or a getter
 that creates can surprise callers; separate the effects or name the combined
@@ -75,9 +95,12 @@ Use the project's established error channel: exceptions, result types, protocol
 statuses, or explicit job failures. Translate at the owning boundary when callers
 need context or a stable type. Do not add wrappers just to make all errors look alike.
 
-Recover where the owner can establish valid state. A broken invariant may fail a
-request, job, worker, or process depending on what was corrupted. Use existing
-isolation; additional recovery infrastructure needs a current requirement.
+Let it crash applies when a defined failure unit has an owner that can restore
+known-good state. Callees should surface failures they cannot meaningfully handle
+through the established error channel. A broken invariant may fail a request,
+job, worker, or process depending on what was corrupted; boundary validation and
+cleanup must survive. Use existing isolation; additional recovery infrastructure
+needs a current requirement.
 
 Retries need a recoverable failure mode, safe repeated effects, a bounded budget,
 and visible terminal failure. Fallbacks need defined degraded behavior that callers
@@ -88,13 +111,16 @@ end conditions; permanent product fallbacks need not have removal dates.
 
 Start with the contract and affected code. Use measurements for claimed performance
 benefits and lifecycle reasoning for locks or cancellation. Known capacity or
-correctness requirements can justify a design before a benchmark exists.
+correctness requirements can justify a design.
 
 Use [ablation](defensive-audit.md#use-ablation-when-it-can-resolve-uncertainty)
 when a bounded comparison could settle the remaining question. Do not require
 building a knowingly incorrect version before implementing a necessary guard.
-No observed difference supports only the exercised cases.
+Observing no difference supports only the exercised cases.
 
 Record a material ceiling and upgrade trigger when the tradeoff would otherwise
 be hidden. Avoid speculative implementation or mandatory comments for every future
 limit. Routine reversible choices remain with the executor under [SKILL.md](../SKILL.md).
+
+The canonical material behind these heuristics is listed in
+[sources.md](sources.md).

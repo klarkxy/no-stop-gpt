@@ -21,7 +21,7 @@
 npx skills add klarkxy/no-stop-gpt
 ```
 
-也可以把整个 `skills/no-stop-gpt/` 目录复制到所用智能体的技能目录中，保留其中的 `SKILL.md`、`references/`、`agents/` 和 `LICENSE.txt`。升级时用新目录整体替换旧目录，避免留下已退役的参考文件；先保存自己的本地定制。
+也可以把整个 `skills/no-stop-gpt/` 目录复制到所用智能体的技能目录中，保留其中的 `SKILL.md`、`references/`、`agents/` 和 `LICENSE.txt`。升级时用新目录整体替换旧目录，清除已退役的参考文件；先保存自己的本地定制。
 
 ## 使用
 

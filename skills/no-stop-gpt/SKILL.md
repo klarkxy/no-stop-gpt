@@ -5,7 +5,7 @@ description: >-
   cleanup, or implementation choices about added layers, state, or defenses.
 license: SATA 2.0 (modified)
 metadata:
-  version: "0.1.7"
+  version: "0.1.8"
 ---
 
 # No, Stop! GPT!
@@ -18,7 +18,7 @@ under-delivery, not simplification.
 
 - **Prevent:** apply the principles below while implementing the request. Read
   [design-heuristics.md](references/design-heuristics.md) if an abstraction, reuse,
-  or error-contract tradeoff needs more detail. No separate audit report is needed.
+  or error-contract tradeoff needs more detail.
 - **Audit:** answer the named complexity question with evidence. Use
   [defensive-audit.md](references/defensive-audit.md) for a disputed mechanism or
   [antipatterns.md](references/antipatterns.md) for diff scope and review examples.
@@ -41,7 +41,7 @@ A review or survey is read-only. Requests to implement, simplify, remove, or app
 findings authorize changes within that scope, including investigation, relevant
 local checks, and repair of regressions caused by the change where permitted.
 Continue through that result; a first patch, intermediate finding, or successful
-cut is not a handoff point. Do not ask again for already authorized work.
+cut is not a handoff point, and already authorized work needs no re-approval.
 
 Pause only the dependent action when a material question about requirements,
 compatibility, authority, or irreversible effects needs the user's decision.
@@ -62,14 +62,19 @@ supported capabilities, publication, deployment, or unrelated changes.
   test input alone does not establish a supported production case.
 - Preserve the caller's distinction between failure, valid absence, and success.
   Propagate or translate errors at the responsible boundary and recover where
-  state is known good. Do not hide a root cause behind a permissive default or
-  abort a healthy process for a request-scoped failure.
+  state is known good. Fail the affected unit visibly rather than continue on
+  guessed state; do not abort a healthy process for a request-scoped failure.
+- Fix the cause within scope and retire paths made obsolete by the change.
+  Compare the cost of restructuring with repeated workarounds, including migration
+  and verification. Use [sweep.md](references/sweep.md) when sequencing needs care.
 
 ## Evidence and protections
 
 Tests, schemas, and documents can describe a contract; their existence alone is
 not independent proof that a mechanism is required. Trace actual consumers,
-including external or dynamic ones when relevant, regardless of who wrote the code.
+including external or dynamic ones when relevant, regardless of who wrote the
+code. Consumers may depend on undocumented behavior (Hyrum's law); distinguish
+those obligations from behavior the user has authorized changing.
 Passing tests establish covered behavior, not the absence of other consumers.
 Retain a mechanism or mark it unresolved when a material evidence gap remains.
 

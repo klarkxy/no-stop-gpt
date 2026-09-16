@@ -25,7 +25,7 @@ npx skills add klarkxy/no-stop-gpt
 For manual installation, copy the entire `skills/no-stop-gpt/` directory into your
 agent's skill directory. Keep `SKILL.md`, `references/`, `agents/`, and `LICENSE.txt`
 together. To upgrade, replace that entire installed directory with the new copy
-so retired reference files do not linger. Preserve any local customizations first.
+to clear out retired reference files. Preserve any local customizations first.
 
 ## Use
 
@@ -47,7 +47,7 @@ unless already authorized; publication and deployment remain separate actions.
 Prefer fewer concepts among designs that satisfy the same requirements. Preserve
 necessary security, data integrity, accessibility, compatibility, and lifecycle
 guarantees. Search counts and passing tests alone do not prove something is safe
-to remove; no justified deletion is a valid result.
+to remove; finding nothing justified to remove is a valid result.
 
 Start with [SKILL.md](./skills/no-stop-gpt/SKILL.md). It links to optional design
 examples, focused defense and lifecycle guidance, and the consolidated Sweep
