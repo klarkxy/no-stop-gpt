@@ -56,3 +56,31 @@ the skill text owns the operative rules.
   (<https://github.com/addyosmani/agent-skills/blob/main/skills/code-simplification/SKILL.md>)
   — behavior preservation, project conventions, scoped incremental passes, and
   separating cleanup commits from feature work.
+
+## Interface copy and model verbosity
+
+Reviewed 2026-09-16. The operative frontend rule is [Less is more](less-is-more.md).
+
+- Nielsen Norman Group, [Aesthetic and Minimalist Design](https://www.nngroup.com/articles/aesthetic-minimalist-design/)
+  — irrelevant information competes with useful information. Preserve everything
+  necessary for the task; visual emptiness alone is not usability.
+- GOV.UK, [Writing for user interfaces](https://www.gov.uk/service-manual/design/writing-for-user-interfaces)
+  — people scan; start with less copy, add help for demonstrated needs, and fix
+  interactions that require explanations of how to operate them.
+- OpenAI, [Frontend prompt instructions](https://developers.openai.com/api/docs/guides/frontend-prompt)
+  — audience and domain should determine on-screen text and layout; operational
+  tools should support scanning and repeated action with restrained presentation.
+  It also explicitly discourages visible in-app explanations of features and use.
+- Park et al., ACL 2024, [Disentangling Length from Quality in Direct Preference Optimization](https://aclanthology.org/2024.findings-acl.297/)
+  — experiments show preference optimization can exploit length rather than
+  quality. This supports a possible mechanism, not a diagnosis of current GPT UI output.
+- Zhang et al., ACL 2025, [From Lists to Emojis: How Format Bias Affects Model Alignment](https://aclanthology.org/2025.acl-long.1308/)
+  — preference models can favor verbosity and formatting independently of quality.
+
+A plausible frontend failure is carrying an assistant's explanatory answer style
+into product copy, treating every requirement as something to announce on screen,
+or compensating for unclear controls with more prose. These are design hypotheses,
+not established facts about a specific GPT model's training or motives. General
+verbosity research does not demonstrate why any particular screen became wordy.
+Constrain the generated UI copy directly; a shorter chat response alone does not
+establish a more concise interface.

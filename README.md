@@ -31,13 +31,15 @@ to clear out retired reference files. Preserve any local customizations first.
 
 Invoke `no-stop-gpt` explicitly, or let a host that supports automatic discovery
 select it for complexity reviews, scoped cleanup, or implementation choices about
-added layers, state, or defenses. Installation does not guarantee activation.
+added layers, state, defenses, or excessive interface copy. Installation does not
+guarantee activation.
 
 | Mode | Example request | Result |
 | --- | --- | --- |
 | **Prevent** | “Implement this feature using no-stop-gpt.” | Apply the principles while completing the code change. |
 | **Audit** | “Review this diff for overengineering.” | Read-only keep / remove / downgrade / decide findings with evidence. |
 | **Sweep** | “Simplify this subsystem and remove unnecessary code.” | Investigate, apply justified cuts, and verify the surviving behavior. |
+| **Less is more** | “Use no-stop-gpt: Less is more. Reduce the text on this screen.” | Remove redundant UI copy while preserving clear actions and essential information. |
 
 A request to audit or propose repository cleanup stays read-only. An explicit
 cleanup request authorizes changes within its scope without another approval of
@@ -58,6 +60,19 @@ keep discovery concise, load detail only for the question at hand, and replace
 fixed itineraries with decision criteria. Authorized implementation continues
 through relevant checks and repairs; intermediate findings do not require another
 approval. Contract and protection requirements still apply across supported agents.
+
+## Less is more: frontend copy
+
+Minimize the text users must read to finish their task. Delete redundant subtitles,
+explanatory cards, repeated hints, and implementation commentary. Let clear labels,
+controls, and feedback carry the interaction; show secondary help when relevant.
+Preserve necessary labels, consequential conditions, errors, and recovery steps.
+Fewer words should reduce reading effort without making the interface harder to use.
+
+The [frontend guidance](./skills/no-stop-gpt/references/less-is-more.md) includes
+before/after examples. The [research notes](./skills/no-stop-gpt/references/sources.md#interface-copy-and-model-verbosity)
+separate usability evidence and measured verbosity bias from hypotheses about
+why a particular generated interface is too wordy.
 
 ## Related tools and adopted ideas
 

@@ -25,13 +25,14 @@ npx skills add klarkxy/no-stop-gpt
 
 ## 使用
 
-可以显式调用 `no-stop-gpt`，也可由支持自动发现的宿主在复杂度审查、指定范围的清理，或涉及新增层次、状态、防御机制的实现选择中启用它。安装不代表每次都会启用。
+可以显式调用 `no-stop-gpt`，也可由支持自动发现的宿主在复杂度审查、指定范围的清理、涉及新增层次、状态、防御机制的实现选择，或界面文字过多时启用它。安装不代表每次都会启用。
 
 | 模式 | 请求示例 | 结果 |
 | --- | --- | --- |
 | **Prevent** | “用 no-stop-gpt 实现这个功能。” | 在完成代码修改时应用原则。 |
 | **Audit** | “审查这个 diff 的过度设计。” | 只读输出保留、移除、简化或待定结论，并附证据。 |
 | **Sweep** | “精简这个子系统，移除不需要的代码。” | 调查、实施有依据的清理，并验证保留的行为。 |
+| **Less is more** | “用 no-stop-gpt 的 Less is more，精简这个页面的文字。” | 删除冗余界面文案，保留清楚的操作和必要信息。 |
 
 审查或提出仓库清理建议的请求保持只读。明确的清理请求授权范围内的修改，不需要再审批中间发现。撤回受支持的行为或兼容性，若尚未授权，需要用户决定；发布和部署另行授权。
 
@@ -40,6 +41,12 @@ npx skills add klarkxy/no-stop-gpt
 从 [SKILL.md](./skills/no-stop-gpt/SKILL.md) 开始，按需读取设计案例、防御与生命周期指引，以及合并后的 Sweep 流程。纯解释、格式调整和无关文字修改不触发技能。
 
 技能参考 OpenAI 的 [Rethinking skills and prompts for GPT-6 Astra](https://developers.openai.com/blog/rethinking-skills-and-prompts-for-gpt-6-astra)：缩短触发描述，按当前问题加载细节，用决策依据替代固定步骤。已授权的实现持续推进到相关验证和问题修复完成，中间发现无需再次审批；契约和保护要求仍适用于所有支持的智能体。
+
+## Less is more：前端文案
+
+尽量减少用户完成当前任务必须阅读的文字。删除重复副标题、解释卡片、反复提示和实现说明，让清楚的标签、控件和反馈承担交互表达；次要帮助在需要时出现。保留必要标签、影响决定的条件、错误和恢复方法。以阅读负担降低且操作仍然清楚为准。
+
+[前端指引](./skills/no-stop-gpt/references/less-is-more.md)包含精简前后的例子。[研究记录](./skills/no-stop-gpt/references/sources.md#interface-copy-and-model-verbosity)区分了可用性依据、实验发现的模型冗长偏差，以及对具体界面为什么文字过多的推测。
 
 ## 同类工具与借鉴
 

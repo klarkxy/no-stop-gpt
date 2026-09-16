@@ -2,10 +2,11 @@
 name: no-stop-gpt
 description: >-
   Review overengineering and simplify code. Use for complexity reviews, scoped
-  cleanup, or implementation choices about added layers, state, or defenses.
+  cleanup, implementation choices about added layers, state, or defenses, and
+  reducing excessive frontend interface copy with Less is more.
 license: SATA 2.0 (modified)
 metadata:
-  version: "0.1.8"
+  version: "0.1.9"
 ---
 
 # No, Stop! GPT!
@@ -23,6 +24,9 @@ under-delivery, not simplification.
   [defensive-audit.md](references/defensive-audit.md) for a disputed mechanism or
   [antipatterns.md](references/antipatterns.md) for diff scope and review examples.
 - **Sweep:** use [sweep.md](references/sweep.md) for subsystem or repository cleanup.
+- **Less is more (frontend):** apply the rule below when creating or simplifying
+  interface copy. Read [less-is-more.md](references/less-is-more.md) for examples
+  and a focused review of text-heavy screens.
 - For cuts involving ownership, concurrent transitions, cancellation, or disposal,
   consult [boundaries-and-lifecycle.md](references/boundaries-and-lifecycle.md).
 
@@ -67,6 +71,21 @@ supported capabilities, publication, deployment, or unrelated changes.
 - Fix the cause within scope and retire paths made obsolete by the change.
   Compare the cost of restructuring with repeated workarounds, including migration
   and verification. Use [sweep.md](references/sweep.md) when sequencing needs care.
+
+## Less is more — frontend copy
+
+Minimize the text users must read to complete the current task. Every visible
+phrase should help them identify, decide, act, or recover. Delete copy that adds
+none of these; shorten what remains and disclose secondary help when relevant.
+Do not add subtitles, explanatory cards, repeated hints, or reassuring prose by
+default. Keep implementation explanations and delivery commentary out of the UI.
+
+Make labels, grouping, controls, and feedback carry the interaction. If a simple
+action needs a paragraph, fix the interaction before adding instructions. Preserve
+necessary labels, consequential conditions, errors, and recovery steps where users
+need them. Do not replace clear text with ambiguous icons, tiny type, or hidden
+essentials. Judge success by lower reading effort with complete usable behavior,
+not a word quota or fewer supported capabilities.
 
 ## Evidence and protections
 
