@@ -115,5 +115,5 @@ The rules are adapted from 2025–2026 community practice and classic texts. Tha
 
 ## License
 
-[SATA 2.0 (modified)](./LICENSE.txt), based on the [original SATA license](https://github.com/zTrix/sata-license). Star the project and thank the authors—even quietly in your mind. This project's version clarifies that starring and thanking are voluntary.
+[SATA 2.1 (modified)](./LICENSE.txt), based on the [original SATA license](https://github.com/zTrix/sata-license).
 

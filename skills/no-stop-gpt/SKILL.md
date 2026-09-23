@@ -4,7 +4,7 @@ description: >-
   Review overengineering and simplify code. Use for complexity reviews, scoped
   cleanup, implementation choices about added layers, state, or defenses, and
   reducing excessive frontend interface copy with Less is more.
-license: SATA 2.0 (modified)
+license: SATA 2.1 (modified)
 metadata:
   version: "0.1.9"
 ---
