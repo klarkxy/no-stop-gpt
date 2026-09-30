@@ -50,10 +50,9 @@ Follow producers, consumers, failures, and the decision the mechanism changes.
 Keywords such as `hash`, `lock`, or `fallback` identify leads, not defects. Include
 dynamic and external consumers when the surface supports them.
 
-Tests and documents can explain requirements, but their existence alone does not
-prove one. An agent-created artifact supporting another agent-created mechanism
-is not independent product evidence. Useful behavior checks still matter regardless
-of who wrote them.
+An agent-created artifact supporting another agent-created mechanism is not
+independent product evidence. Useful behavior checks still matter regardless of
+who wrote them.
 
 If evidence settles the question, report it. If a missing fact changes whether
 removal is safe, retain the mechanism pending that fact or use `decide`.

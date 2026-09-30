@@ -6,7 +6,7 @@ description: >-
   reducing excessive frontend interface copy with Less is more.
 license: SATA 2.1 (modified)
 metadata:
-  version: "0.1.9"
+  version: "0.1.10"
 ---
 
 # No, Stop! GPT!
@@ -25,8 +25,8 @@ under-delivery, not simplification.
   [antipatterns.md](references/antipatterns.md) for diff scope and review examples.
 - **Sweep:** use [sweep.md](references/sweep.md) for subsystem or repository cleanup.
 - **Less is more (frontend):** apply the rule below when creating or simplifying
-  interface copy. Read [less-is-more.md](references/less-is-more.md) for examples
-  and a focused review of text-heavy screens.
+  interface copy. Read [less-is-more.md](references/less-is-more.md) for detailed
+  rules, examples, and a focused review of text-heavy screens.
 - For cuts involving ownership, concurrent transitions, cancellation, or disposal,
   consult [boundaries-and-lifecycle.md](references/boundaries-and-lifecycle.md).
 
@@ -75,17 +75,12 @@ supported capabilities, publication, deployment, or unrelated changes.
 ## Less is more — frontend copy
 
 Minimize the text users must read to complete the current task. Every visible
-phrase should help them identify, decide, act, or recover. Delete copy that adds
-none of these; shorten what remains and disclose secondary help when relevant.
-Do not add subtitles, explanatory cards, repeated hints, or reassuring prose by
-default. Keep implementation explanations and delivery commentary out of the UI.
-
-Make labels, grouping, controls, and feedback carry the interaction. If a simple
-action needs a paragraph, fix the interaction before adding instructions. Preserve
-necessary labels, consequential conditions, errors, and recovery steps where users
-need them. Do not replace clear text with ambiguous icons, tiny type, or hidden
-essentials. Judge success by lower reading effort with complete usable behavior,
-not a word quota or fewer supported capabilities.
+phrase should help them identify, decide, act, or recover; delete the rest, and do
+not add subtitles, explanatory cards, or implementation commentary by default.
+Let labels, controls, and feedback carry the interaction; if a simple action needs
+a paragraph, fix the interaction. Preserve necessary labels, consequences, errors,
+and recovery steps. Judge success by lower reading effort with complete usable
+behavior, not a word quota.
 
 ## Evidence and protections
 
@@ -112,10 +107,3 @@ Honor the user's verification constraints and distinguish performed checks from 
 Deliver the answer or completed change with material evidence, limitations, and
 blockers. Finding nothing justified to remove is a valid result. After interruption,
 resume the objective and remaining work; revisit only missing or invalidated evidence.
-
-## Maintain the skill
-
-Keep instructions that change decisions for this workflow. Revisit old workarounds
-as models and tools improve; remove obsolete scaffolding and repeated generic advice.
-Keep discovery concise, route conditional detail to its existing reference, and
-preserve real constraints for all supported agents without a model-specific recipe.

@@ -116,7 +116,6 @@ correctness requirements can justify a design.
 Use [ablation](defensive-audit.md#use-ablation-when-it-can-resolve-uncertainty)
 when a bounded comparison could settle the remaining question. Do not require
 building a knowingly incorrect version before implementing a necessary guard.
-Observing no difference supports only the exercised cases.
 
 Record a material ceiling and upgrade trigger when the tradeoff would otherwise
 be hidden. Avoid speculative implementation or mandatory comments for every future

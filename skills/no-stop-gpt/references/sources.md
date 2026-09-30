@@ -33,8 +33,8 @@ the skill text owns the operative rules.
   — crashing early beats continuing on corrupted state.
 - Codersera, *Stop Claude Code From Over-Engineering Your Code*
   (<https://codersera.com/blog/how-to-stop-claude-code-over-engineering-2026/>)
-  — catalog of agent elaboration tells and why models hedge with unrequested
-  code.
+  — practitioner catalog of agent elaboration tells; its explanations of model
+  motives are anecdotal, not measured.
 - Michael Feathers, *Working Effectively with Legacy Code* — legacy code is
   code without tests; pin current behavior with characterization tests at a
   seam, then change boldly.

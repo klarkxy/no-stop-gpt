@@ -55,9 +55,9 @@ Search alternate call forms, dispatch keys, serialized fields, and manifests whe
 the system uses them. Read surrounding flow rather than counting hits. Resolve
 uncertain use through loaders, publication boundaries, compatibility policy,
 history, or downstream evidence within scope. If external use cannot be bounded,
-state that limit rather than calling the surface dead. A document or test may
-describe a real requirement; artifacts referring to one another are not independent
-proof of one. Age alone does not establish obsolescence.
+state that limit rather than calling the surface dead. Artifacts referring to one
+another are not independent proof of a requirement, and age alone does not
+establish obsolescence.
 
 Use [defensive-audit.md](defensive-audit.md) for a disputed mechanism and
 [boundaries-and-lifecycle.md](boundaries-and-lifecycle.md) when ownership,
@@ -82,8 +82,7 @@ only when it removes responsibility rather than moving it into a wrapper.
 
 Contract and consumer analysis come first. Use
 [ablation](defensive-audit.md#use-ablation-when-it-can-resolve-uncertainty) only
-when a bounded experiment can resolve material uncertainty. Green checks establish
-only exercised cases, not absence of unexercised or external consumers.
+when a bounded experiment can resolve material uncertainty.
 
 ## Implement and verify
 
@@ -119,9 +118,9 @@ this workflow does not require delegation.
 
 Choose checks that could expose a real regression: residue searches, a compiler,
 existing tests, a build, protocol comparison, or a real workflow as appropriate.
-Capture a baseline when it helps distinguish prior failure from regression. Honor
-the user's verification constraints; do not run every category mechanically.
-Controlled measurements are needed for performance improvement claims.
+Capture a baseline when it helps distinguish prior failure from regression; do not
+run every category mechanically. Controlled measurements are needed for performance
+improvement claims.
 
 Keep cleanup commits separate from feature and fix work so each stays reviewable
 and revertible. When a cut spans hundreds of sites, prefer a codemod or scripted
@@ -140,8 +139,7 @@ unrelated application build does not verify prose.
 When a check fails, determine whether the premise was wrong, the edit regressed
 behavior, or the failure predates it. Repair or undo the affected cut; do not weaken
 assertions, extend timeouts, or retry blindly to make it pass. A failing baseline
-limits the evidence without blocking unrelated supported changes. Repeat passing
-checks only for new changes, failures, or unresolved concerns.
+limits the evidence without blocking unrelated supported changes.
 
 For source-only changes, the diff can provide recovery. Data, configuration,
 deployment, and publication need recovery appropriate to their side effects and

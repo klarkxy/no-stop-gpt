@@ -3,7 +3,7 @@
 # No, Stop! GPT!
 
 [![Agent Skill](https://img.shields.io/badge/Agent-Skill-22c55e?style=flat-square)](./skills/no-stop-gpt/SKILL.md)
-[![License: SATA 2.0 (modified)](https://img.shields.io/badge/License-SATA%202.0%20%28modified%29-0f172a?style=flat-square)](./LICENSE.txt)
+[![License: SATA 2.1 (modified)](https://img.shields.io/badge/License-SATA%202.1%20%28modified%29-0f172a?style=flat-square)](./LICENSE.txt)
 
 [English](./README.md)
 
@@ -84,6 +84,10 @@ npx skills add klarkxy/no-stop-gpt
 - TigerBeetle TIGER_STYLE 与 NASA Power of 10 — 重防御就是最优解的领域边界
 - Mitchell Hashimoto — rules as failure log
 - OpenClaw AGENTS.md — fallback 是产品决策
+
+## 维护技能
+
+只保留会改变这一工作流决策的指令。随着模型和工具进步，重新审视旧的变通做法，删除过时的脚手架和重复的通用建议。共享原则只在 `SKILL.md` 中说一次，参考文档只放各自的条件性细节。保留对所有支持的智能体都成立的真实约束，不写针对特定模型的配方。
 
 ## 许可证
 

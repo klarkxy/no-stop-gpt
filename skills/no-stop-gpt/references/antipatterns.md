@@ -185,9 +185,11 @@ choose severity according to the actual outcome.
 
 ## Agent-generated elaboration
 
-Models hedge: unable to rule out imagined edge cases, they add code as
-insurance, and training rewards answers that look thorough. Judge every addition
-by a named requirement, consumer, or failure mode rather than by apparent rigor.
+Agents often add code as insurance against edge cases they cannot rule out.
+Preference training may also reward apparent thoroughness; that is a plausible
+mechanism, not an established cause (see [sources](sources.md#interface-copy-and-model-verbosity)).
+Judge every addition by a named requirement, consumer, or failure mode rather
+than by apparent rigor.
 Common tells:
 
 - A one-line fix returning with a new helper directory, a custom error class, a

@@ -3,7 +3,7 @@
 # No, Stop! GPT!
 
 [![Agent Skill](https://img.shields.io/badge/Agent-Skill-22c55e?style=flat-square)](./skills/no-stop-gpt/SKILL.md)
-[![License: SATA 2.0 (modified)](https://img.shields.io/badge/License-SATA%202.0%20%28modified%29-0f172a?style=flat-square)](./LICENSE.txt)
+[![License: SATA 2.1 (modified)](https://img.shields.io/badge/License-SATA%202.1%20%28modified%29-0f172a?style=flat-square)](./LICENSE.txt)
 
 [简体中文](./README.zh-CN.md)
 
@@ -112,6 +112,14 @@ The rules are adapted from 2025–2026 community practice and classic texts. Tha
 - TigerBeetle TIGER_STYLE & NASA's Power of 10 — where heavy defense is the optimum
 - Mitchell Hashimoto — rules as failure log
 - OpenClaw AGENTS.md — a fallback is a product decision
+
+## Maintaining the skill
+
+Keep only instructions that change decisions for this workflow. Revisit old
+workarounds as models and tools improve; remove obsolete scaffolding and repeated
+generic advice. State each shared principle once in `SKILL.md`; references hold
+only their own conditional detail. Preserve real constraints for all supported
+agents without a model-specific recipe.
 
 ## License
 
