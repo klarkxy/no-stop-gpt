@@ -72,10 +72,17 @@ banning event-driven designs.
 
 ## Dependencies and reuse
 
-Prefer a contract-matching platform facility or existing dependency. For new
-dependencies, compare maintained behavior, footprint, platform support, and
-ownership cost with local implementation. Few lines of usage can justify a library
-for difficult parsing, security, or compatibility. Copying has maintenance and licensing costs.
+External candidates can be libraries, components, plugins, official SDKs, tools, or
+complete applications. Verify required behavior and supported versions against
+official documentation or maintained source; search snippets and popularity alone
+do not establish fit.
+
+For a new dependency, compare maintained behavior, footprint, platform support,
+licensing, and ownership cost with a local implementation. Include transitive
+dependencies, adapter code, and architectural changes, not just usage-site lines.
+A small integration can justify a library for difficult parsing, security, or
+compatibility. Copying upstream code transfers maintenance and licensing
+obligations instead of removing them.
 
 An adapter can contain upstream types, resource ownership, errors, policy, or a
 substitution boundary with one backend. Forwarding without such a purpose is a

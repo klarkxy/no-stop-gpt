@@ -54,10 +54,22 @@ supported capabilities, publication, deployment, or unrelated changes.
 
 ## Complexity decisions
 
+- Search before building. Before implementing a capability, inspect the codebase,
+  existing dependencies, and standard-library or platform/framework facilities.
+  If none fits and the capability is general-purpose, search for established
+  external solutions before writing it from scratch. Adopt a suitable solution
+  by default, through its supported APIs and only the integration code the task
+  needs. Custom implementation needs a concrete reason grounded in requirements,
+  compatibility, licensing, or total integration and maintenance cost; familiarity
+  with writing it or speculative flexibility is not enough. Keep discovery
+  proportional: stop when a suitable option is established, reuse still-valid
+  findings, and do not turn routine local edits into ecosystem surveys. Respect
+  source and dependency constraints. If external search is unavailable or not
+  permitted, state that limitation and proceed with available evidence, without
+  claiming no solution exists.
 - Compare designs that satisfy the same contract. Prefer readable control flow
-  and fewer responsibilities over fewer lines. Follow project conventions; reuse
-  existing facilities when their semantics fit. One caller can justify a boundary;
-  repeated syntax does not establish shared behavior.
+  and fewer responsibilities over fewer lines. Follow project conventions. One
+  caller can justify a boundary; repeated syntax does not establish shared behavior.
 - Judge guards, retries, caches, flags, and layers by a current consumer, guarantee,
   or supported failure mode. Trace the affected flow when the purpose is unclear.
   Missing evidence makes a mechanism an investigation candidate, not dead code.
