@@ -40,7 +40,7 @@ npx skills add klarkxy/no-stop-gpt
 
 从 [SKILL.md](./skills/no-stop-gpt/SKILL.md) 开始，按需读取设计案例、防御与生命周期指引，以及合并后的 Sweep 流程。纯解释、格式调整和无关文字修改不触发技能。
 
-技能参考 OpenAI 的 [Rethinking skills and prompts for GPT-6 Astra](https://developers.openai.com/blog/rethinking-skills-and-prompts-for-gpt-6-astra)：缩短触发描述，按当前问题加载细节，用决策依据替代固定步骤。已授权的实现持续推进到相关验证和问题修复完成，中间发现无需再次审批。上面的完成规则同时吸收了 [Using GPT-6.2](https://developers.openai.com/api/docs/guides/latest-model) 的任务完成与最终答复指引，阅读日期为 2026-11-18。旧链接中的 `model=gpt-6-astra` 查询参数并不固定模型版本。该页不增加授权，不引入供应商 API 参数，也不要求工作永不停止。契约和保护要求仍适用于所有支持的智能体。
+技能参考 OpenAI 的 [Rethinking skills and prompts for GPT-6 Astra](https://developers.openai.com/blog/rethinking-skills-and-prompts-for-gpt-6-astra)：缩短触发描述，按当前问题加载细节，用决策依据替代固定步骤。已授权的实现持续推进到相关验证和问题修复完成，中间发现无需再次审批。上面的完成规则吸收了 [Using GPT-6.2](https://developers.openai.com/api/docs/guides/latest-model) 的任务完成与自包含交付。2026-11-18 读取的是无查询的规范 URL，标题为 Using GPT-6.2。原始链接的 `model` 参数值末尾带句点，呈现的是该默认页。该页不增加授权，不引入供应商 API 参数，也不要求工作永不停止。契约和保护要求仍适用于所有支持的智能体。
 
 ## Less is more：前端文案
 

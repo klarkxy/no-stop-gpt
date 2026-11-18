@@ -59,9 +59,11 @@ the skill text owns the operative rules.
 
 ## Task completion and self-contained delivery
 
-Read on 2026-11-18 from OpenAI, [Using GPT-6.2](https://developers.openai.com/api/docs/guides/latest-model).
-The title that day is "Using GPT-6.2". A `model=gpt-6-astra` query, including
-one with a period before the query string, does not pin a model version.
+Read on 2026-11-18 from the canonical URL with no query,
+[Using GPT-6.2](https://developers.openai.com/api/docs/guides/latest-model).
+The title is "Using GPT-6.2". Task completion and self-contained delivery were
+taken from that page. The original link, whose `model` value ends in a period,
+presents that default page.
 
 [SKILL.md](../SKILL.md) owns the operative rule. This note records the limit of
 the adoption. Vendor model names and reasoning-effort settings stay out.

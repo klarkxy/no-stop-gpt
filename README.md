@@ -62,12 +62,12 @@ The skill follows OpenAI's [Rethinking skills and prompts for GPT-6 Astra](https
 keep discovery concise, load detail only for the question at hand, and replace
 fixed itineraries with decision criteria. Authorized implementation continues
 through relevant checks and repairs; intermediate findings do not require another
-approval. The completion rule above also adapts task-completion and final-answer
-guidance from [Using GPT-6.2](https://developers.openai.com/api/docs/guides/latest-model),
-read on 2026-11-18. A `model=gpt-6-astra` query on older links does not pin a
-model version. That page adds no authority, vendor API parameters, or duty to
-continue without end. Contract and protection requirements still apply across
-supported agents.
+approval. The completion rule above also adapts task completion and
+self-contained delivery from [Using GPT-6.2](https://developers.openai.com/api/docs/guides/latest-model),
+read on 2026-11-18 from the canonical URL with no query. The original link,
+whose `model` value ends in a period, presents that default page. That page adds
+no authority, vendor API parameters, or duty to continue without end. Contract
+and protection requirements still apply across supported agents.
 
 ## Less is more: frontend copy
 
