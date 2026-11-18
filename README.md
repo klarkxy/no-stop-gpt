@@ -43,8 +43,11 @@ guarantee activation.
 
 A request to audit or propose repository cleanup stays read-only. An explicit
 cleanup request authorizes changes within its scope without another approval of
-intermediate findings. Retiring supported behavior or compatibility needs direction
-unless already authorized; publication and deployment remain separate actions.
+intermediate findings. Within that scope, take the next authorized step rather
+than handing back a plan, a routine question, or steps for the user to execute,
+and deliver a result that stands on its own. Retiring supported behavior or
+compatibility needs direction unless already authorized; publication and
+deployment remain separate actions.
 
 Prefer fewer concepts among designs that satisfy the same requirements. Preserve
 necessary security, data integrity, accessibility, compatibility, and lifecycle
@@ -59,7 +62,12 @@ The skill follows OpenAI's [Rethinking skills and prompts for GPT-6 Astra](https
 keep discovery concise, load detail only for the question at hand, and replace
 fixed itineraries with decision criteria. Authorized implementation continues
 through relevant checks and repairs; intermediate findings do not require another
-approval. Contract and protection requirements still apply across supported agents.
+approval. The completion rule above also adapts task completion and
+self-contained delivery from [Using GPT-6.2](https://developers.openai.com/api/docs/guides/latest-model),
+read on 2026-11-18 from the canonical URL with no query. The original link,
+whose `model` value ends in a period, presents that default page. That page adds
+no authority, vendor API parameters, or duty to continue without end. Contract
+and protection requirements still apply across supported agents.
 
 ## Less is more: frontend copy
 

@@ -34,13 +34,13 @@ npx skills add klarkxy/no-stop-gpt
 | **Sweep** | “精简这个子系统，移除不需要的代码。” | 调查、实施有依据的清理，并验证保留的行为。 |
 | **Less is more** | “用 no-stop-gpt 的 Less is more，精简这个页面的文字。” | 删除冗余界面文案，保留清楚的操作和必要信息。 |
 
-审查或提出仓库清理建议的请求保持只读。明确的清理请求授权范围内的修改，不需要再审批中间发现。撤回受支持的行为或兼容性，若尚未授权，需要用户决定；发布和部署另行授权。
+审查或提出仓库清理建议的请求保持只读。明确的清理请求授权范围内的修改，不需要再审批中间发现。在该范围内直接执行已授权的下一步，不以计划、例行提问或交回用户执行的步骤作为完成，并交付可以独立阅读的结果。撤回受支持的行为或兼容性，若尚未授权，需要用户决定；发布和部署另行授权。
 
 在满足同一需求的方案中，优先选择概念更少的设计。保留必要的安全、数据完整性、可访问性、兼容性和生命周期保证。搜索命中数与测试通过不能单独证明删除安全；没有合理删除项也是有效结果。
 
 从 [SKILL.md](./skills/no-stop-gpt/SKILL.md) 开始，按需读取设计案例、防御与生命周期指引，以及合并后的 Sweep 流程。纯解释、格式调整和无关文字修改不触发技能。
 
-技能参考 OpenAI 的 [Rethinking skills and prompts for GPT-6 Astra](https://developers.openai.com/blog/rethinking-skills-and-prompts-for-gpt-6-astra)：缩短触发描述，按当前问题加载细节，用决策依据替代固定步骤。已授权的实现持续推进到相关验证和问题修复完成，中间发现无需再次审批；契约和保护要求仍适用于所有支持的智能体。
+技能参考 OpenAI 的 [Rethinking skills and prompts for GPT-6 Astra](https://developers.openai.com/blog/rethinking-skills-and-prompts-for-gpt-6-astra)：缩短触发描述，按当前问题加载细节，用决策依据替代固定步骤。已授权的实现持续推进到相关验证和问题修复完成，中间发现无需再次审批。上面的完成规则吸收了 [Using GPT-6.2](https://developers.openai.com/api/docs/guides/latest-model) 的任务完成与自包含交付。2026-11-18 读取的是无查询的规范 URL，标题为 Using GPT-6.2。原始链接的 `model` 参数值末尾带句点，呈现的是该默认页。该页不增加授权，不引入供应商 API 参数，也不要求工作永不停止。契约和保护要求仍适用于所有支持的智能体。
 
 ## Less is more：前端文案
 
