@@ -3,6 +3,8 @@
 Canonical material behind the principles in this skill. These inform judgment;
 the skill text owns the operative rules.
 
+## Core design and simplification
+
 - Kent Beck, Extreme Programming — YAGNI: implement only what current
   requirements demand; design for today's needs rather than imagined ones.
 - John Ousterhout, *A Philosophy of Software Design*
@@ -22,8 +24,9 @@ the skill text owns the operative rules.
 - Dan McKinley, *Choose Boring Technology*
   (<https://mcfunley.com/choose-boring-technology>) — innovation tokens: spend
   a limited novelty budget where it pays and default to proven infrastructure.
-- Chesterton's fence — do not remove a mechanism until you understand why it
-  exists; blame and commit history are the first evidence to consult.
+- Chesterton's fence — history can explain a mechanism's purpose. Consult it
+  when useful; this skill does not make complete historical understanding a
+  prerequisite for a recoverable deletion attempt.
 - Joe Armstrong and the Erlang/OTP tradition, "let it crash"
   (<https://www.erlang.org/doc/system/design_principles.html>) — workers carry
   only the happy path and fail visibly inside an isolated unit; supervisors
@@ -59,21 +62,50 @@ the skill text owns the operative rules.
 
 ## Task completion and self-contained delivery
 
-Read on 2026-11-18 from the canonical URL with no query,
-[Using GPT-6.2](https://developers.openai.com/api/docs/guides/latest-model).
-The title is "Using GPT-6.2". Task completion and self-contained delivery were
-taken from that page. The original link, whose `model` value ends in a period,
-presents that default page.
+Read on 2026-11-18 from [Using GPT-6.2](https://developers.openai.com/api/docs/guides/latest-model).
+Task completion and self-contained delivery principles in [SKILL.md](../SKILL.md)
+were adapted from that guide.
 
-[SKILL.md](../SKILL.md) owns the operative rule. This note records the limit of
-the adoption. Vendor model names and reasoning-effort settings stay out.
-Frontend copy remains [Less is more](less-is-more.md); imagery and typography
-notes on the page were not added. Existing reuse, readable control flow, and
-abstraction rules already covered the coding prompt. The page's suggestion to
-skip new tests is not a ban on tests the repository, the user, or a specific
-regression requires. Examples on the page do not add authority. Continued work
-still ends at the observable result; it does not forbid waiting, and it does
-not justify repeating a failed check without a new reason.
+[SKILL.md](../SKILL.md) owns the operative rules. This note records the adoption
+boundaries: vendor model names and reasoning-effort settings stay out. Frontend
+copy remains [Less is more](less-is-more.md); imagery and typography notes on
+the page were not added. Existing reuse, readable control flow, and abstraction
+rules already covered the coding prompt. The guide's suggestion to skip new
+tests is not a ban on tests the repository, the user, or a specific regression
+requires. Examples on the page do not add authority. Continued work still ends at
+the observable result; it does not forbid waiting, and it does not justify
+repeating a failed check without a new reason.
+
+## Legacy code deletion
+
+Reviewed 2026-10-07. The operative workflow is
+[legacy-cleanup.md](legacy-cleanup.md). These are source-reading references, not
+installed dependencies or a measured ranking. The cut-and-repair default for
+locally checkable paths is this skill's policy; the sources contribute specific
+techniques.
+
+- Knip, [Your First Cleanup](https://knip.dev/overview/first-cleanup) — distinguish
+  dead files from missing entrypoint configuration, separate removing an export
+  from deleting its implementation, and rescan as cuts expose more dead code.
+- Uber, [PolyglotPiranha](https://github.com/uber/piranha) — start from a retired
+  flag's final behavior and propagate simplifications through surrounding code.
+- Meta, [Automating dead code cleanup](https://engineering.fb.com/2023/10/24/data-infrastructure/automating-dead-code-cleanup/)
+  — remove unreachable groups, including cycles; account for dynamic and
+  cross-language entrypoints. A small cleanup needs no SCARF-like infrastructure.
+- [kanon-repo design-cleanup](https://github.com/gjkim42/kanon-repo/blob/main/skills/design-cleanup/SKILL.md)
+  — follow abandoned designs into code, names, tests, and documentation. Preserve
+  immutable history rather than adopting its blanket rewrite of design records.
+- [agent-lsp lsp-dead-code](https://github.com/blackwell-systems/agent-lsp/blob/main/skills/lsp-dead-code/SKILL.md)
+  — sanity-check empty reference results with a known active symbol and inspect
+  registration paths. Neither one successful query nor a reference count proves
+  complete indexing or usefulness.
+- [oh-my-openagent remove-deadcode](https://github.com/code-yeongyu/oh-my-openagent/blob/dev/.agents/skills/remove-deadcode/SKILL.md)
+  — batch cuts and verify the combined result. Do not adopt mandatory parallelism,
+  zero-reference certainty, automatic commits, or arbitrary candidate-count stops.
+- Hacker News discussions of [Sensenmann](https://news.ycombinator.com/item?id=35755841)
+  and [ts-remove-unused](https://news.ycombinator.com/item?id=41554014) — practitioner
+  reports highlight low-frequency business paths, dynamic imports, and test-only
+  references. These motivate targeted checks, not a blanket veto on deletion.
 
 ## Interface copy and model verbosity
 

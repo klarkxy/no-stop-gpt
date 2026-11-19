@@ -2,8 +2,9 @@
 name: no-stop-gpt
 description: >-
   Review overengineering and simplify code. Use for complexity reviews, scoped
-  cleanup, implementation choices about added layers, state, or defenses, and
-  reducing excessive frontend interface copy with Less is more.
+  cleanup, legacy-code removal, implementation choices about reuse, added layers,
+  state, or defenses, and reducing excessive frontend interface copy with Less
+  is more.
 license: SATA 2.1 (modified)
 metadata:
   version: "0.1.10"
@@ -18,17 +19,24 @@ under-delivery, not simplification.
 ## Use only the guidance the task needs
 
 - **Prevent:** apply the principles below while implementing the request. Read
-  [design-heuristics.md](references/design-heuristics.md) if an abstraction, reuse,
-  or error-contract tradeoff needs more detail.
-- **Audit:** answer the named complexity question with evidence. Use
-  [defensive-audit.md](references/defensive-audit.md) for a disputed mechanism or
-  [antipatterns.md](references/antipatterns.md) for diff scope and review examples.
-- **Sweep:** use [sweep.md](references/sweep.md) for subsystem or repository cleanup.
+  [design-heuristics.md](references/design-heuristics.md) when an abstraction,
+  reuse, or error-contract tradeoff needs detail.
+- **Audit:** answer the named complexity question with evidence (read-only). Use
+  [defensive-audit.md](references/defensive-audit.md) for a disputed mechanism
+  or [antipatterns.md](references/antipatterns.md) for diff scope and review
+  examples.
+- **Sweep:** use [sweep.md](references/sweep.md) for subsystem or repository
+  simplification, sequencing, design-record consolidation, or importing review
+  findings.
+- **Delete legacy code:** use [legacy-cleanup.md](references/legacy-cleanup.md)
+  for concrete deletion recipes and the delete, repair, and repeat loop when
+  retiring obsolete paths.
 - **Less is more (frontend):** apply the rule below when creating or simplifying
-  interface copy. Read [less-is-more.md](references/less-is-more.md) for detailed
-  rules, examples, and a focused review of text-heavy screens.
-- For cuts involving ownership, concurrent transitions, cancellation, or disposal,
-  consult [boundaries-and-lifecycle.md](references/boundaries-and-lifecycle.md).
+  interface copy. Read [less-is-more.md](references/less-is-more.md) for
+  detailed rules, examples, and a focused review of text-heavy screens.
+- **Ownership and lifecycle:** consult
+  [boundaries-and-lifecycle.md](references/boundaries-and-lifecycle.md) when
+  cuts involve ownership, concurrent transitions, cancellation, or disposal.
 
 These are reference routes, not stages to complete in sequence. Read only what
 can resolve a question in the current task; a local edit needs no repository map.
@@ -84,8 +92,10 @@ Do not turn specialist security or migration work into a general cleanup.
   behavior.
 - **Justify added mechanisms:** Judge guards, retries, caches, flags, and layers
   by a current consumer, guarantee, or supported failure mode. Trace the
-  affected flow when purpose is unclear; missing evidence makes a mechanism an
-  investigation candidate, not dead code.
+  affected flow when purpose is unclear. In read-only review, missing evidence
+  makes a mechanism an investigation candidate rather than proven dead code;
+  during authorized cleanup, an unexplained locally checkable mechanism is a
+  candidate for investigation or a reversible cut, not an automatic keep.
 - **Check owners and failure windows:** Compare the owner and failure window
   before removing duplicate checks or state. Same-process data is not
   automatically trusted or immutable, and a constructible test input alone does
@@ -99,6 +109,23 @@ Do not turn specialist security or migration work into a general cleanup.
   retire paths made obsolete by the change. Compare restructuring cost,
   including migration and verification, against repeated workarounds, and use
   [sweep.md](references/sweep.md) when sequencing needs care.
+
+## Delete legacy code and finish the repair
+
+During authorized cleanup, default to cutting obsolete locally checkable paths
+and repairing the surviving design rather than waiting for exhaustive proof
+before a reversible edit or preserving code merely because someone might use it.
+Use compiler errors, test failures, and exercised workflows to locate remaining
+dependencies; migrate callers, delete tests that only pin retired
+implementation, and chase newly unused helpers, types, configuration, and
+dependencies until the requested scope is clean.
+
+Treat a failed check as work to resolve, not a reason to hand back the task or
+reflexively restore the old subsystem. Repair lost required behavior in the
+surviving design, restoring only the necessary piece if repair cannot preserve
+the contract. Small batches are checkpoints; finish the requested scope. See
+[legacy-cleanup.md](references/legacy-cleanup.md) for deletion recipes and
+repair classification.
 
 ## Less is more — frontend copy
 
@@ -117,8 +144,13 @@ not independent proof that a mechanism is required. Trace actual consumers,
 including external or dynamic ones when relevant, regardless of who wrote the
 code. Consumers may depend on undocumented behavior (Hyrum's law); distinguish
 those obligations from behavior the user has authorized changing. Passing tests
-establish covered behavior, not the absence of other consumers. Retain a
-mechanism or mark it unresolved when a material evidence gap remains.
+establish covered behavior, not the absence of other consumers. In read-only
+reviews, retain uncertain mechanisms or mark them unresolved rather than
+inventing evidence. During authorized cleanup, resolve locally checkable
+uncertainty through reversible cuts and relevant checks; retain or pause only
+the dependent cut when an obligation cannot be tested locally, such as an
+external API, dynamic entrypoint, stored or wire format, or unknown concurrency
+ordering, without holding up independent cuts.
 
 Preserve required security, data integrity and loss prevention, stored-format
 compatibility, accessibility, I/O failure handling, startup validation, and

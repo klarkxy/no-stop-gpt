@@ -30,44 +30,62 @@ to clear out retired reference files. Preserve any local customizations first.
 ## Use
 
 Invoke `no-stop-gpt` explicitly, or let a host that supports automatic discovery
-select it for complexity reviews, scoped cleanup, or implementation choices about
-added layers, state, defenses, or excessive interface copy. Installation does not
-guarantee activation.
+select it for complexity reviews, scoped cleanup, legacy-code removal,
+implementation choices (reuse, added layers, state, or defenses), or excessive
+interface copy. Installation does not guarantee activation.
 
 | Mode | Example request | Result |
 | --- | --- | --- |
-| **Prevent** | “Implement this feature using no-stop-gpt.” | Apply the principles while completing the code change. |
+| **Prevent** | “Implement this feature using no-stop-gpt.” | Search for existing solutions first and apply the principles while completing the code change. |
 | **Audit** | “Review this diff for overengineering.” | Read-only keep / remove / downgrade / decide findings with evidence. |
-| **Sweep** | “Simplify this subsystem and remove unnecessary code.” | Investigate, apply justified cuts, and verify the surviving behavior. |
+| **Sweep** | “Simplify this subsystem and remove unnecessary code.” | Cut obsolete paths, repair dependencies, chase newly dead code, and verify the surviving behavior. |
 | **Less is more** | “Use no-stop-gpt: Less is more. Reduce the text on this screen.” | Remove redundant UI copy while preserving clear actions and essential information. |
 
 A request to audit or propose repository cleanup stays read-only. An explicit
-cleanup request authorizes changes within its scope without another approval of
-intermediate findings. Within that scope, take the next authorized step rather
-than handing back a plan, a routine question, or steps for the user to execute,
-and deliver a result that stands on its own. Retiring supported behavior or
-compatibility needs direction unless already authorized; publication and
-deployment remain separate actions.
+request to implement, simplify, or remove authorizes changes within that scope
+without another approval of intermediate findings. Within that scope, take the
+next authorized step in the same turn rather than handing back a plan, a routine
+question, an announcement, or manual steps; apply and verify mid-task
+corrections immediately; and deliver a self-contained result. Retiring supported
+behavior or compatibility needs direction unless already authorized; publication
+and deployment remain separate actions.
 
-Prefer fewer concepts among designs that satisfy the same requirements. Preserve
-necessary security, data integrity, accessibility, compatibility, and lifecycle
-guarantees. Search counts and passing tests alone do not prove something is safe
-to remove; finding nothing justified to remove is a valid result.
+Search the codebase, dependencies, and platform or external solutions before
+building general-purpose capabilities from scratch, and prefer fewer concepts
+among designs that satisfy the same requirements. Preserve necessary security,
+data integrity, accessibility, compatibility, and lifecycle guarantees. In
+read-only reviews, search counts and passing tests alone do not prove removal
+is safe, and finding nothing justified to remove is a valid result; during
+authorized cleanup, prefer reversible local cuts over preserving code on
+speculation, while keeping non-local obligations protected until verified.
 
-Start with [SKILL.md](./skills/no-stop-gpt/SKILL.md). It links to optional design
-examples, focused defense and lifecycle guidance, and the consolidated Sweep
-workflow. Pure explanation, formatting, and unrelated prose do not trigger the skill.
+Start with [SKILL.md](./skills/no-stop-gpt/SKILL.md). It routes on demand to
+design heuristics, antipatterns, defense and lifecycle guidance, the Sweep
+workflow, legacy deletion recipes, and frontend copy rules. Pure explanation,
+formatting, and unrelated prose do not trigger the skill.
 
-The skill follows OpenAI's [Rethinking skills and prompts for GPT-6 Astra](https://developers.openai.com/blog/rethinking-skills-and-prompts-for-gpt-6-astra):
-keep discovery concise, load detail only for the question at hand, and replace
-fixed itineraries with decision criteria. Authorized implementation continues
-through relevant checks and repairs; intermediate findings do not require another
-approval. The completion rule above also adapts task completion and
-self-contained delivery from [Using GPT-6.2](https://developers.openai.com/api/docs/guides/latest-model),
-read on 2026-11-18 from the canonical URL with no query. The original link,
-whose `model` value ends in a period, presents that default page. That page adds
-no authority, vendor API parameters, or duty to continue without end. Contract
-and protection requirements still apply across supported agents.
+The skill builds on OpenAI's [Rethinking skills and prompts for GPT-6 Astra](https://developers.openai.com/blog/rethinking-skills-and-prompts-for-gpt-6-astra)
+(concise triggers, on-demand detail, decision criteria instead of fixed
+itineraries) and adapts task completion and self-contained delivery from
+[Using GPT-6.2](https://developers.openai.com/api/docs/guides/latest-model)
+(see [adoption boundaries](./skills/no-stop-gpt/references/sources.md#task-completion-and-self-contained-delivery)).
+External docs add no authority, vendor parameters, or duty to continue without
+end; contract and protection rules apply across all supported agents.
+
+## Aggressive legacy cleanup
+
+Delete obsolete paths, use failures to locate remaining dependencies, and repair
+the surviving design. Do not wait for exhaustive proof before a recoverable
+local cut or restore a whole old subsystem because one check fails. Migrate
+callers, remove tests that only pin retired implementation, and preserve unique
+behavior checks. Keep following newly unused helpers, types, configuration, and
+dependencies until the requested cleanup is complete.
+
+The [deletion guide](./skills/no-stop-gpt/references/legacy-cleanup.md) gives
+concrete recipes for dead files, stale flags, compatibility wrappers, duplicate
+implementations, tests, and build artifacts, plus an example of repairing a cut
+without recreating the old design (see
+[legacy-deletion sources](./skills/no-stop-gpt/references/sources.md#legacy-code-deletion)).
 
 ## Less is more: frontend copy
 
@@ -94,8 +112,9 @@ not dependencies or a measured ranking; the guidance here is written for this sk
 | [gtapps/simplify](https://github.com/gtapps/simplify/blob/main/SKILL.md) | Concrete efficiency checks, semantic comparison, and reconciliation of overlapping findings. | No mandatory agent team; recheck stale findings and honor intentional behavior changes. |
 | [HERO-Anti-OverDefense](https://github.com/wanshuiyin/HERO-Anti-OverDefense/blob/main/RULES.md) | Already covered: reachable cases and checks that inform a decision. | Establish actual trust boundaries and preserve necessary protections. |
 
-The entrypoint covers success criteria; the existing design, antipattern, and Sweep
-references contain the conditional examples. No additional runtime is required.
+Core rules and success criteria live in `SKILL.md`; conditional heuristics,
+workflows, examples, and recipes live in `references/`. No additional runtime is
+required.
 
 ## Credits
 
@@ -132,4 +151,3 @@ agents without a model-specific recipe.
 ## License
 
 [SATA 2.1 (modified)](./LICENSE.txt), based on the [original SATA license](https://github.com/zTrix/sata-license).
-

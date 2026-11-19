@@ -124,9 +124,10 @@ isolation can serve a real verification requirement. Do not remove it because
 its direct caller is a test.
 
 Generic library examples add little; checks protecting the application's actual
-integration or environment can be useful. Do not change coverage policy, delete
-flaky tests, or weaken assertions merely to make a cleanup pass. Diagnose the
-failure and preserve unique behavior coverage.
+integration or environment can be useful. Delete tests whose sole subject is an
+intentionally retired implementation while migrating unique behavior coverage to
+the surviving path; do not change coverage policy, delete flaky tests, or weaken
+behavior assertions merely to make a cleanup pass.
 
 ## Dependency and performance overhead
 
@@ -136,8 +137,10 @@ ordering, failure handling, and notification semantics before eliminating work.
 Prefer removing waste over adding a cache or worker pool.
 
 A tiny package or thin wrapper can cost more than the responsibility it removes;
-a maintained implementation can also prevent subtle local bugs. Compare semantics,
-maintenance, platform support, and existing use before replacing it.
+a maintained implementation can also prevent subtle local bugs. Apply the full
+fit and ownership-cost comparison in
+[design-heuristics.md](design-heuristics.md#dependencies-and-reuse) before adding
+or replacing a dependency.
 
 Caches, pools, memoization, and custom protocols need a workload or contract reason.
 Measurements are needed to claim improvements, but known capacity and semantic
@@ -187,10 +190,10 @@ choose severity according to the actual outcome.
 
 Agents often add code as insurance against edge cases they cannot rule out.
 Preference training may also reward apparent thoroughness; that is a plausible
-mechanism, not an established cause (see [sources](sources.md#interface-copy-and-model-verbosity)).
-Judge every addition by a named requirement, consumer, or failure mode rather
-than by apparent rigor.
-Common tells:
+mechanism, not an established cause (see
+[sources.md](sources.md#interface-copy-and-model-verbosity)). Judge every
+addition by a named requirement, consumer, or failure mode rather than by
+apparent rigor. Common tells:
 
 - A one-line fix returning with a new helper directory, a custom error class, a
   retry wrapper, and a config flag. Working code is not the deliverable; the
@@ -207,7 +210,8 @@ Common tells:
   and documentation. Group a broad diff for review without dropping necessary work.
 - Compatibility theater: shims for a signature with one caller, versioned
   internal APIs, old paths kept just in case. Internal compatibility without an
-  external consumer is a candidate for removal; see unrequested machinery.
+  external consumer is a candidate for removal; see unrequested machinery and
+  [legacy-cleanup.md](legacy-cleanup.md).
 - Future-proofing: abstraction and configuration bought for imagined callers,
   scale, or platforms. Buy flexibility when the requirement exists.
 - Comment and docstring inflation: narration of what the code plainly says.

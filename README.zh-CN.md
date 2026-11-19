@@ -25,22 +25,28 @@ npx skills add klarkxy/no-stop-gpt
 
 ## 使用
 
-可以显式调用 `no-stop-gpt`，也可由支持自动发现的宿主在复杂度审查、指定范围的清理、涉及新增层次、状态、防御机制的实现选择，或界面文字过多时启用它。安装不代表每次都会启用。
+可以显式调用 `no-stop-gpt`，也可由支持自动发现的宿主在复杂度审查、指定范围清理、旧代码清除、涉及复用、新增层次、状态或防御机制的实现选择，以及界面文字过多时启用它。安装不代表每次都会启用。
 
 | 模式 | 请求示例 | 结果 |
 | --- | --- | --- |
-| **Prevent** | “用 no-stop-gpt 实现这个功能。” | 在完成代码修改时应用原则。 |
+| **Prevent** | “用 no-stop-gpt 实现这个功能。” | 先检索已有方案再动手，在完成代码修改时应用原则。 |
 | **Audit** | “审查这个 diff 的过度设计。” | 只读输出保留、移除、简化或待定结论，并附证据。 |
-| **Sweep** | “精简这个子系统，移除不需要的代码。” | 调查、实施有依据的清理，并验证保留的行为。 |
+| **Sweep** | “精简这个子系统，移除不需要的代码。” | 删除旧路径、修复依赖、追删新暴露的死代码，并验证保留的行为。 |
 | **Less is more** | “用 no-stop-gpt 的 Less is more，精简这个页面的文字。” | 删除冗余界面文案，保留清楚的操作和必要信息。 |
 
-审查或提出仓库清理建议的请求保持只读。明确的清理请求授权范围内的修改，不需要再审批中间发现。在该范围内直接执行已授权的下一步，不以计划、例行提问或交回用户执行的步骤作为完成，并交付可以独立阅读的结果。撤回受支持的行为或兼容性，若尚未授权，需要用户决定；发布和部署另行授权。
+审查或提出仓库清理建议的请求保持只读。明确的实现、精简或删除请求授权范围内的修改，不需要再审批中间发现。在授权范围内，于同一轮直接执行下一步，不以计划、例行提问、下一步预告或交回用户执行的步骤收尾；对任务中的纠偏立即修改并验证，最终交付可以独立阅读的结果。撤回受支持的行为或兼容性，若尚未授权，需要用户决定；发布和部署另行授权。
 
-在满足同一需求的方案中，优先选择概念更少的设计。保留必要的安全、数据完整性、可访问性、兼容性和生命周期保证。搜索命中数与测试通过不能单独证明删除安全；没有合理删除项也是有效结果。
+实现通用能力前先检索仓库、现有依赖、平台能力或成熟外部方案；在满足同一需求的方案中，优先选择概念更少的设计。保留必要的安全、数据完整性、可访问性、兼容性和生命周期保证。在只读审查中，搜索命中数与测试通过不能单独证明删除安全，没有合理删除项也是有效结果；在已授权的清理中，对局部可验证路径优先尝试可恢复的删除而非因猜测保留，对无法在本地验证的外部或契约义务则先确认再删。
 
-从 [SKILL.md](./skills/no-stop-gpt/SKILL.md) 开始，按需读取设计案例、防御与生命周期指引，以及合并后的 Sweep 流程。纯解释、格式调整和无关文字修改不触发技能。
+从 [SKILL.md](./skills/no-stop-gpt/SKILL.md) 开始，按需路由到设计取舍、反模式目录、防御与生命周期指引、Sweep 流程、旧代码清理指南及前端文案规则。纯解释、格式调整和无关文字修改不触发技能。
 
-技能参考 OpenAI 的 [Rethinking skills and prompts for GPT-6 Astra](https://developers.openai.com/blog/rethinking-skills-and-prompts-for-gpt-6-astra)：缩短触发描述，按当前问题加载细节，用决策依据替代固定步骤。已授权的实现持续推进到相关验证和问题修复完成，中间发现无需再次审批。上面的完成规则吸收了 [Using GPT-6.2](https://developers.openai.com/api/docs/guides/latest-model) 的任务完成与自包含交付。2026-11-18 读取的是无查询的规范 URL，标题为 Using GPT-6.2。原始链接的 `model` 参数值末尾带句点，呈现的是该默认页。该页不增加授权，不引入供应商 API 参数，也不要求工作永不停止。契约和保护要求仍适用于所有支持的智能体。
+技能结构参考 OpenAI 的 [Rethinking skills and prompts for GPT-6 Astra](https://developers.openai.com/blog/rethinking-skills-and-prompts-for-gpt-6-astra)（精简触发描述、按需加载细节、用决策依据替代固定步骤），并吸收了 [Using GPT-6.2](https://developers.openai.com/api/docs/guides/latest-model) 的任务完成与自包含交付原则（见[采用边界](./skills/no-stop-gpt/references/sources.md#task-completion-and-self-contained-delivery)）。外部文档不增加授权、不引入供应商 API 参数，也不要求工作永不停止；契约与保护要求仍适用于所有支持的智能体。
+
+## 激进清理旧代码
+
+删除旧路径，用失败定位剩余依赖，再修通保留的设计。对局部可恢复的删除无需等待穷尽证明，也不要因为一次检查失败就恢复整个旧子系统。迁移调用者，删除只绑定已退役实现的测试，保留能检测独有行为的检查。继续追删失去用途的辅助函数、类型、配置和依赖，直到完成约定范围。
+
+[删除指南](./skills/no-stop-gpt/references/legacy-cleanup.md)提供死文件、旧开关、兼容包装、重复实现、测试和构建产物的具体配方，并演示如何修复删除后的问题而不重建旧设计（参考来源见[旧代码清理资料](./skills/no-stop-gpt/references/sources.md#legacy-code-deletion)）。
 
 ## Less is more：前端文案
 
@@ -59,7 +65,7 @@ npx skills add klarkxy/no-stop-gpt
 | [gtapps/simplify](https://github.com/gtapps/simplify/blob/main/SKILL.md) | 具体的效率检查、语义比较，以及重叠审查结论的协调。 | 不强制智能体团队；重新核对过时结论，尊重有意的行为变更。 |
 | [HERO-Anti-OverDefense](https://github.com/wanshuiyin/HERO-Anti-OverDefense/blob/main/RULES.md) | 已覆盖：按实际可达情况判断，让检查服务于决策。 | 核实真实信任边界，保留必要保护。 |
 
-成功条件放在技能入口；条件性例子归入已有的设计、反模式和 Sweep 参考文档，无需新增运行组件。
+核心规则与成功条件放在入口 `SKILL.md`；条件性取舍、流程、案例和清理配方按需放入 `references/`，无需新增运行组件。
 
 ## 思想来源
 
@@ -92,4 +98,3 @@ npx skills add klarkxy/no-stop-gpt
 ## 许可证
 
 [SATA 2.1（本项目修改版）](./LICENSE.txt)，基于[原版 SATA 许可证](https://github.com/zTrix/sata-license)。
-

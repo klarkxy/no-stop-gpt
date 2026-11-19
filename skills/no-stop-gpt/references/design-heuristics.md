@@ -20,18 +20,14 @@ inspect the behavior they protect and whether an existing entrypoint can cover
 it; test-only use does not prove dead code. Check public package consumers and
 compatibility obligations before withdrawing an exported API.
 
-When callers use different subsets of a helper, inspect whether they share a
-contract. A boolean can express a coherent option; several flags selecting
-unrelated workflows suggest separate functions. Move differing behavior back to
-its owners and extract the common part, without mechanically inlining every caller.
-
-When an abstraction has accumulated parameters and conditionals that select
-per-caller behavior, first establish whether the branches still serve a coherent
-shared contract. Options within that contract do not by themselves justify
-splitting it. If the abstraction couples unrelated responsibilities, consider
-inlining the differing paths into their callers and re-extracting any genuinely
-shared behavior. Preserve logic that still needs one owner; sunk cost alone is
-not a reason to keep the wrong abstraction.
+When callers use different subsets of a helper, or when an abstraction accumulates
+parameters and conditionals selecting per-caller behavior, first establish
+whether those paths still serve a coherent shared contract. A simple option
+within that contract does not by itself justify splitting it; several flags or
+branches coupling unrelated workflows suggest separate functions. Inline the
+differing behavior back into its owners and re-extract any genuinely shared part,
+preserving logic that still needs one owner without keeping the wrong abstraction
+for sunk cost.
 
 ## Compare complete designs
 
@@ -120,8 +116,10 @@ Start with the contract and affected code. Use measurements for claimed performa
 benefits and lifecycle reasoning for locks or cancellation. Known capacity or
 correctness requirements can justify a design.
 
-Use [ablation](defensive-audit.md#use-ablation-when-it-can-resolve-uncertainty)
-when a bounded comparison could settle the remaining question. Do not require
+During authorized cleanup, locally checkable uncertainty can be tested directly
+with a reversible cut ([legacy-cleanup.md](legacy-cleanup.md)). Use
+[ablation](defensive-audit.md#use-ablation-when-it-can-resolve-uncertainty) when a
+bounded controlled comparison could settle the remaining question. Do not require
 building a knowingly incorrect version before implementing a necessary guard.
 
 Record a material ceiling and upgrade trigger when the tradeoff would otherwise

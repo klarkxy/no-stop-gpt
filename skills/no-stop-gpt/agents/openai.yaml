@@ -1,4 +1,4 @@
 interface:
   display_name: "No, Stop! GPT!"
   short_description: "Keep code complexity and interface copy proportional to requirements"
-  default_prompt: "Use $no-stop-gpt to complete the requested work with proportional complexity and concise interface copy, preserving required behavior and making failures visible."
+  default_prompt: "Use $no-stop-gpt to complete the requested work through verification with proportional complexity and concise interface copy, preserving required behavior and making failures visible."

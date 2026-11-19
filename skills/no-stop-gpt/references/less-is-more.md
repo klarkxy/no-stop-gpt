@@ -49,4 +49,4 @@ extra steps. Do not impose a universal word count or reduction percentage. Keep
 copy whose removal makes the task harder, and preserve explicitly required content.
 
 For design evidence and the limits of explanations for model verbosity, see
-[Sources and further reading](sources.md#interface-copy-and-model-verbosity).
+[sources.md](sources.md#interface-copy-and-model-verbosity).

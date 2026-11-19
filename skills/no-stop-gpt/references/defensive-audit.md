@@ -54,14 +54,18 @@ An agent-created artifact supporting another agent-created mechanism is not
 independent product evidence. Useful behavior checks still matter regardless of
 who wrote them.
 
-If evidence settles the question, report it. If a missing fact changes whether
-removal is safe, retain the mechanism pending that fact or use `decide`.
+If evidence settles a read-only question, report it; otherwise state the missing
+fact. During authorized cleanup, try a reversible removal when its consequences
+can be checked locally, then repair what the attempt reveals. Retain or use
+`decide` for material contract choices or obligations that local experiments
+cannot establish.
 
 ## Use ablation when it can resolve uncertainty
 
 An ablation removes or disables a mechanism in a bounded experiment. Use it when
-contract and consumer analysis leave a material question the experiment can answer,
-not as a requirement for every verdict or change.
+a controlled comparison can answer a material question; exhaustive prior analysis
+is unnecessary. Ordinary cleanup follows the lighter
+[delete-and-repair loop](legacy-cleanup.md), without a separate ablation stage.
 
 - Isolate the changed mechanism and keep workload and environment comparable to
   the control. Identify the behavior that could expose a wrong cut.

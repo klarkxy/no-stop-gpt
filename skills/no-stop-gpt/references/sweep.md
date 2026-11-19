@@ -5,9 +5,10 @@ requested behavior. [SKILL.md](../SKILL.md) owns common principles, authority,
 and protected outcomes. Use the relevant sections for investigation and delivery;
 they do not require a separate artifact or approval at each step.
 
-Do not sweep where the result cannot change decisions: code that already serves
-its contract clearly, modules about to be rewritten wholesale, or paths the
-investigation cannot yet explain; resolve the open questions first.
+Do not spend a sweep on code that already serves its contract clearly or on
+cosmetic work in modules about to be replaced. For old paths whose dependencies
+are unclear, use a reversible cut to learn what must move or survive. Follow
+[legacy-cleanup.md](legacy-cleanup.md) for deletion recipes and repair decisions.
 
 ## Scope and outcome
 
@@ -25,10 +26,10 @@ Read applicable instructions and working-tree state. Consult manifests, test and
 generation conventions, architecture, or history where they affect the change.
 Distinguish user changes, generated files, and externally maintained surfaces.
 
-Use blame and commit context to recover why a mechanism or shape exists: a
-performance need, a platform constraint, an incident. The recorded reason may no
-longer hold, and a missing reason is a lead to investigate, not proof the code
-is dead.
+Consult blame and commit context when a mechanism's purpose or external
+obligations are unclear: a performance need, platform constraint, or past incident
+may explain what survives. Recorded reasons can be stale, and missing history is a
+lead to investigate or test—not a blanket ban on a reversible local cut.
 
 For a diff-scoped request, follow the
 [diff scope guidance](antipatterns.md#establish-the-diff-scope).
@@ -36,8 +37,8 @@ For a diff-scoped request, follow the
 For broad work, partition by responsibility: entrypoints and public interfaces,
 configuration, domain state, persistence, protocols and dynamic loading, background
 work and resource ownership, packages, tests, and operational documentation.
-Record the relevant paths examined and meaningful blind spots. A local cleanup
-does not need a full repository inventory.
+Record the relevant paths examined and meaningful blind spots. Start cutting a
+useful boundary without waiting for a complete inventory of every candidate.
 
 Look for dormant contracts, duplicate state, ownerless flexibility, forwarding
 layers without a boundary, parallel state machines, repeated defense, custom
@@ -76,13 +77,16 @@ failure windows. Prove candidate-exclusive members within shared files instead
 of deleting mixed artifacts wholesale. Retain useful rejected findings and name
 the missing fact for unresolved ones.
 
-For replacement dependencies, compare exact semantics, residual local policy,
-platform support, maintenance, footprint, and migration cost. Reuse reduces burden
-only when it removes responsibility rather than moving it into a wrapper.
+For replacement dependencies, apply the fit and full ownership-cost comparison in
+[design-heuristics.md](design-heuristics.md#dependencies-and-reuse). Reuse reduces
+burden only when it removes responsibility rather than moving it into a wrapper.
 
-Contract and consumer analysis come first. Use
-[ablation](defensive-audit.md#use-ablation-when-it-can-resolve-uncertainty) only
-when a bounded experiment can resolve material uncertainty.
+Read enough to choose a useful cut, then try it. Compiler errors, test failures,
+and exercised workflows can reveal the remaining dependencies faster than more
+speculative analysis. Use
+[ablation](defensive-audit.md#use-ablation-when-it-can-resolve-uncertainty) when a
+disputed guarantee needs a controlled comparison; no separate experiment or report
+is required for an ordinary delete-and-repair pass.
 
 ## Implement and verify
 
@@ -106,9 +110,10 @@ options, not stages every replacement must pass:
   the uncertainty matters to the cut. Reuse existing tests or other relevant
   checks when they already answer the question; do not freeze a bug the user
   requested fixing.
-- When analysis leaves the dependency order unclear, a bounded attempt can expose
-  blockers. Isolate it or undo only the experimental edits, preserve unrelated
-  work, and resolve the discovered prerequisites before retrying.
+- When dependency order is unclear, make the cut and use the resulting failures
+  as the repair queue. Move callers to the surviving path and remove newly dead
+  support code. Undo only the affected cut if needed to resolve a prerequisite,
+  then resume; do not use wholesale restoration as the default repair.
 
 Remove compatibility glue only when its obligation is absent or retirement is
 authorized with a suitable transition. Redirect consumers to the surviving state
@@ -136,10 +141,14 @@ For documentation-only edits, check changed facts, links, and paired translation
 where maintained. Run documentation generation or rendering when affected; an
 unrelated application build does not verify prose.
 
-When a check fails, determine whether the premise was wrong, the edit regressed
-behavior, or the failure predates it. Repair or undo the affected cut; do not weaken
-assertions, extend timeouts, or retry blindly to make it pass. A failing baseline
-limits the evidence without blocking unrelated supported changes.
+When a check fails, classify whether it exposes a remaining caller, an obsolete
+implementation assertion, a lost required behavior, or a pre-existing failure (see
+[legacy-cleanup.md](legacy-cleanup.md#repair-without-rebuilding-the-old-design)
+for repair decisions). Repair in the surviving design, restoring only the
+necessary piece if repair cannot preserve the contract; do not weaken behavior
+checks, extend timeouts, or retry blindly to make it pass. A failing baseline
+limits the evidence without blocking unrelated supported changes, and repair and
+verification must finish before calling the cleanup complete.
 
 For source-only changes, the diff can provide recovery. Data, configuration,
 deployment, and publication need recovery appropriate to their side effects and
