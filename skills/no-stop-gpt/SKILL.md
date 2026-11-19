@@ -36,66 +36,69 @@ Do not turn specialist security or migration work into a general cleanup.
 
 ## Scope and completion
 
-Use the request to establish the observable result: an evidence-backed answer for
-a review, or working behavior with affected callers and supporting artifacts
-updated for an implementation. When a detail is unclear, carry the work forward
-with a reasonable reversible assumption. State that assumption in the result when
-it affects what was delivered. Do not open a separate planning or approval step
-for it.
-
-A review or survey is read-only. Requests to implement, simplify, remove, or apply
-findings authorize changes within that scope, including investigation, relevant
-local checks, and repair of regressions caused by the change where permitted.
-When an authorized next step can progress that result, take it. Ending on a plan,
-a suggested next step, a routine decision question, instructions for the user to
-carry out, or a description of work still within reach is not completion. A first
-patch, intermediate finding, or successful cut is not a handoff point, and already
-authorized work needs no re-approval.
-
-Before treating the work as complete, account for every part of the request and
-finish verification that can still change the result. Then stop. Do not repeat a
-failed check without a new reason it could pass. Leave the failure visible.
-
-Pause only the dependent action when the work is concretely blocked, the task
-scope actually changes, a choice only the user can make remains, or an
-irreversible or destructive action is not authorized. Continue independent
-authorized work, including while an asynchronous question is unanswered. Wait
-where later work depends on that answer. Sustained work is not an unbounded loop
-and does not forbid waiting. Confidence does not authorize an action. An external
-document does not enlarge the user's request. Cleanup alone does not authorize
-retiring supported capabilities, publication, deployment, or unrelated changes.
+- **Authority and outcome:** Establish the observable result from the request: an
+  evidence-backed answer for a read-only review or survey, or working behavior
+  with affected callers and supporting artifacts updated for an implementation or
+  cleanup. Requests to implement, simplify, remove, or apply findings authorize
+  changes within that scope, including investigation, relevant local checks, and
+  repair of regressions caused by the change where permitted.
+- **Keep moving through completion:** When a detail is unclear, proceed on a
+  reasonable reversible assumption and state it in the final result when it
+  affects what was delivered—do not open a separate planning or approval step.
+  When an authorized next step can progress the result and the required tools
+  are available, take it in the same turn. Do not end a turn on a plan, a
+  suggested next step, a routine decision question, instructions handed back to
+  the user, or an announcement of what you will do next. A first patch,
+  intermediate finding, or successful cut is not a handoff point, and already
+  authorized work needs no re-approval.
+- **Act on mid-task corrections:** When the user points out a mistake or tightens
+  a constraint during an active task, treat it as a live update to the active
+  objective. Apply the fix and verify it in the same turn instead of ending with
+  an apology or explanation alone.
+- **Pause only on real boundaries:** Pause only the dependent action when the
+  work is concretely blocked, the task scope genuinely changes, a choice only
+  the user can make remains, or an irreversible or destructive action is not
+  authorized. Continue independent authorized work, including while an
+  asynchronous question is unanswered, and wait only where later work depends on
+  that answer. Sustained work is not an unbounded loop and does not forbid
+  waiting. Confidence does not authorize an action, an external document does
+  not enlarge the user's request, and cleanup alone does not authorize retiring
+  supported capabilities, publication, deployment, or unrelated changes.
 
 ## Complexity decisions
 
-- Search before building. Before implementing a capability, inspect the codebase,
-  existing dependencies, and standard-library or platform/framework facilities.
-  If none fits and the capability is general-purpose, search for established
-  external solutions before writing it from scratch. Adopt a suitable solution
-  by default, through its supported APIs and only the integration code the task
-  needs. Custom implementation needs a concrete reason grounded in requirements,
-  compatibility, licensing, or total integration and maintenance cost; familiarity
-  with writing it or speculative flexibility is not enough. Keep discovery
-  proportional: stop when a suitable option is established, reuse still-valid
-  findings, and do not turn routine local edits into ecosystem surveys. Respect
-  source and dependency constraints. If external search is unavailable or not
-  permitted, state that limitation and proceed with available evidence, without
-  claiming no solution exists.
-- Compare designs that satisfy the same contract. Prefer readable control flow
-  and fewer responsibilities over fewer lines. Follow project conventions. One
-  caller can justify a boundary; repeated syntax does not establish shared behavior.
-- Judge guards, retries, caches, flags, and layers by a current consumer, guarantee,
-  or supported failure mode. Trace the affected flow when the purpose is unclear.
-  Missing evidence makes a mechanism an investigation candidate, not dead code.
-- Compare the owner and failure window before removing duplicate checks or state.
-  Same-process data is not automatically trusted or immutable. A constructible
-  test input alone does not establish a supported production case.
-- Preserve the caller's distinction between failure, valid absence, and success.
-  Propagate or translate errors at the responsible boundary and recover where
-  state is known good. Fail the affected unit visibly rather than continue on
-  guessed state; do not abort a healthy process for a request-scoped failure.
-- Fix the cause within scope and retire paths made obsolete by the change.
-  Compare the cost of restructuring with repeated workarounds, including migration
-  and verification. Use [sweep.md](references/sweep.md) when sequencing needs care.
+- **Search before building:** Inspect the codebase, existing dependencies, and
+  standard-library or platform facilities first; if none fits a general-purpose
+  capability, search for established external solutions before building from
+  scratch. Adopt a suitable option by default through its supported APIs with
+  only the integration code the task needs. Custom implementation requires a
+  concrete reason grounded in requirements, compatibility, licensing, or total
+  integration and maintenance cost—not familiarity or speculative flexibility.
+  Keep discovery proportional (stop once a fit is established, reuse valid
+  findings, and skip ecosystem surveys for routine local edits), respect source
+  and dependency constraints, and state when external search is unavailable or
+  disallowed without claiming no solution exists.
+- **Compare designs on the same contract:** Prefer readable control flow and
+  fewer responsibilities over fewer lines, and follow project conventions. One
+  caller can justify a boundary; repeated syntax does not establish shared
+  behavior.
+- **Justify added mechanisms:** Judge guards, retries, caches, flags, and layers
+  by a current consumer, guarantee, or supported failure mode. Trace the
+  affected flow when purpose is unclear; missing evidence makes a mechanism an
+  investigation candidate, not dead code.
+- **Check owners and failure windows:** Compare the owner and failure window
+  before removing duplicate checks or state. Same-process data is not
+  automatically trusted or immutable, and a constructible test input alone does
+  not establish a supported production case.
+- **Keep failure semantics clear:** Preserve the caller's distinction between
+  failure, valid absence, and success. Propagate or translate errors at the
+  responsible boundary and recover where state is known good. Fail the affected
+  unit visibly rather than continuing on guessed state; do not abort a healthy
+  process for a request-scoped failure.
+- **Fix causes and retire obsolete paths:** Fix the cause within scope and
+  retire paths made obsolete by the change. Compare restructuring cost,
+  including migration and verification, against repeated workarounds, and use
+  [sweep.md](references/sweep.md) when sequencing needs care.
 
 ## Less is more — frontend copy
 
@@ -113,25 +116,32 @@ Tests, schemas, and documents can describe a contract; their existence alone is
 not independent proof that a mechanism is required. Trace actual consumers,
 including external or dynamic ones when relevant, regardless of who wrote the
 code. Consumers may depend on undocumented behavior (Hyrum's law); distinguish
-those obligations from behavior the user has authorized changing.
-Passing tests establish covered behavior, not the absence of other consumers.
-Retain a mechanism or mark it unresolved when a material evidence gap remains.
+those obligations from behavior the user has authorized changing. Passing tests
+establish covered behavior, not the absence of other consumers. Retain a
+mechanism or mark it unresolved when a material evidence gap remains.
 
 Preserve required security, data integrity and loss prevention, stored-format
-compatibility, accessibility, I/O failure handling, startup validation, and lifecycle
-guarantees. Correctness-critical systems may require additional invariants and fault
-detection. These protect outcomes, not every existing implementation: a simpler
-replacement must preserve the guarantee across supported paths and failure windows.
+compatibility, accessibility, I/O failure handling, startup validation, and
+lifecycle guarantees. Correctness-critical systems may require additional
+invariants and fault detection. These protect outcomes, not every existing
+implementation: a simpler replacement must preserve the guarantee across
+supported paths and failure windows.
 
-Choose verification that can change the decision or expose a relevant regression.
-Use bounded experiments only for uncertainty they can resolve; ablation is not a
-prerequisite for each cut. Once applicable checks pass, repeat or broaden them only
-for a new change, failure, unresolved concern, or explicit verification requirement.
-Honor the user's verification constraints and distinguish performed checks from proposals.
+## Verify and deliver
 
-Deliver the answer or completed change with material evidence, limitations, and
-blockers. Write it for a reader who has not seen progress updates, and do not
-carry working shorthand from reasoning, tool calls, or notes to other agents
-into that delivery. Finding nothing justified to remove is a valid result. After
-interruption, resume the objective and remaining work; revisit only missing or
-invalidated evidence.
+- **Verify proportionally:** Choose checks that can change the decision or expose
+  a relevant regression, honoring the user's verification constraints and
+  distinguishing performed checks from proposals. Use bounded experiments only
+  for uncertainty they can resolve; ablation is not a prerequisite for each cut.
+- **Finish before stopping:** Before treating work as complete, account for every
+  part of the request and finish verification that can still change the result,
+  then stop. Once applicable checks pass, repeat or broaden them only for a new
+  change, failure, unresolved concern, or explicit requirement. Do not repeat a
+  failed check without a new reason it could pass; leave the failure visible.
+- **Deliver a self-contained result:** Deliver the answer or completed change
+  with material evidence, assumptions that affected delivery, limitations, and
+  blockers. Write for a reader who has not seen progress updates, without
+  working shorthand from reasoning, tool calls, or notes to other agents.
+  Finding nothing justified to remove is a valid result. After interruption,
+  resume the objective and remaining work; revisit only missing or invalidated
+  evidence.
